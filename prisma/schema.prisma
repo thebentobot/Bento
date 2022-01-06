@@ -1,0 +1,401 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model announcementSchedule {
+  id        Int      @id(map: "announcementschedule_pk") @unique(map: "announcementschedule_id_uindex") @default(autoincrement())
+  guildID   BigInt
+  channelID BigInt
+  message   String   @db.VarChar
+  date      DateTime @db.Timestamptz(6)
+  guild     guild    @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "announcementschedule_guild_guildid_fk")
+}
+
+model announcementTime {
+  id           Int      @id(map: "announcementtime_pk") @unique(map: "announcementtime_id_uindex") @default(autoincrement())
+  guildID      BigInt
+  channelID    BigInt
+  message      String   @db.VarChar
+  date         DateTime @db.Timestamptz(6)
+  amountOfTime Int
+  timeframe    String   @db.VarChar
+  guild        guild    @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "announcementtime_guild_guildid_fk")
+}
+
+model autoRole {
+  autoRoleID BigInt @id(map: "autorole_pk") @unique(map: "autorole_autoroleid_uindex") @default(autoincrement())
+  guildID    BigInt
+  roleID     BigInt
+  guild      guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "autorole_guild_guildid_fk")
+}
+
+model availableRolesGuild {
+  role    String    @db.VarChar
+  id      Int       @id(map: "availablerolesguild_pk") @unique(map: "availablerolesguild_id_uindex") @default(autoincrement())
+  guildID BigInt
+  type    roletypes
+  guild   guild     @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "availablerolesguild_guild_guildid_fk")
+}
+
+model ban {
+  banCase BigInt   @id(map: "ban_pk") @unique(map: "ban_mutecase_uindex") @default(autoincrement())
+  userID  BigInt
+  guildID BigInt
+  date    DateTime @default(now()) @db.Timestamptz(6)
+  note    String?  @db.VarChar
+  actor   BigInt
+  reason  String?  @db.VarChar
+  guild   guild    @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "ban_guild_guildid_fk")
+}
+
+model bento {
+  userID    BigInt   @id(map: "bento_pk") @unique(map: "bento_userid_uindex")
+  bento     Int
+  bentoDate DateTime @default(now()) @db.Timestamptz(6)
+  user      user     @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "bento_user_userid_fk")
+}
+
+model bye {
+  guildID BigInt  @id(map: "bye_pk") @unique(map: "bye_guildid_uindex")
+  message String? @db.VarChar
+  channel BigInt?
+  guild   guild   @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "bye_guild_guildid_fk")
+}
+
+model caseGlobal {
+  guildID    BigInt  @id(map: "caseglobal_pk") @unique(map: "caseglobal_guildid_uindex")
+  serverName Boolean
+  reason     Boolean
+  guild      guild   @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "caseglobal_guild_guildid_fk")
+}
+
+model channelDisable {
+  id        Int    @id(map: "channeldisable_pk") @unique(map: "channeldisable_id_uindex") @default(autoincrement())
+  guildID   BigInt
+  channelID BigInt @unique(map: "channeldisable_channelid_uindex")
+  guild     guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "channeldisable_guild_guildid_fk")
+}
+
+model gfycatBlacklist {
+  id       Int    @id(map: "gfycatblacklist_pk") @unique(map: "gfycatblacklist_id_uindex") @default(autoincrement())
+  username String @unique(map: "gfycatblacklist_username_uindex") @db.VarChar
+}
+
+model gfycatWordList {
+  id   Int    @id(map: "gfycatwordlist_pk") @unique(map: "gfycatwordlist_id_uindex") @default(autoincrement())
+  word String @unique(map: "gfycatwordlist_word_uindex") @db.VarChar
+}
+
+model guild {
+  guildID              BigInt                 @id(map: "guild_pk") @unique(map: "guild_guildid_uindex")
+  guildName            String                 @db.VarChar(255)
+  prefix               String                 @db.VarChar(16)
+  tiktok               Boolean
+  leaderboard          Boolean
+  media                Boolean
+  icon                 String?                @db.VarChar
+  memberCount          Int?
+  announcementSchedule announcementSchedule[]
+  announcementTime     announcementTime[]
+  autoRole             autoRole[]
+  availableRolesGuild  availableRolesGuild[]
+  ban                  ban[]
+  bye                  bye?
+  caseGlobal           caseGlobal?
+  channelDisable       channelDisable[]
+  guildMember          guildMember[]
+  kick                 kick[]
+  memberLog            memberLog?
+  messageLog           messageLog?
+  modLog               modLog?
+  mute                 mute[]
+  muteRole             muteRole?
+  role                 role[]
+  roleChannel          roleChannel?
+  roleMessages         roleMessages?
+  tag                  tag[]
+  warning              warning[]
+  welcome              welcome?
+}
+
+model guildMember {
+  guildMemberID BigInt  @id(map: "guildmember_pk") @unique(map: "guildmember_guildmemberid_uindex") @default(autoincrement())
+  userID        BigInt
+  guildID       BigInt
+  xp            Int
+  level         Int
+  avatarURL     String? @db.VarChar
+  guild         guild   @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "guildmember_guild_guildid_fk")
+  user          user    @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "guildmember_user_userid_fk")
+}
+
+model horoscope {
+  userID    BigInt @id(map: "horoscope_pk") @unique(map: "horoscope_userid_uindex")
+  horoscope horos
+  user      user   @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "horoscope_user_userid_fk")
+}
+
+model kick {
+  kickCase BigInt   @id(map: "kick_pk") @unique(map: "kick_mutecase_uindex") @default(autoincrement())
+  userID   BigInt
+  guildID  BigInt
+  date     DateTime @default(now()) @db.Timestamptz(6)
+  note     String?  @db.VarChar
+  actor    BigInt
+  reason   String?  @db.VarChar
+  guild    guild    @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "kick_guild_guildid_fk")
+}
+
+model lastfm {
+  userID BigInt @id(map: "lastfm_pk") @unique(map: "lastfm_userid_uindex")
+  lastfm String @db.VarChar(255)
+  user   user   @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "lastfm_user_userid_fk")
+}
+
+model memberLog {
+  guildID BigInt @id(map: "memberlog_pk") @unique(map: "memberlog_guildid_uindex")
+  channel BigInt @unique(map: "memberlog_channel_uindex")
+  guild   guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "memberlog_guild_guildid_fk")
+}
+
+model messageLog {
+  guildID BigInt @id(map: "messagelog_pk") @unique(map: "messagelog_guildid_uindex")
+  channel BigInt
+  guild   guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "messagelog_guild_guildid_fk")
+}
+
+model modLog {
+  guildID BigInt @id(map: "modlog_pk") @unique(map: "modlog_guildid_uindex")
+  channel BigInt
+  guild   guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "modlog_guild_guildid_fk")
+}
+
+model mute {
+  muteCase   BigInt    @id(map: "mute_pk") @unique(map: "mute_mutecase_uindex") @default(autoincrement())
+  userID     BigInt
+  guildID    BigInt
+  date       DateTime  @default(now()) @db.Timestamptz(6)
+  muteEnd    DateTime? @db.Timestamptz(6)
+  note       String?   @db.VarChar
+  actor      BigInt
+  reason     String?   @db.VarChar
+  MuteStatus Boolean
+  guild      guild     @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "mute_guild_guildid_fk")
+}
+
+model muteRole {
+  guildID BigInt @id(map: "muterole_pk") @unique(map: "muterole_guildid_uindex")
+  roleID  BigInt @unique(map: "muterole_role_uindex")
+  guild   guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "muterole_guild_guildid_fk")
+}
+
+model notificationMessage {
+  id      Int      @id(map: "notificationmessage_pk") @unique(map: "notificationmessage_id_uindex") @default(autoincrement())
+  userID  BigInt
+  guildID BigInt
+  content String   @db.VarChar
+  global  Boolean?
+  user    user     @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "notificationmessage_user_userid_fk")
+}
+
+model patreon {
+  id         Int     @id(map: "patreon_pk") @unique(map: "patreon_id_uindex") @default(autoincrement())
+  userID     BigInt  @unique(map: "patreon_userid_uindex")
+  name       String? @db.VarChar
+  avatar     String? @db.VarChar
+  supporter  Boolean
+  follower   Boolean
+  enthusiast Boolean
+  disciple   Boolean
+  sponsor    Boolean
+  emoteSlot1 String? @db.VarChar
+  emoteSlot2 String? @db.VarChar
+  emoteSlot3 String? @db.VarChar
+  emoteSlot4 String? @db.VarChar
+  user       user    @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "patreon_user_userid_fk")
+}
+
+model profile {
+  userID                     BigInt   @id(map: "profile_pk") @unique(map: "profile_userid_uindex")
+  lastfmBoard                Boolean?
+  xpBoard                    Boolean?
+  backgroundUrl              String?  @db.VarChar
+  BackgroundColourOpacity    Int?
+  backgroundColour           String?  @db.VarChar
+  descriptionColourOpacity   Int?
+  descriptionColour          String?  @db.VarChar
+  overlayOpacity             Int?
+  overlayColour              String?  @db.VarChar
+  usernameColour             String?  @db.VarChar
+  discriminatorColour        String?  @db.VarChar
+  sidebarItemServerColour    String?  @db.VarChar
+  sidebarItemGlobalColour    String?  @db.VarChar
+  sidebarItemBentoColour     String?  @db.VarChar
+  sidebarItemTimezoneColour  String?  @db.VarChar
+  sidebarValueServerColour   String?  @db.VarChar
+  sidebarValueGlobalColour   String?  @db.VarChar
+  sidebarValueBentoColour    String?  @db.VarChar
+  sidebarOpacity             Int?
+  sidebarColour              String?  @db.VarChar
+  sidebarBlur                Int?
+  fmDivBGOpacity             Int?
+  fmDivBGColour              String?  @db.VarChar
+  fmSongTextOpacity          Int?
+  fmSongTextColour           String?  @db.VarChar
+  fmArtistTextOpacity        Int?
+  fmArtistTextColour         String?  @db.VarChar
+  xpDivBGOpacity             Int?
+  xpDivBGColour              String?  @db.VarChar
+  xpTextOpacity              Int?
+  xpTextColour               String?  @db.VarChar
+  xpText2Opacity             Int?
+  xpText2Colour              String?  @db.VarChar
+  xpDoneServerColour1Opacity Int?
+  xpDoneServerColour1        String?  @db.VarChar
+  xpDoneServerColour2Opacity Int?
+  xpDoneServerColour2        String?  @db.VarChar
+  xpDoneServerColour3Opacity Int?
+  xpDoneServerColour3        String?  @db.VarChar
+  xpDoneGlobalColour1Opacity Int?
+  xpDoneGlobalColour1        String?  @db.VarChar
+  xpDoneGlobalColour2Opacity Int?
+  xpDoneGlobalColour2        String?  @db.VarChar
+  xpDoneGlobalColour3Opacity Int?
+  xpDoneGlobalColour3        String?  @db.VarChar
+  description                String?  @db.VarChar
+  timezone                   String?  @db.VarChar
+  birthday                   String?  @db.VarChar
+  xpBarOpacity               Int?
+  xpBarColour                String?  @db.VarChar
+  xpBar2Opacity              Int?
+  xpBar2Colour               String?  @db.VarChar
+  user                       user     @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "profile_user_userid_fk")
+}
+
+model reminder {
+  id       Int      @id(map: "reminder_pk") @unique(map: "reminder_id_uindex") @default(autoincrement())
+  userID   BigInt
+  date     DateTime @default(now()) @db.Timestamptz(6)
+  reminder String   @db.VarChar
+  user     user     @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "reminder_user_userid_fk")
+}
+
+model role {
+  id          Int        @id(map: "role_pk") @unique(map: "role_id_uindex") @default(autoincrement())
+  roleID      BigInt
+  roleCommand String     @db.VarChar
+  roleName    String?    @db.VarChar
+  guildID     BigInt
+  type        roletypes?
+  guild       guild      @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "role_guild_guildid_fk")
+}
+
+model roleChannel {
+  guildID   BigInt @id(map: "rolechannel_pk") @unique(map: "rolechannel_guildid_uindex")
+  channelID BigInt @unique(map: "rolechannel_channelid_uindex")
+  guild     guild  @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "rolechannel_guild_guildid_fk")
+}
+
+model roleMessages {
+  guildID   BigInt  @id(map: "rolemessages_pk")
+  messageID BigInt?
+  message   String? @db.VarChar
+  guild     guild   @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "rolemessages_guild_guildid_fk")
+}
+
+model rpsGame {
+  id             Int    @id(map: "rpsgame_pk") @unique(map: "rpsgame_id_uindex") @default(autoincrement())
+  userID         BigInt @unique(map: "rpsgame_userid_uindex")
+  paperWins      Int?
+  paperLosses    Int?
+  rockWins       Int?
+  rockLosses     Int?
+  scissorWins    Int?
+  scissorsLosses Int?
+  paperTies      Int?
+  rockTies       Int?
+  scissorsTies   Int?
+  user           user   @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "rpsgame_user_userid_fk")
+}
+
+model tag {
+  tagID   BigInt    @id(map: "tag_pk") @unique(map: "tag_tagid_uindex") @default(autoincrement())
+  userID  BigInt
+  guildID BigInt
+  date    DateTime? @default(now()) @db.Timestamptz(6)
+  command String    @db.VarChar(255)
+  content String    @db.VarChar
+  count   Int
+  guild   guild     @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "tag_guild_guildid_fk")
+  user    user      @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "tag_user_userid_fk")
+}
+
+model user {
+  userID              BigInt                @id(map: "user_pk") @unique(map: "user_userid_uindex")
+  discriminator       String                @db.VarChar
+  xp                  Int
+  level               Int
+  username            String?               @db.VarChar
+  avatarURL           String?               @db.VarChar
+  bento               bento?
+  guildMember         guildMember[]
+  horoscope           horoscope?
+  lastfm              lastfm?
+  notificationMessage notificationMessage[]
+  patreon             patreon?
+  profile             profile?
+  reminder            reminder[]
+  rpsGame             rpsGame?
+  tag                 tag[]
+  weather             weather?
+}
+
+model warning {
+  warningCase BigInt   @id(map: "warning_pk") @unique(map: "warning_mutecase_uindex") @default(autoincrement())
+  userID      BigInt
+  guildID     BigInt
+  date        DateTime @default(now()) @db.Timestamptz(6)
+  note        String?  @db.VarChar
+  actor       BigInt
+  reason      String?  @db.VarChar
+  guild       guild    @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "warning_guild_guildid_fk")
+}
+
+model weather {
+  userID BigInt @id(map: "weather_pk") @unique(map: "weather_userid_uindex")
+  city   String @db.VarChar(255)
+  user   user   @relation(fields: [userID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "weather_user_userid_fk")
+}
+
+model welcome {
+  guildID BigInt  @id(map: "welcome_pk") @unique(map: "welcome_guildid_uindex")
+  message String? @db.VarChar
+  channel BigInt?
+  guild   guild   @relation(fields: [guildID], references: [guildID], onDelete: NoAction, onUpdate: NoAction, map: "welcome_guild_guildid_fk")
+}
+
+enum horos {
+  Aries
+  Taurus
+  Gemini
+  Cancer
+  Leo
+  Virgo
+  Libra
+  Scorpio
+  Sagittarius
+  Capricorn
+  Aquarius
+  Pisces
+}
+
+enum roletypes {
+  main
+  sub
+  other
+}
