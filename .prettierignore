@@ -17,3 +17,11 @@ node_modules
 config.json
 dist
 build/
+
+# Folders
+/.cache
+/.git
+/dist
+/docs
+/misc
+/node_modules
