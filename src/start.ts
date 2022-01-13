@@ -16,6 +16,7 @@ import { CustomClient } from './extensions';
 import { Job } from './jobs';
 import { Reaction } from './reactions';
 import { JobService, Logger } from './services';
+import { GuildRepo } from './services/database/repos/guild-repo';
 import { Trigger } from './triggers';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -46,6 +47,9 @@ async function start(): Promise<void> {
 		// TODO: Add new commands here
 	].sort((a, b) => (a.metadata.name > b.metadata.name ? 1 : -1));
 
+	const helpCommand = new HelpCommand();
+	//const guildRepo = new GuildRepo();
+
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -59,9 +63,9 @@ async function start(): Promise<void> {
 	// Event handlers
 	const guildJoinHandler = new GuildJoinHandler();
 	const guildLeaveHandler = new GuildLeaveHandler();
-	const commandHandler = new CommandHandler(commands);
+	const commandHandler = new CommandHandler(Config.prefix as string, helpCommand, commands);
 	const triggerHandler = new TriggerHandler(triggers);
-	const messageHandler = new MessageHandler(triggerHandler);
+	const messageHandler = new MessageHandler(commandHandler, triggerHandler);
 	const reactionHandler = new ReactionHandler(reactions);
 
 	// Jobs

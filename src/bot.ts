@@ -135,7 +135,7 @@ export class Bot {
 		}
 
 		try {
-			await this.commandHandler.process(intr);
+			await this.commandHandler.processIntr(intr);
 		} catch (error) {
 			Logger.error(Logs.error.command, error);
 		}

@@ -1,11 +1,12 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
-import { ApplicationCommandData, CommandInteraction, MessageEmbed, PermissionString } from 'discord.js';
+import { ApplicationCommandData, CommandInteraction, DMChannel, Message, MessageEmbed, PermissionString, TextChannel } from 'discord.js';
 
 import { EventData } from '../models/internal-models';
 import { MessageUtils } from '../utils';
 import { Command } from './command';
 
 export class LinkCommand implements Command {
+	public name = `link`;
 	public metadata: ApplicationCommandData = {
 		name: `link`,
 		description: `Get links to invite, support, etc.`,
@@ -47,9 +48,23 @@ export class LinkCommand implements Command {
 	public requireUserPerms: PermissionString[] = [];
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async execute(intr: CommandInteraction, _data: EventData): Promise<void> {
+	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const link = intr.options.getString(`link`);
 
+		const command = await this.linkCommand(link);
+
+		await MessageUtils.sendIntr(intr, command);
+	}
+
+	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
+		const link = args[2];
+
+		const command = await this.linkCommand(link);
+
+		await MessageUtils.send(msg.channel, command);
+	}
+
+	private async linkCommand(link: string | null): Promise<MessageEmbed> {
 		let embed: MessageEmbed;
 		switch (link) {
 		case `docs`: {
@@ -73,10 +88,9 @@ export class LinkCommand implements Command {
 			break;
 		}
 		default: {
-			return;
+			embed = new MessageEmbed().setDescription(`Invalid link`);
 		}
 		}
-
-		await MessageUtils.sendIntr(intr, embed);
+		return embed;
 	}
 }
