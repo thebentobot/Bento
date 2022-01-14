@@ -63,7 +63,7 @@ async function start(): Promise<void> {
 	// Event handlers
 	const guildJoinHandler = new GuildJoinHandler();
 	const guildLeaveHandler = new GuildLeaveHandler();
-	const commandHandler = new CommandHandler(Config.prefix as string, helpCommand, commands);
+	const commandHandler = new CommandHandler(helpCommand, commands);
 	const triggerHandler = new TriggerHandler(triggers);
 	const messageHandler = new MessageHandler(commandHandler, triggerHandler);
 	const reactionHandler = new ReactionHandler(reactions);

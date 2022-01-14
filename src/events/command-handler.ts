@@ -5,6 +5,7 @@ import { EventHandler } from '.';
 import { Command } from '../commands';
 import { EventData } from '../models/internal-models';
 import { Logger } from '../services';
+import { prisma } from '../services/prisma';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -18,12 +19,14 @@ export class CommandHandler implements EventHandler {
 		Config.rateLimiting.commands.interval * 1000,
 	);
 
-	constructor(private prefix: string, private helpCommand: Command, public commands: Command[]) {}
+	constructor(private helpCommand: Command, public commands: Command[]) {}
 
-	public shouldHandle(msg: Message, args: string[]): boolean {
+	public async shouldHandle(msg: Message, args: string[]): Promise<boolean> {
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const guildData = await prisma.guild.findUnique({where: {guildID: BigInt(msg.guild!.id)}});
 		return (
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			[this.prefix, `<@${msg.client.user!.id}>`, `<@!${msg.client.user!.id}>`].includes(
+			[guildData!.prefix, `<@${msg.client.user!.id}>`, `<@!${msg.client.user!.id}>`].includes(
 				args[0].toLowerCase()
 			) && !msg.author.bot
 		);
@@ -48,16 +51,38 @@ export class CommandHandler implements EventHandler {
 			return;
 		}
 
-		// If only a prefix, run the help command
-		if (args.length === 1) {
+		if (args.length === 1 && msg.mentions.users.has(msg.client?.user?.id as string)) {
 			await this.helpCommand.executeMsgCmd(msg, args, data);
+			return;
 		}
 
 		// Try to find the command the user wants
 		const command = this.find(args[1]);
 
 		if (!command) {
-			await this.helpCommand.executeMsgCmd(msg, args, data);
+			const customCommand = await prisma.tag.findFirst({
+				where: {
+					guildID: BigInt(msg.guild?.id as string),
+					command: args[1]
+				}
+			});
+			if (customCommand) {
+				await prisma.tag.update({
+					where: {
+						tagID: customCommand.tagID
+					},
+					data: {
+						count: {
+							increment: 1
+						}
+					}
+				});
+				await MessageUtils.send(msg.channel, customCommand.content);
+				return;
+			} else {
+				return;
+			}
+			//await this.helpCommand.executeMsgCmd(msg, args, data);
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

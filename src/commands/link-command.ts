@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
-import { ApplicationCommandData, CommandInteraction, DMChannel, Message, MessageEmbed, PermissionString, TextChannel } from 'discord.js';
+import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
 import { EventData } from '../models/internal-models';
 import { MessageUtils } from '../utils';

@@ -9,6 +9,10 @@ import {
 	TextBasedChannel,
 	User,
 } from 'discord.js';
+import { prisma } from '../services/prisma';
+
+const cooldownServer = new Set();
+const cooldownGlobal = new Set();
 
 export class MessageUtils {
 	public static async send(
@@ -105,6 +109,106 @@ export class MessageUtils {
 				return;
 			} else {
 				throw error;
+			}
+		}
+	}
+
+	public static async addXpServer(guildMemberId: bigint, xp: number): Promise<void> {
+		if (cooldownServer.has(guildMemberId)) {
+			return;
+		} else {
+			const result = await prisma.guildMember.update({
+				where: {
+					guildMemberID: guildMemberId
+				},
+				data: {
+					xp: {
+						increment: xp
+					}
+				}
+			});
+
+			const guildMemberXp = result.xp;
+			const guildMemberLevel = result.level;
+			const getNeededXP = (level: number) => level * level * 100;
+			const needed = getNeededXP(guildMemberLevel);
+
+			if (guildMemberXp >= needed) {
+				await prisma.guildMember.update({
+					where: {
+						guildMemberID: guildMemberId
+					},
+					data: {
+						xp: 0,
+						level: {
+							increment: 1
+						}
+					}
+				});
+
+				cooldownServer.add(guildMemberId);
+				setTimeout(() => {
+					cooldownServer.delete(guildMemberId);
+				}, 60000); // 1 minute
+
+				return;
+			} else {
+				cooldownServer.add(guildMemberId);
+				setTimeout(() => {
+					cooldownServer.delete(guildMemberId);
+				}, 60000); // 1 minute
+
+				return;
+			}
+		}
+	}
+
+	public static async addXpGlobal(userId: bigint, xp: number): Promise<void> {
+		if (cooldownGlobal.has(userId)) {
+			return;
+		} else {
+			const result = await prisma.user.update({
+				where: {
+					userID: userId
+				},
+				data: {
+					xp: {
+						increment: xp
+					}
+				}
+			});
+
+			const userXp = result.xp;
+			const userLevel = result.level;
+			const getNeededXP = (level: number) => level * level * 100;
+			const needed = getNeededXP(userLevel);
+
+			if (userXp >= needed) {
+				await prisma.user.update({
+					where: {
+						userID: userId
+					},
+					data: {
+						xp: 0,
+						level: {
+							increment: 1
+						}
+					}
+				});
+
+				cooldownGlobal.add(userId);
+				setTimeout(() => {
+					cooldownGlobal.delete(userId);
+				}, 60000); // 1 minute
+
+				return;
+			} else {
+				cooldownGlobal.add(userId);
+				setTimeout(() => {
+					cooldownGlobal.delete(userId);
+				}, 60000); // 1 minute
+				
+				return;
 			}
 		}
 	}
