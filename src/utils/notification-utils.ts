@@ -1,18 +1,8 @@
-import { EmbedAuthorData, Message, MessageActionRow, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel, User } from "discord.js";
+import { EmbedAuthorData, Message, MessageActionRow, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
 import { prisma } from "../services/prisma";
-import { DateTime } from "luxon";
 import { StringUtils, stylingUtils } from ".";
 import { notificationMessage } from "@prisma/client";
-/*
-interface notificationValues {
-    id: number
-    userID: bigint
-    guildID: bigint
-    content: string
-    global: boolean
-    guildMemberID: bigint
-}
-*/
+
 export class notificationUtils {
 	public static async notificationCheck(msg: Message): Promise<Message | void> {
 		const notiMessage = msg.content
@@ -21,14 +11,7 @@ export class notificationUtils {
 			.replace(/\\/g, `\\\\`)
 			.replace(`__`, ``)
 			.split(` `);
-		/*
-		const notificationData: Array<notificationValues> = await prisma.$queryRaw
-		`
-        SELECT n.*, gM."guildMemberID"
-        FROM "notificationMessage" as n
-        INNER JOIN "guildMember" gM on n."userID" = gM."userID"
-        WHERE content ILIKE ANY(ARRAY [${notiMessage}]);`, notiMessage;
-*/
+		
 		const notificationData = await prisma.notificationMessage.findMany({
 			where: {
 				content: {
@@ -69,11 +52,8 @@ export class notificationUtils {
 				try {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					const user = await (await msg.client.guilds.fetch(msg.guild!.id)).members.fetch(noti.userID.toString());
-					// we need to somehow get the channel object
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					const channelData = (msg.client.channels.cache.get(msg.channel.id) as TextChannel | NewsChannel | ThreadChannel);
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					//console.log(user.permissionsIn(channelData).has(`VIEW_CHANNEL`));
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					if (!user.permissionsIn(channelData).has(`VIEW_CHANNEL`)) return;
 					const lastMessagesCollection = (await msg.channel.messages.fetch({ limit: 3 }));
@@ -143,7 +123,6 @@ export class notificationUtils {
 					});
 					return;
 				} catch {
-					console.log(`reached`);
 					return;
 				}
 			}
