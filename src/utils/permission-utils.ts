@@ -3,7 +3,7 @@ import { AnyChannel, ClientUser, DMChannel, GuildChannel, GuildMember, Permissio
 import { Command } from '../commands';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 export class PermissionUtils {
 	public static canSend(channel: AnyChannel, embedLinks = false): boolean {

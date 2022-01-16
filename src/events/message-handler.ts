@@ -4,7 +4,7 @@ import { Message, Permissions } from 'discord.js';
 import { CommandHandler, EventHandler, TriggerHandler } from '.';
 import { GuildRepo } from '../services/database/repos/guild-repo';
 import { prisma } from '../services/prisma';
-import { MessageUtils } from '../utils';
+import { MessageUtils, notificationUtils } from '../utils';
 
 const hasEmoteRegex = /<a?:.+:\d+>/gm;
 const emoteRegex = /<:.+:(\d+)>/gm;
@@ -16,6 +16,11 @@ export class MessageHandler implements EventHandler {
 	public async process(msg: Message): Promise<void> {
 		// Don't respond to system messages or self
 		if (msg.system || msg.author.id === msg.client.user?.id) {
+			return;
+		}
+
+		// Don't respond to DM's
+		if (msg.channel.type === `DM`) {
 			return;
 		}
 
@@ -92,6 +97,7 @@ export class MessageHandler implements EventHandler {
 		// add a function for roles - or are we gonna make a new and better one with discord API features?
 
 		// add a function for notifications here
+		await notificationUtils.notificationCheck(msg);
 
 		const channelDisableData = await prisma.channelDisable.findUnique({where: {channelID: BigInt(msg.channel.id)}});
 		

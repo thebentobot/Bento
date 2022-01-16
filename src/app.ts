@@ -9,9 +9,9 @@ import { HttpService, JobService, Logger, MasterApiService } from './services';
 import { MathUtils, ShardUtils } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config.json`);
+const Config = require(`./config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`../config/debug.json`);
+const Debug = require(`./config/debug.json`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Logs = require(`../lang/logs.json`);
 

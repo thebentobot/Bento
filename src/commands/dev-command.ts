@@ -8,7 +8,7 @@ import { MessageUtils, ShardUtils } from '../utils';
 import { Command } from './command';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const TsConfig = require(`../../tsconfig.json`);
+const TsConfig = require(`../../tsconfig`);
 
 export class DevCommand implements Command {
 	public name = `dev`;

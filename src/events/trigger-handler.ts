@@ -5,7 +5,7 @@ import { EventData } from '../models/internal-models';
 import { Trigger } from '../triggers';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 export class TriggerHandler {
 	private rateLimiter = new RateLimiter(

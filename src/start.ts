@@ -20,7 +20,7 @@ import { GuildRepo } from './services/database/repos/guild-repo';
 import { Trigger } from './triggers';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config.json`);
+const Config = require(`./config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Logs = require(`../lang/logs.json`);
 

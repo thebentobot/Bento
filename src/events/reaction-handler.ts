@@ -6,7 +6,7 @@ import { EventData } from '../models/internal-models';
 import { Reaction } from '../reactions';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 export class ReactionHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(

@@ -4,7 +4,7 @@ import { HttpService } from '.';
 import { LoginClusterResponse, RegisterClusterRequest, RegisterClusterResponse } from '../models/master-api';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 export class MasterApiService {
 	/*

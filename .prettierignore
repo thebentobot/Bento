@@ -14,7 +14,7 @@ coverage
 
 node_modules
 .env
-config.json
+config
 dist
 build/
 

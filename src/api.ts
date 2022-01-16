@@ -6,7 +6,7 @@ import { checkAuth, handleError } from './middleware';
 import { Logger } from './services';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config.json`);
+const Config = require(`./config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Logs = require(`../lang/logs.json`);
 

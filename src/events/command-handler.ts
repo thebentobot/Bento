@@ -9,7 +9,7 @@ import { prisma } from '../services/prisma';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Logs = require(`../../lang/logs.json`);
 

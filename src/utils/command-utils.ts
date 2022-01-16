@@ -6,9 +6,9 @@ import { Permission } from '../models/enums';
 import { EventData } from '../models/internal-models';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`../../config/debug.json`);
+const Debug = require(`../config/debug.json`);
 
 export class CommandUtils {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

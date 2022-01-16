@@ -8,3 +8,5 @@ export { PermissionUtils } from './permission-utils';
 export { RegexUtils } from './regex-utils';
 export { ShardUtils } from './shard-utils';
 export { StringUtils } from './string-utils';
+export { notificationUtils } from './notification-utils';
+export { stylingUtils } from './styling-utils';

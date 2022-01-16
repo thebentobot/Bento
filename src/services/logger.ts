@@ -3,7 +3,7 @@ import { DiscordAPIError } from 'discord.js';
 import pino from 'pino';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 let logger = pino(
 	{

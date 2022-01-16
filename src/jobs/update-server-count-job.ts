@@ -7,9 +7,9 @@ import { ShardUtils } from '../utils';
 import { Job } from './job';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const BotSites: BotSite[] = require(`../../config/bot-sites.json`);
+const BotSites: BotSite[] = require(`../../config/bot-sites.js`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Logs = require(`../../lang/logs.json`);
 

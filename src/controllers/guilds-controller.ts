@@ -6,7 +6,7 @@ import { GetGuildsResponse } from '../models/cluster-api';
 import { Controller } from './controller';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../../config/config.json`);
+const Config = require(`../config/config`);
 
 export class GuildsController implements Controller {
 	public path = `/guilds`;
