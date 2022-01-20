@@ -53,7 +53,7 @@
 		"dotenv": "^14.2.0",
 		"express": "^4.17.2",
 		"express-promise-router": "^4.1.1",
-		"filesize": "^8.0.6",
+		"filesize": "^8.0.7",
 		"luxon": "^2.3.0",
 		"node-schedule": "^2.1.0",
 		"node-vibrant": "^3.2.1-alpha.1",
