@@ -1,10 +1,10 @@
 import { guildMember, user } from '@prisma/client';
 import { Message, Permissions } from 'discord.js';
 
-import { CommandHandler, EventHandler, TriggerHandler } from '.';
-import { GuildRepo } from '../services/database/repos/guild-repo';
-import { prisma } from '../services/prisma';
-import { MessageUtils, notificationUtils } from '../utils';
+import { CommandHandler, EventHandler, TriggerHandler } from './index.js';
+import { GuildRepo } from '../services/database/repos/guild-repo.js';
+import { prisma } from '../services/prisma.js';
+import { MessageUtils, notificationUtils } from '../utils/index.js';
 
 const hasEmoteRegex = /<a?:.+:\d+>/gm;
 const emoteRegex = /<:.+:(\d+)>/gm;

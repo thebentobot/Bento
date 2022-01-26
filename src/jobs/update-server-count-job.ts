@@ -1,17 +1,13 @@
 import { ActivityType, ShardingManager } from 'discord.js';
+import { botSites as BotSites } from '../config/bot-sites.js';
+import { config as Config } from '../config/config.js';
 
-import { CustomClient } from '../extensions';
-import { BotSite } from '../models/config-models';
-import { HttpService, Logger } from '../services';
-import { ShardUtils } from '../utils';
-import { Job } from './job';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const BotSites: BotSite[] = require(`../../config/bot-sites.js`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../../lang/logs.json`);
+import { CustomClient } from '../extensions/index.js';
+import { logs as Logs } from '../lang/logs.js';
+import { BotSite } from '../models/config-models.js';
+import { HttpService, Logger } from '../services/index.js';
+import { ShardUtils } from '../utils/index.js';
+import { Job } from './job.js';
 
 export class UpdateServerCountJob implements Job {
 	public name = `Update Server Count`;

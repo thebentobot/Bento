@@ -1,5 +1,5 @@
 import { guild } from "@prisma/client";
-import { prisma } from "../../prisma";
+import { prisma } from "../../prisma.js";
 
 export class GuildRepo {
 	public async getGuild(discordId: string): Promise<guild> {

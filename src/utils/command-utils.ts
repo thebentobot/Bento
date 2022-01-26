@@ -1,14 +1,11 @@
 import { ClientUser, CommandInteraction, GuildChannel, GuildMember, MessageEmbed, Permissions } from 'discord.js';
 
-import { MessageUtils } from '.';
-import { Command } from '../commands';
-import { Permission } from '../models/enums';
-import { EventData } from '../models/internal-models';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`../config/debug.json`);
+import { MessageUtils } from './index.js';
+import { Command } from '../commands/index.js';
+import { config as Config } from '../config/config.js';
+import { debug as Debug } from '../config/debug.js';
+import { Permission } from '../models/enums/index.js';
+import { EventData } from '../models/internal-models.js';
 
 export class CommandUtils {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

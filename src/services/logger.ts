@@ -1,9 +1,5 @@
 import { DiscordAPIError } from 'discord.js';
-//import { Response } from 'node-fetch';
 import pino from 'pino';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
 
 let logger = pino(
 	{
@@ -13,16 +9,14 @@ let logger = pino(
 			},
 		},
 	},
-	Config.logging.pretty
-		? pino.transport({
-			target: `pino-pretty`,
-			options: {
-				colorize: true,
-				ignore: `pid,hostname`,
-				translateTime: `yyyy-mm-dd HH:MM:ss.l`,
-			},
-		  })
-		: undefined,
+ 	pino.transport({
+		target: `pino-pretty`,
+		options: {
+			colorize: true,
+			ignore: `pid,hostname`,
+			translateTime: `yyyy-mm-dd HH:MM:ss.l`,
+		},
+		  }),
 );
 
 export class Logger {

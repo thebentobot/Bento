@@ -1,7 +1,7 @@
 import { AnyChannel, Client, NewsChannel } from 'discord.js';
 import { DiscordAPIError, Guild, GuildMember, TextChannel, User } from 'discord.js';
 
-import { PermissionUtils, RegexUtils } from '.';
+import { PermissionUtils, RegexUtils } from './index.js';
 
 const FETCH_MEMBER_LIMIT = 20;
 
@@ -71,7 +71,7 @@ export class ClientUtils {
 	public static async findNotifyChannel(guild: Guild): Promise<TextChannel | NewsChannel> {
 		// Prefer the system channel
 		const systemChannel = guild.systemChannel;
-		if (systemChannel && PermissionUtils.canSend(systemChannel)) {
+		if (systemChannel && PermissionUtils.canSend(systemChannel, true)) {
 			return systemChannel;
 		}
 
@@ -81,7 +81,7 @@ export class ClientUtils {
 		return (await guild.channels.fetch()).find(
 			(channel) =>
 				(channel instanceof TextChannel || channel instanceof NewsChannel) &&
-				PermissionUtils.canSend(channel) &&
+				PermissionUtils.canSend(channel, true) &&
 				channelRegex.test(channel.name),
 		) as TextChannel | NewsChannel;
 	}

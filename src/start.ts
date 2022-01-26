@@ -2,27 +2,25 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/rest/v9';
 import { Options } from 'discord.js';
 
-import { Bot } from './bot';
-import { Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands';
+import { Bot } from './bot.js';
+import { Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands/index.js';
+import { config as Config } from './config/config.js';
 import {
 	CommandHandler,
 	GuildJoinHandler,
 	GuildLeaveHandler,
+	GuildMemberAddHandler,
+	GuildMemberRemoveHandler,
 	MessageHandler,
 	ReactionHandler,
 	TriggerHandler,
-} from './events';
-import { CustomClient } from './extensions';
-import { Job } from './jobs';
-import { Reaction } from './reactions';
-import { JobService, Logger } from './services';
-import { GuildRepo } from './services/database/repos/guild-repo';
-import { Trigger } from './triggers';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+} from './events/index.js';
+import { CustomClient } from './extensions/index.js';
+import { Job } from './jobs/index.js';
+import { logs as Logs } from './lang/logs.js';
+import { Reaction } from './reactions/index';
+import { JobService, Logger } from './services/index.js';
+import { Trigger } from './triggers/index.js';
 
 async function start(): Promise<void> {
 	// Client
@@ -67,6 +65,8 @@ async function start(): Promise<void> {
 	const triggerHandler = new TriggerHandler(triggers);
 	const messageHandler = new MessageHandler(commandHandler, triggerHandler);
 	const reactionHandler = new ReactionHandler(reactions);
+	const guildMemberAddHandler = new GuildMemberAddHandler();
+	const guildMemberRemoveHandler = new GuildMemberRemoveHandler();
 
 	// Jobs
 	const jobs: Job[] = [
@@ -83,6 +83,8 @@ async function start(): Promise<void> {
 		commandHandler,
 		reactionHandler,
 		new JobService(jobs),
+		guildMemberAddHandler,
+		guildMemberRemoveHandler
 	);
 
 	// Register
@@ -116,9 +118,11 @@ async function registerCommands(commands: Command[]): Promise<void> {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 process.on(`unhandledRejection`, (reason, _promise) => {
-	Logger.error(Logs.error.unhandledRejection, reason);
+	console.log(reason);
+	Logger.error(`An unhandled promise rejection ocurred.`, reason);
 });
 
+
 start().catch((error) => {
-	Logger.error(Logs.error.unspecified, error);
+	Logger.error(`An unspecified error ocurred.`, error);
 });

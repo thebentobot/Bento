@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
 import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
-import { EventData } from '../models/internal-models';
-import { MessageUtils } from '../utils';
-import { Command } from './command';
+import { EventData } from '../models/internal-models.js';
+import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { Command } from './command.js';
 
 export class LinkCommand implements Command {
 	public name = `link`;
@@ -61,7 +61,7 @@ export class LinkCommand implements Command {
 
 		const command = await this.linkCommand(link);
 
-		await MessageUtils.send(msg.channel, command);
+		await MessageUtils.send(msg.channel, command.setColor(`#${await stylingUtils.urlToColours(msg.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)		);
 	}
 
 	private async linkCommand(link: string | null): Promise<MessageEmbed> {

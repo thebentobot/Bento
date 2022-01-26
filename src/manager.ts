@@ -1,13 +1,9 @@
 import { Shard, ShardingManager } from 'discord.js';
+import { config as Config } from './config/config.js';
+import { debug as Debug } from './config/debug.js';
+import { logs as Logs } from './lang/logs.js';
 
-import { JobService, Logger } from './services';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`./config/debug.json`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+import { JobService, Logger } from './services/index.js';
 
 export class Manager {
 	constructor(private shardManager: ShardingManager, private jobService: JobService) {}

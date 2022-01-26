@@ -1,5 +1,5 @@
 import { ApplicationCommandData, CommandInteraction, Message, PermissionString } from 'discord.js';
-import { EventData } from '../models/internal-models';
+import { EventData } from '../models/internal-models.js';
 
 export interface Command {
 	adminOnly?: boolean;

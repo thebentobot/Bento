@@ -1,14 +1,11 @@
 import express, { Express } from 'express';
 import util from 'util';
+import { config as Config } from './config/config.js';
 
-import { Controller } from './controllers';
-import { checkAuth, handleError } from './middleware';
-import { Logger } from './services';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+import { Controller } from './controllers/index.js';
+import { logs as Logs } from './lang/logs.js';
+import { checkAuth, handleError } from './middleware/index.js';
+import { Logger } from './services/index.js';
 
 export class Api {
 	private app: Express;
@@ -24,7 +21,7 @@ export class Api {
 		const listen = util.promisify(this.app.listen.bind(this.app));
 		// await listen(Config.api.port) gave an error cuz listen is expected to be empty;
 		await listen();
-		Logger.info(Logs.info.apiStarted.replaceAll(`{PORT}`, Config.api.port));
+		Logger.info(Logs.info.apiStarted.replaceAll(`{PORT}`, `${Config.api.port}`));
 	}
 
 	private setupControllers(): void {

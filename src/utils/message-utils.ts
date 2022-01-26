@@ -1,3 +1,4 @@
+import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 import {
 	CommandInteraction,
 	DiscordAPIError,
@@ -9,7 +10,18 @@ import {
 	TextBasedChannel,
 	User,
 } from 'discord.js';
-import { prisma } from '../services/prisma';
+import { prisma } from '../services/prisma.js';
+
+const IGNORED_ERRORS = [
+	DiscordApiErrors.UnknownMessage,
+	DiscordApiErrors.UnknownChannel,
+	DiscordApiErrors.UnknownGuild,
+	DiscordApiErrors.UnknownUser,
+	DiscordApiErrors.UnknownInteraction,
+	DiscordApiErrors.CannotSendMessagesToThisUser, // User blocked bot or DM disabled
+	DiscordApiErrors.ReactionWasBlocked, // User blocked bot or DM disabled
+];
+
 
 const cooldownServer = new Set();
 const cooldownGlobal = new Set();
@@ -28,6 +40,24 @@ export class MessageUtils {
 			// 10013: "Unknown user"
 			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
 			if (error instanceof DiscordAPIError && [10003, 10004, 10013, 50007].includes(error.code)) {
+				return;
+			} else {
+				throw error;
+			}
+		}
+	}
+
+	public static async editReplyIntr(
+		intr: CommandInteraction,
+		content: string | MessageEmbed | MessageOptions
+	): Promise<Message | void> {
+		try {
+			const msgOptions = this.messageOptions(content);
+			return (await intr.editReply({
+				...msgOptions,
+			})) as Message;
+		} catch (error) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;

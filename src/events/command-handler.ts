@@ -2,16 +2,13 @@ import { CommandInteraction, MessageEmbed, NewsChannel, TextChannel, ThreadChann
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from '.';
-import { Command } from '../commands';
-import { EventData } from '../models/internal-models';
-import { Logger } from '../services';
-import { prisma } from '../services/prisma';
-import { CommandUtils, MessageUtils, PermissionUtils } from '../utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../../lang/logs.json`);
+import { Command } from '../commands/index.js';
+import { config as Config } from '../config/config.js';
+import { logs as Logs } from '../lang/logs.js';
+import { EventData } from '../models/internal-models.js';
+import { Logger } from '../services/index.js';
+import { prisma } from '../services/prisma.js';
+import { CommandUtils, MessageUtils, PermissionUtils } from '../utils/index.js';
 
 export class CommandHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -125,7 +122,7 @@ export class CommandHandler implements EventHandler {
 					:
 					Logs.error.commandOther
 						.replaceAll(`{MESSAGE_ID}`, msg.id)
-						.replaceAll(`{COMMAND_KEYWORD}`, command?.aliases?.join(`, `))
+						.replaceAll(`{COMMAND_NAME}`, command?.aliases?.join(`, `) as string)
 						.replaceAll(`{USER_TAG}`, msg.author.tag)
 						.replaceAll(`{USER_ID}`, msg.author.id),
 				error
@@ -160,6 +157,10 @@ export class CommandHandler implements EventHandler {
 		// Check if user is rate limited
 		const limited = this.rateLimiter.take(intr.user.id);
 		if (limited) {
+			return;
+		}
+
+		if (intr.user.id === intr.client.user?.id || intr.user.bot) {
 			return;
 		}
 
@@ -204,8 +205,8 @@ export class CommandHandler implements EventHandler {
 						.replaceAll(`{USER_ID}`, intr.user.id)
 						.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
 						.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
-						.replaceAll(`{GUILD_NAME}`, intr.guild?.name)
-						.replaceAll(`{GUILD_ID}`, intr.guild?.id)
+						.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
+						.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
 					: Logs.error.commandOther
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
 						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)

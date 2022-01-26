@@ -1,8 +1,8 @@
 import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
-import { EventData } from '../models/internal-models';
-import { MessageUtils } from '../utils';
-import { Command } from './command';
+import { EventData } from '../models/internal-models.js';
+import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { Command } from './command.js';
 
 export class InfoCommand implements Command {
 	public name = `info`;
@@ -31,6 +31,7 @@ export class InfoCommand implements Command {
 	private async infoCommand(message: Message | CommandInteraction): Promise<MessageEmbed> {
 		const element = message;
 		const embed = new MessageEmbed()
+			.setColor(`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)
 			.setTitle(`${element.client.user?.username} - Info`)
 			.setDescription(`lmao`);
 		return embed;

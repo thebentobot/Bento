@@ -2,11 +2,9 @@ import { Message, MessageReaction, User } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from '.';
-import { EventData } from '../models/internal-models';
-import { Reaction } from '../reactions';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
+import { config as Config } from '../config/config.js';
+import { EventData } from '../models/internal-models.js';
+import { Reaction } from '../reactions/index.js';
 
 export class ReactionHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(

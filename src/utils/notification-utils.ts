@@ -1,6 +1,6 @@
 import { EmbedAuthorData, Message, MessageActionRow, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
-import { prisma } from "../services/prisma";
-import { StringUtils, stylingUtils } from ".";
+import { prisma } from "../services/prisma.js";
+import { StringUtils, stylingUtils } from "./index.js";
 import { notificationMessage } from "@prisma/client";
 
 export class notificationUtils {

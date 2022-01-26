@@ -1,8 +1,6 @@
 import { ErrorRequestHandler } from 'express';
-import { Logger } from '../services';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../../lang/logs.json`);
+import { logs as Logs } from '../lang/logs.js';
+import { Logger } from '../services/index.js';
 
 export function handleError(): ErrorRequestHandler {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

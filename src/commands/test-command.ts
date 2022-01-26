@@ -1,8 +1,8 @@
 import { ApplicationCommandData, CommandInteraction, Message, PermissionString } from 'discord.js';
 
-import { EventData } from '../models/internal-models';
-import { MessageUtils } from '../utils';
-import { Command } from './command';
+import { EventData } from '../models/internal-models.js';
+import { MessageUtils } from '../utils/index.js';
+import { Command } from './command.js';
 
 export class TestCommand implements Command {
 	public name = `test`;

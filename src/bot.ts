@@ -2,25 +2,23 @@ import {
 	Client,
 	Constants,
 	Guild,
+	GuildMember,
 	Interaction,
 	Message,
 	MessageReaction,
+	PartialGuildMember,
 	PartialMessageReaction,
 	PartialUser,
 	RateLimitData,
 	User,
 } from 'discord.js';
+import { config as Config } from './config/config.js';
+import { debug as Debug } from './config/debug.js';
 
-import { CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler } from './events';
-import { JobService, Logger } from './services';
-import { PartialUtils } from './utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`./config/debug.json`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+import { CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler, GuildMemberAddHandler, GuildMemberRemoveHandler } from './events';
+import { logs as Logs } from './lang/logs.js';
+import { JobService, Logger } from './services/index.js';
+import { PartialUtils } from './utils/index.js';
 
 export class Bot {
 	private ready = false;
@@ -34,6 +32,8 @@ export class Bot {
 		private commandHandler: CommandHandler,
 		private reactionHandler: ReactionHandler,
 		private jobService: JobService,
+		private guildMemberAddHandler: GuildMemberAddHandler,
+		private guildMemberRemoveHandler: GuildMemberRemoveHandler
 	) {}
 
 	public async start(): Promise<void> {
@@ -56,6 +56,8 @@ export class Bot {
 				this.onReaction(messageReaction, user),
 		);
 		this.client.on(Constants.Events.RATE_LIMIT, (rateLimitData: RateLimitData) => this.onRateLimit(rateLimitData));
+		this.client.on(Constants.Events.GUILD_MEMBER_ADD, (member: GuildMember) => this.onGuildMemberAdd(member));
+		this.client.on(Constants.Events.GUILD_MEMBER_REMOVE, (member: GuildMember | PartialGuildMember) => this.onGuildMemberRemove(member));
 	}
 
 	private async login(token: string): Promise<void> {
@@ -69,7 +71,7 @@ export class Bot {
 
 	private async onReady(): Promise<void> {
 		const userTag = this.client.user?.tag;
-		Logger.info(Logs.info.clientLogin.replaceAll(`{USER_TAG}`, userTag));
+		Logger.info(Logs.info.clientLogin.replaceAll(`{USER_TAG}`, userTag as string));
 
 		if (!Debug.dummyMode.enabled) {
 			this.jobService.start();
@@ -169,6 +171,30 @@ export class Bot {
 	private async onRateLimit(rateLimitData: RateLimitData): Promise<void> {
 		if (rateLimitData.timeout >= Config.logging.rateLimit.minTimeout * 1000) {
 			Logger.error(Logs.error.apiRateLimit, rateLimitData);
+		}
+	}
+
+	private async onGuildMemberAdd(member: GuildMember): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildMemberAddHandler.process(member);
+		} catch (error) {
+			Logger.error(Logs.error.guildMemberAdd, error);
+		}
+	}
+
+	private async onGuildMemberRemove(member: GuildMember | PartialGuildMember): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildMemberRemoveHandler.process(member);
+		} catch (error) {
+			Logger.error(Logs.error.guildMemberRemove, error);
 		}
 	}
 }

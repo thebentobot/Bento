@@ -1,12 +1,10 @@
 import { ShardingManager } from 'discord.js';
 import { Request, Response, Router } from 'express';
 import router from 'express-promise-router';
+import { config as Config } from '../config/config.js';
 
-import { GetGuildsResponse } from '../models/cluster-api';
-import { Controller } from './controller';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
+import { GetGuildsResponse } from '../models/cluster-api/index.js';
+import { Controller } from './controller.js';
 
 export class GuildsController implements Controller {
 	public path = `/guilds`;
