@@ -37,6 +37,10 @@ interface IConfig {
 			amount: number,
 			interval: number
 		},
+		buttons: {
+			amount: number,
+			interval: number
+		},
 		triggers: {
 			amount: number,
 			interval: number
@@ -100,6 +104,10 @@ export const config: IConfig = {
 	},
 	rateLimiting: {
 		commands: {
+			amount: 10,
+			interval: 30
+		},
+		buttons: {
 			amount: 10,
 			interval: 30
 		},

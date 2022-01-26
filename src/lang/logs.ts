@@ -37,6 +37,7 @@ export const logs = {
 		message: `An error occurred while processing a message.`,
 		reaction: `An error occurred while processing a reaction.`,
 		command: `An error occurred while processing a command interaction.`,
+		button: `An error occurred while processing a button interaction.`,
 		commandNotFound: `[{INTERACTION_ID}] A command with the name '{COMMAND_NAME}' could not be found.`,
 		commandGuild: `[{INTERACTION_ID}] An error occurred while executing the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}) in channel '{CHANNEL_NAME}' ({CHANNEL_ID}) in guild '{GUILD_NAME}' ({GUILD_ID}).`,
 		commandOther: `[{INTERACTION_ID}] An error occurred while executing the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}).`,

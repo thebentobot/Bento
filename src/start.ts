@@ -3,6 +3,7 @@ import { Routes } from 'discord-api-types/rest/v9';
 import { Options } from 'discord.js';
 
 import { Bot } from './bot.js';
+import { Button } from './buttons/index.js';
 import { Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -14,6 +15,7 @@ import {
 	MessageHandler,
 	ReactionHandler,
 	TriggerHandler,
+	ButtonHandler
 } from './events/index.js';
 import { CustomClient } from './extensions/index.js';
 import { Job } from './jobs/index.js';
@@ -48,6 +50,11 @@ async function start(): Promise<void> {
 	const helpCommand = new HelpCommand();
 	//const guildRepo = new GuildRepo();
 
+	// Buttons
+	const buttons: Button[] = [
+		// TODO: Add new buttons here
+	];
+	
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -67,7 +74,8 @@ async function start(): Promise<void> {
 	const reactionHandler = new ReactionHandler(reactions);
 	const guildMemberAddHandler = new GuildMemberAddHandler();
 	const guildMemberRemoveHandler = new GuildMemberRemoveHandler();
-
+	const buttonHandler = new ButtonHandler(buttons);
+	
 	// Jobs
 	const jobs: Job[] = [
 		// TODO: Add new jobs here
@@ -81,10 +89,11 @@ async function start(): Promise<void> {
 		guildLeaveHandler,
 		messageHandler,
 		commandHandler,
+		buttonHandler,
 		reactionHandler,
 		new JobService(jobs),
 		guildMemberAddHandler,
-		guildMemberRemoveHandler
+		guildMemberRemoveHandler,
 	);
 
 	// Register

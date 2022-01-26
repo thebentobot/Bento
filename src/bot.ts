@@ -11,11 +11,13 @@ import {
 	PartialUser,
 	RateLimitData,
 	User,
+	ButtonInteraction,
+	CommandInteraction
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 
-import { CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler, GuildMemberAddHandler, GuildMemberRemoveHandler } from './events';
+import { ButtonHandler, CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler, GuildMemberAddHandler, GuildMemberRemoveHandler } from './events';
 import { logs as Logs } from './lang/logs.js';
 import { JobService, Logger } from './services/index.js';
 import { PartialUtils } from './utils/index.js';
@@ -30,6 +32,7 @@ export class Bot {
 		private guildLeaveHandler: GuildLeaveHandler,
 		private messageHandler: MessageHandler,
 		private commandHandler: CommandHandler,
+		private buttonHandler: ButtonHandler,
 		private reactionHandler: ReactionHandler,
 		private jobService: JobService,
 		private guildMemberAddHandler: GuildMemberAddHandler,
@@ -129,17 +132,24 @@ export class Bot {
 
 	private async onInteraction(intr: Interaction): Promise<void> {
 		if (
-			!intr.isCommand() ||
 			!this.ready ||
-			(Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(intr.user.id))
+            (Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(intr.user.id))
 		) {
 			return;
 		}
 
-		try {
-			await this.commandHandler.processIntr(intr);
-		} catch (error) {
-			Logger.error(Logs.error.command, error);
+		if (intr instanceof CommandInteraction) {
+			try {
+				await this.commandHandler.processIntr(intr);
+			} catch (error) {
+				Logger.error(Logs.error.command, error);
+			}
+		} else if (intr instanceof ButtonInteraction) {
+			try {
+				await this.buttonHandler.process(intr, intr.message as Message);
+			} catch (error) {
+				Logger.error(Logs.error.button, error);
+			}
 		}
 	}
 

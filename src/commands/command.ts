@@ -5,6 +5,7 @@ export interface Command {
 	adminOnly?: boolean;
 	requireSetup?: boolean;
 	name: string;
+	deferType: CommandDeferType;
     aliases?: string[];
 	metadata: ApplicationCommandData;
 	ownerOnly?: boolean;
@@ -16,4 +17,10 @@ export interface Command {
 	requirePremium: boolean;
 	executeIntr(intr: CommandInteraction, data?: EventData): Promise<void>;
 	executeMsgCmd(msg: Message, args?: string[], data?: EventData): Promise<void>;
+}
+
+export enum CommandDeferType {
+    PUBLIC = `PUBLIC`,
+    HIDDEN = `HIDDEN`,
+    NONE = `NONE`,
 }

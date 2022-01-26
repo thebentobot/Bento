@@ -1,7 +1,8 @@
 import { CommandInteraction, MessageEmbed, NewsChannel, TextChannel, ThreadChannel, Message, GuildMember, Permissions } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
-import { EventHandler } from '.';
+import { EventHandler } from './index.js';
+import { CommandDeferType } from '../commands/command.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { logs as Logs } from '../lang/logs.js';
@@ -154,34 +155,43 @@ export class CommandHandler implements EventHandler {
 	}
 
 	public async processIntr(intr: CommandInteraction): Promise<void> {
+		// Don't respond to self, or other bots
+		if (intr.user.id === intr.client.user?.id || intr.user.bot) {
+			return;
+		}
+
 		// Check if user is rate limited
 		const limited = this.rateLimiter.take(intr.user.id);
 		if (limited) {
 			return;
 		}
 
-		if (intr.user.id === intr.client.user?.id || intr.user.bot) {
+		// Try to find the command the user wants
+		const command = this.commands.find(command => command.metadata.name === intr.commandName);
+		if (!command) {
+			Logger.error(
+				Logs.error.commandNotFound
+					.replaceAll(`{INTERACTION_ID}`, intr.id)
+					.replaceAll(`{COMMAND_NAME}`, intr.commandName)
+			);
 			return;
 		}
 
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
-		await intr.deferReply();
+		switch (command.deferType) {
+		case CommandDeferType.PUBLIC: {
+			await MessageUtils.deferReply(intr, false);
+			break;
+		}
+		case CommandDeferType.HIDDEN: {
+			await MessageUtils.deferReply(intr, true);
+			break;
+		}
+		}
 
 		// TODO: Get data from database
 		const data = new EventData();
-
-		// Try to find the command the user wants
-		const command = this.commands.find((command) => command.metadata.name === intr.commandName);
-		if (!command) {
-			await this.sendIntrError(intr, data);
-			Logger.error(
-				Logs.error.commandNotFound
-					.replaceAll(`{INTERACTION_ID}`, intr.id)
-					.replaceAll(`{COMMAND_NAME}`, intr.commandName),
-			);
-			return;
-		}
 
 		try {
 			// Check if interaction passes command checks
@@ -196,8 +206,8 @@ export class CommandHandler implements EventHandler {
 			// Log command error
 			Logger.error(
 				intr.channel instanceof TextChannel ||
-					intr.channel instanceof NewsChannel ||
-					intr.channel instanceof ThreadChannel
+                    intr.channel instanceof NewsChannel ||
+                    intr.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
 						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
@@ -212,7 +222,7 @@ export class CommandHandler implements EventHandler {
 						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
 						.replaceAll(`{USER_TAG}`, intr.user.tag)
 						.replaceAll(`{USER_ID}`, intr.user.id),
-				error,
+				error
 			);
 		}
 	}

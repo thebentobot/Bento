@@ -3,7 +3,7 @@ import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, Perm
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../utils/index.js';
-import { Command } from './command.js';
+import { Command, CommandDeferType } from './command.js';
 
 export class LinkCommand implements Command {
 	public name = `link`;
@@ -44,6 +44,7 @@ export class LinkCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
+	public deferType = CommandDeferType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
 

@@ -6,7 +6,7 @@ import typescript from 'typescript';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
-import { Command } from './command.js';
+import { Command, CommandDeferType } from './command.js';
 
 const require = createRequire(import.meta.url);
 const TsConfig = require(`../../tsconfig.json`);
@@ -19,6 +19,7 @@ export class DevCommand implements Command {
 		description: `View developer info`,
 	};
 	public requireDev = true;
+	public deferType = CommandDeferType.PUBLIC;
 	public requireGuild = false;
 	public requirePremium = false;
 	public requireClientPerms: PermissionString[] = [];
