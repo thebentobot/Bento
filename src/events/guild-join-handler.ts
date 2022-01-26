@@ -40,7 +40,7 @@ export class GuildJoinHandler implements EventHandler {
 			iconURL: guild.client.user?.avatarURL() as string,
 		};
 
-		const EmbedFooterData: EmbedFooterData = {
+		const embedFooterData: EmbedFooterData = {
 			text: `Bento 🍱 is created by Banner#1017`,
 			iconURL: (await guild.client.users.fetch(`232584569289703424`)).avatarURL({
 				dynamic: true,
@@ -66,7 +66,7 @@ export class GuildJoinHandler implements EventHandler {
 			.addField(`Want additional benefits when using Bento 🍱?`, `https://www.patreon.com/bentobot`)
 			.addField(`Get a Bento 🍱 for each tip`, `https://ko-fi.com/bentobot`)
 			.addField(`Vote on top.gg and receive 5 Bento 🍱`, `https://top.gg/bot/787041583580184609/vote`)
-			.setFooter(EmbedFooterData)
+			.setFooter(embedFooterData)
 			.setTimestamp();
 		const notifyChannel = await ClientUtils.findNotifyChannel(guild);
 		if (notifyChannel) {

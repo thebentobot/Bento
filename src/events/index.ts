@@ -8,3 +8,5 @@ export { TriggerHandler } from './trigger-handler.js';
 export { GuildMemberAddHandler } from './guildmember-add-handler.js';
 export { GuildMemberRemoveHandler } from './guildmember-remove-handler.js';
 export { ButtonHandler } from './button-handler.js';
+export { MessageDeleteHandler } from './message-delete-handler.js';
+export { MessageUpdateHandler } from './message-update-handler.js';

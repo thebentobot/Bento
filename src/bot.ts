@@ -12,12 +12,13 @@ import {
 	RateLimitData,
 	User,
 	ButtonInteraction,
-	CommandInteraction
+	CommandInteraction,
+	PartialMessage
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 
-import { ButtonHandler, CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler, GuildMemberAddHandler, GuildMemberRemoveHandler } from './events';
+import { ButtonHandler, MessageDeleteHandler, MessageUpdateHandler, CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler, GuildMemberAddHandler, GuildMemberRemoveHandler } from './events';
 import { logs as Logs } from './lang/logs.js';
 import { JobService, Logger } from './services/index.js';
 import { PartialUtils } from './utils/index.js';
@@ -36,7 +37,9 @@ export class Bot {
 		private reactionHandler: ReactionHandler,
 		private jobService: JobService,
 		private guildMemberAddHandler: GuildMemberAddHandler,
-		private guildMemberRemoveHandler: GuildMemberRemoveHandler
+		private guildMemberRemoveHandler: GuildMemberRemoveHandler,
+		private messageDeleteHandler: MessageDeleteHandler,
+		private messageUpdateHandler: MessageUpdateHandler
 	) {}
 
 	public async start(): Promise<void> {
@@ -61,6 +64,8 @@ export class Bot {
 		this.client.on(Constants.Events.RATE_LIMIT, (rateLimitData: RateLimitData) => this.onRateLimit(rateLimitData));
 		this.client.on(Constants.Events.GUILD_MEMBER_ADD, (member: GuildMember) => this.onGuildMemberAdd(member));
 		this.client.on(Constants.Events.GUILD_MEMBER_REMOVE, (member: GuildMember | PartialGuildMember) => this.onGuildMemberRemove(member));
+		this.client.on(Constants.Events.MESSAGE_DELETE, (message: Message | PartialMessage ) => this.onMessageDelete(message));
+		this.client.on(Constants.Events.MESSAGE_UPDATE, (oldMessage: Message<boolean> | PartialMessage, newMessage: Message<boolean> | PartialMessage) => this.onMessageUpdate(oldMessage, newMessage));
 	}
 
 	private async login(token: string): Promise<void> {
@@ -205,6 +210,30 @@ export class Bot {
 			await this.guildMemberRemoveHandler.process(member);
 		} catch (error) {
 			Logger.error(Logs.error.guildMemberRemove, error);
+		}
+	}
+
+	private async onMessageDelete(message: Message | PartialMessage): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.messageDeleteHandler.process(message);
+		} catch (error) {
+			Logger.error(Logs.error.messageDelete, error);
+		}
+	}
+
+	private async onMessageUpdate(oldMessage: Message | PartialMessage, newMessage: Message | PartialMessage): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.messageUpdateHandler.process(oldMessage, newMessage);
+		} catch (error) {
+			Logger.error(Logs.error.messageUpdate, error);
 		}
 	}
 }

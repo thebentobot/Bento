@@ -34,6 +34,8 @@ export const logs = {
 		guildLeave: `An error occurred while processing a guild leave.`,
 		guildMemberAdd: `An error occurred while processing a guildMember add.`,
 		guildMemberRemove: `An error occurred while processing a guildMember remove.`,
+		messageDelete: `An error occurred while processing a message delete.`,
+		messageUpdate: `An error occurred while processing a message update.`,
 		message: `An error occurred while processing a message.`,
 		reaction: `An error occurred while processing a reaction.`,
 		command: `An error occurred while processing a command interaction.`,

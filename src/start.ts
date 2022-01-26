@@ -15,7 +15,9 @@ import {
 	MessageHandler,
 	ReactionHandler,
 	TriggerHandler,
-	ButtonHandler
+	ButtonHandler,
+	MessageDeleteHandler,
+	MessageUpdateHandler
 } from './events/index.js';
 import { CustomClient } from './extensions/index.js';
 import { Job } from './jobs/index.js';
@@ -75,6 +77,8 @@ async function start(): Promise<void> {
 	const guildMemberAddHandler = new GuildMemberAddHandler();
 	const guildMemberRemoveHandler = new GuildMemberRemoveHandler();
 	const buttonHandler = new ButtonHandler(buttons);
+	const messageDeleteHandler = new MessageDeleteHandler();
+	const messageUpdateHandler = new MessageUpdateHandler();
 	
 	// Jobs
 	const jobs: Job[] = [
@@ -94,6 +98,8 @@ async function start(): Promise<void> {
 		new JobService(jobs),
 		guildMemberAddHandler,
 		guildMemberRemoveHandler,
+		messageDeleteHandler,
+		messageUpdateHandler
 	);
 
 	// Register
