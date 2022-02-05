@@ -11,7 +11,8 @@ export class GuildLeaveHandler implements EventHandler {
 
 		await prisma.guild.delete({
 			where: {
-				guildID: BigInt(guild.id)
-			}});
+				guildID: BigInt(guild.id),
+			},
+		});
 	}
 }

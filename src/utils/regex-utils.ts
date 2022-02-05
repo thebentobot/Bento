@@ -13,7 +13,7 @@ export class RegexUtils {
 		return input.match(/\b\d{17,20}\b/)?.[0] as string;
 	}
 
-	public static tag(input: string): { username: string; tag: string; discriminator: string }  | void {
+	public static tag(input: string): { username: string; tag: string; discriminator: string } | void {
 		const match = input.match(/\b(.+)#([\d]{4})\b/);
 		if (!match) {
 			return;

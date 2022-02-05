@@ -8,36 +8,36 @@ export class GuildMemberRemoveHandler implements EventHandler {
 	public async process(member: GuildMember | PartialGuildMember): Promise<void> {
 		const memberLogData = await prisma.memberLog.findUnique({
 			where: {
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (memberLogData) {
 			const [banData, kickData, muteData, warningData] = await prisma.$transaction([
 				prisma.ban.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.kick.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.mute.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.warning.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
-				})
+				}),
 			]);
 
 			const channel = member.guild.channels.cache.get(`${memberLogData.channel}`) as TextChannel;
-            
+
 			const EmbedFooterData: EmbedFooterData = {
 				text: `UserID: ${member.user.id}`,
 			};
@@ -71,34 +71,34 @@ export class GuildMemberRemoveHandler implements EventHandler {
 		const guildMemberData = await prisma.guildMember.findFirst({
 			where: {
 				userID: BigInt(member.user.id),
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		await prisma.guildMember.delete({
 			where: {
-				guildMemberID: guildMemberData?.guildMemberID
-			}
+				guildMemberID: guildMemberData?.guildMemberID,
+			},
 		});
 
 		const userData = await prisma.user.findMany({
 			where: {
-				userID: BigInt(member.user.id)
-			}
+				userID: BigInt(member.user.id),
+			},
 		});
 
 		if (userData.length < 1) {
 			await prisma.user.delete({
 				where: {
-					userID: BigInt(member.user.id)
-				}
+					userID: BigInt(member.user.id),
+				},
 			});
 		}
 
 		const byeData = await prisma.bye.findUnique({
 			where: {
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (byeData && byeData.message && byeData.channel) {

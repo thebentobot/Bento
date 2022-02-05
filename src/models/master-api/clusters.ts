@@ -4,24 +4,24 @@ import { IsDefined, IsInt, IsPositive, IsString, IsUrl, Length, ValidateNested }
 export class Callback {
 	@IsDefined()
 	@IsUrl({ require_tld: false })
-		url: string | undefined;
+	url: string | undefined;
 
 	@IsDefined()
 	@IsString()
 	@Length(5, 2000)
-		token: string | undefined;
+	token: string | undefined;
 }
 
 export class RegisterClusterRequest {
 	@IsDefined()
 	@IsInt()
 	@IsPositive()
-		shardCount: number | undefined;
+	shardCount: number | undefined;
 
 	@IsDefined()
 	@ValidateNested()
 	@Type(() => Callback)
-		callback: Callback | undefined;
+	callback: Callback | undefined;
 }
 
 export interface RegisterClusterResponse {

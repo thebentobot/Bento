@@ -9,35 +9,36 @@ export class GuildMemberAddHandler implements EventHandler {
 		const currentMute = await prisma.mute.findFirst({
 			where: {
 				userID: BigInt(member.user.id),
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (currentMute) {
 			const muteRoleData = await prisma.muteRole.findUnique({
 				where: {
-					guildID: BigInt(member.guild.id)
-				}
+					guildID: BigInt(member.guild.id),
+				},
 			});
 
 			const role = member.guild.roles.cache.get(`${muteRoleData?.roleID}`);
-			
+
 			if (member.guild.me?.permissions.has(`MANAGE_ROLES`)) {
 				try {
-				    await member.roles.add(role as Role);
+					await member.roles.add(role as Role);
 				} catch {
 					console.log(`${member.guild.id} has deleted a mute role and can't mute the user`);
 				}
 			} else {
-				console.log(`Attempted to add mute role in ${member.guild.name} (${member.guild.id}), but didn't have permissions.`);
+				console.log(
+					`Attempted to add mute role in ${member.guild.name} (${member.guild.id}), but didn't have permissions.`,
+				);
 			}
-			
 		}
 
 		const autoRoleData = await prisma.autoRole.findMany({
 			where: {
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (autoRoleData) {
@@ -51,13 +52,15 @@ export class GuildMemberAddHandler implements EventHandler {
 						console.log(`AutoRole ${value.roleID} couldn't be added because it is deleted.`);
 						await prisma.autoRole.delete({
 							where: {
-								autoRoleID: value.autoRoleID
-							}
+								autoRoleID: value.autoRoleID,
+							},
 						});
 						continue;
 					}
 				} else {
-					console.log(`Attempted to add autoRole ${value.roleID} in ${member.guild.name} (${member.guild.id}), but didn't have permissions.`);
+					console.log(
+						`Attempted to add autoRole ${value.roleID} in ${member.guild.name} (${member.guild.id}), but didn't have permissions.`,
+					);
 					continue;
 				}
 			}
@@ -65,36 +68,36 @@ export class GuildMemberAddHandler implements EventHandler {
 
 		const memberLogData = await prisma.memberLog.findUnique({
 			where: {
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (memberLogData) {
 			const [banData, kickData, muteData, warningData] = await prisma.$transaction([
 				prisma.ban.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.kick.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.mute.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
 				}),
 				prisma.warning.findMany({
 					where: {
-						userID: BigInt(member.user.id)
+						userID: BigInt(member.user.id),
 					},
-				})
+				}),
 			]);
 
 			const channel = member.guild.channels.cache.get(`${memberLogData.channel}`) as TextChannel;
-            
+
 			const EmbedFooterData: EmbedFooterData = {
 				text: `UserID: ${member.user.id}`,
 			};
@@ -127,8 +130,8 @@ export class GuildMemberAddHandler implements EventHandler {
 
 		const welcomeData = await prisma.welcome.findUnique({
 			where: {
-				guildID: BigInt(member.guild.id)
-			}
+				guildID: BigInt(member.guild.id),
+			},
 		});
 
 		if (welcomeData && welcomeData.message && welcomeData.channel) {

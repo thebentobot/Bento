@@ -62,35 +62,40 @@ export class LinkCommand implements Command {
 
 		const command = await this.linkCommand(link);
 
-		await MessageUtils.send(msg.channel, command.setColor(`#${await stylingUtils.urlToColours(msg.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)		);
+		await MessageUtils.send(
+			msg.channel,
+			command.setColor(
+				`#${await stylingUtils.urlToColours(msg.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+			),
+		);
 	}
 
 	private async linkCommand(link: string | null): Promise<MessageEmbed> {
 		let embed: MessageEmbed;
 		switch (link) {
-		case `docs`: {
-			embed = new MessageEmbed().setDescription(`docs`);
-			break;
-		}
-		case `donate`: {
-			embed = new MessageEmbed().setDescription(`donate`);
-			break;
-		}
-		case `invite`: {
-			embed = new MessageEmbed().setDescription(`invite`);
-			break;
-		}
-		case `support`: {
-			embed = new MessageEmbed().setDescription(`support`);
-			break;
-		}
-		case `vote`: {
-			embed = new MessageEmbed().setDescription(`vote`);
-			break;
-		}
-		default: {
-			embed = new MessageEmbed().setDescription(`Invalid link`);
-		}
+			case `docs`: {
+				embed = new MessageEmbed().setDescription(`docs`);
+				break;
+			}
+			case `donate`: {
+				embed = new MessageEmbed().setDescription(`donate`);
+				break;
+			}
+			case `invite`: {
+				embed = new MessageEmbed().setDescription(`invite`);
+				break;
+			}
+			case `support`: {
+				embed = new MessageEmbed().setDescription(`support`);
+				break;
+			}
+			case `vote`: {
+				embed = new MessageEmbed().setDescription(`vote`);
+				break;
+			}
+			default: {
+				embed = new MessageEmbed().setDescription(`Invalid link`);
+			}
 		}
 		return embed;
 	}

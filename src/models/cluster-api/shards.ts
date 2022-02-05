@@ -21,14 +21,14 @@ export interface ShardInfo {
 export class SetShardPresencesRequest {
 	@IsDefined()
 	@IsEnum(Constants.ActivityTypes)
-		type: ActivityType | undefined;
+	type: ActivityType | undefined;
 
 	@IsDefined()
 	@IsString()
 	@Length(1, 128)
-		name: string | undefined;
+	name: string | undefined;
 
 	@IsDefined()
 	@IsUrl()
-		url: string | undefined;
+	url: string | undefined;
 }

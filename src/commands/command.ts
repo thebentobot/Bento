@@ -6,7 +6,7 @@ export interface Command {
 	requireSetup?: boolean;
 	name: string;
 	deferType: CommandDeferType;
-    aliases?: string[];
+	aliases?: string[];
 	metadata: ApplicationCommandData;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
@@ -20,7 +20,7 @@ export interface Command {
 }
 
 export enum CommandDeferType {
-    PUBLIC = `PUBLIC`,
-    HIDDEN = `HIDDEN`,
-    NONE = `NONE`,
+	PUBLIC = `PUBLIC`,
+	HIDDEN = `HIDDEN`,
+	NONE = `NONE`,
 }

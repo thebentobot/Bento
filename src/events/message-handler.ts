@@ -25,52 +25,54 @@ export class MessageHandler implements EventHandler {
 		}
 
 		// find user and check if they're saved in the DB
-		let user = await prisma.user.findUnique({where: {userID: BigInt(msg.author.id)}});
+		let user = await prisma.user.findUnique({ where: { userID: BigInt(msg.author.id) } });
 
 		if (user === null) {
-			user = await prisma.user.create({data: {
-				userID: BigInt(msg.author.id),
-				username: msg.author.username,
-				discriminator: msg.author.discriminator,
-				avatarURL: msg.author.avatarURL({
-					format: `png`,
-					dynamic: true,
-					size: 1024,
-				}),
-				xp: 0,
-				level: 1
-			}}) as user;
+			user = (await prisma.user.create({
+				data: {
+					userID: BigInt(msg.author.id),
+					username: msg.author.username,
+					discriminator: msg.author.discriminator,
+					avatarURL: msg.author.avatarURL({
+						format: `png`,
+						dynamic: true,
+						size: 1024,
+					}),
+					xp: 0,
+					level: 1,
+				},
+			})) as user;
 		}
 
 		// find guild member and check if they're saved in the DB
-		let guildMember = await prisma.guildMember.findFirst(
-			{
-				where: {
-					userID: BigInt(msg.author.id), 
-					guildID: BigInt(msg.guild?.id as string)
-				}
-			}
-		);
-
-		if (guildMember === null) {
-			guildMember = await prisma.guildMember.create({data: {
+		let guildMember = await prisma.guildMember.findFirst({
+			where: {
 				userID: BigInt(msg.author.id),
 				guildID: BigInt(msg.guild?.id as string),
-				avatarURL: msg.member?.displayAvatarURL({
-					format: `png`,
-					dynamic: true,
-					size: 1024,
-				}),
-				xp: 0,
-				level: 1
-			}}) as guildMember;
+			},
+		});
+
+		if (guildMember === null) {
+			guildMember = (await prisma.guildMember.create({
+				data: {
+					userID: BigInt(msg.author.id),
+					guildID: BigInt(msg.guild?.id as string),
+					avatarURL: msg.member?.displayAvatarURL({
+						format: `png`,
+						dynamic: true,
+						size: 1024,
+					}),
+					xp: 0,
+					level: 1,
+				},
+			})) as guildMember;
 		}
 
 		// XP
 
-		const messageGuild = await prisma.guild.findUnique({where: {guildID: BigInt(msg.guild?.id as string)}});
-		
-		const patreonUser = await prisma.patreon.findUnique({where: {userID: BigInt(msg.author.id)}}); 
+		const messageGuild = await prisma.guild.findUnique({ where: { guildID: BigInt(msg.guild?.id as string) } });
+
+		const patreonUser = await prisma.patreon.findUnique({ where: { userID: BigInt(msg.author.id) } });
 
 		if (messageGuild?.leaderboard === true) {
 			if (patreonUser) {
@@ -99,8 +101,8 @@ export class MessageHandler implements EventHandler {
 		// add a function for notifications here
 		await notificationUtils.notificationCheck(msg);
 
-		const channelDisableData = await prisma.channelDisable.findUnique({where: {channelID: BigInt(msg.channel.id)}});
-		
+		const channelDisableData = await prisma.channelDisable.findUnique({ where: { channelID: BigInt(msg.channel.id) } });
+
 		if (channelDisableData && !msg.member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
 			return;
 		}
@@ -123,7 +125,7 @@ export class MessageHandler implements EventHandler {
 		let mentionMsgCommand = false;
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		if (argsCheck[0].includes(`<@${msg.client.user!.id}>`) || argsCheck[0].includes(`<@!${msg.client.user!.id}>`))  {
+		if (argsCheck[0].includes(`<@${msg.client.user!.id}>`) || argsCheck[0].includes(`<@!${msg.client.user!.id}>`)) {
 			mentionMsgCommand = true;
 		}
 

@@ -15,10 +15,10 @@ export const logs = {
 		updatedServerCount: `Updated server count. Connected to {SERVER_COUNT} total servers.`,
 		updatedServerCountSite: `Updated server count on '{BOT_SITE}'.`,
 		guildJoined: `Guild '{GUILD_NAME}' ({GUILD_ID}) joined.`,
-		guildLeft: `Guild '{GUILD_NAME}' ({GUILD_ID}) left.`
+		guildLeft: `Guild '{GUILD_NAME}' ({GUILD_ID}) left.`,
 	},
 	warn: {
-		managerNoShards: `No shards to spawn.`
+		managerNoShards: `No shards to spawn.`,
 	},
 	error: {
 		unspecified: `An unspecified error ocurred.`,
@@ -36,6 +36,12 @@ export const logs = {
 		guildMemberRemove: `An error occurred while processing a guildMember remove.`,
 		messageDelete: `An error occurred while processing a message delete.`,
 		messageUpdate: `An error occurred while processing a message update.`,
+		guildBanAdd: `An error occurred while processing a guild ban add.`,
+		guildBanRemove: `An error occurred while processing a guild ban remove.`,
+		guildMemberUpdate: `An error occurred while processing a guild member update.`,
+		guildRoleDelete: `An error occurred while processing a guild role delete.`,
+		guildRoleUpdate: `An error occurred while processing a guild role update.`,
+		userUpdate: `An error occurred while processing a user update.`,
 		message: `An error occurred while processing a message.`,
 		reaction: `An error occurred while processing a reaction.`,
 		command: `An error occurred while processing a command interaction.`,
@@ -44,6 +50,6 @@ export const logs = {
 		commandGuild: `[{INTERACTION_ID}] An error occurred while executing the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}) in channel '{CHANNEL_NAME}' ({CHANNEL_ID}) in guild '{GUILD_NAME}' ({GUILD_ID}).`,
 		commandOther: `[{INTERACTION_ID}] An error occurred while executing the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}).`,
 		apiRequest: `An error occurred while processing a '{HTTP_METHOD}' request to '{URL}'.`,
-		apiRateLimit: `A rate limit was hit while making a request.`
-	}
+		apiRateLimit: `A rate limit was hit while making a request.`,
+	},
 };

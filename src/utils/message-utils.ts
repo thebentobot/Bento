@@ -23,7 +23,6 @@ const IGNORED_ERRORS = [
 	DiscordApiErrors.ReactionWasBlocked, // User blocked bot or DM disabled
 ];
 
-
 const cooldownServer = new Set();
 const cooldownGlobal = new Set();
 
@@ -50,7 +49,7 @@ export class MessageUtils {
 
 	public static async editReplyIntr(
 		intr: CommandInteraction,
-		content: string | MessageEmbed | MessageOptions
+		content: string | MessageEmbed | MessageOptions,
 	): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -69,7 +68,7 @@ export class MessageUtils {
 	public static async sendIntr(
 		intr: CommandInteraction,
 		content: string | MessageEmbed | MessageOptions,
-		hidden = false
+		hidden = false,
 	): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -86,10 +85,7 @@ export class MessageUtils {
 		}
 	}
 
-	public static async reply(
-		msg: Message,
-		content: string | MessageEmbed | MessageOptions
-	): Promise<Message | void> {
+	public static async reply(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.reply(msgOptions);
@@ -102,10 +98,7 @@ export class MessageUtils {
 		}
 	}
 
-	public static async edit(
-		msg: Message,
-		content: string | MessageEmbed | MessageOptions
-	): Promise<Message | void> {
+	public static async edit(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.edit(msgOptions);
@@ -132,7 +125,7 @@ export class MessageUtils {
 
 	public static async deferReply(
 		intr: CommandInteraction | MessageComponentInteraction,
-		hidden = false
+		hidden = false,
 	): Promise<void> {
 		try {
 			return await intr.deferReply({
@@ -161,7 +154,7 @@ export class MessageUtils {
 
 	public static async updateIntr(
 		intr: MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions
+		content: string | MessageEmbed | MessageOptions,
 	): Promise<void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -195,13 +188,13 @@ export class MessageUtils {
 		} else {
 			const result = await prisma.guildMember.update({
 				where: {
-					guildMemberID: guildMemberId
+					guildMemberID: guildMemberId,
 				},
 				data: {
 					xp: {
-						increment: xp
-					}
-				}
+						increment: xp,
+					},
+				},
 			});
 
 			const guildMemberXp = result.xp;
@@ -212,14 +205,14 @@ export class MessageUtils {
 			if (guildMemberXp >= needed) {
 				await prisma.guildMember.update({
 					where: {
-						guildMemberID: guildMemberId
+						guildMemberID: guildMemberId,
 					},
 					data: {
 						xp: 0,
 						level: {
-							increment: 1
-						}
-					}
+							increment: 1,
+						},
+					},
 				});
 
 				cooldownServer.add(guildMemberId);
@@ -245,13 +238,13 @@ export class MessageUtils {
 		} else {
 			const result = await prisma.user.update({
 				where: {
-					userID: userId
+					userID: userId,
 				},
 				data: {
 					xp: {
-						increment: xp
-					}
-				}
+						increment: xp,
+					},
+				},
 			});
 
 			const userXp = result.xp;
@@ -262,14 +255,14 @@ export class MessageUtils {
 			if (userXp >= needed) {
 				await prisma.user.update({
 					where: {
-						userID: userId
+						userID: userId,
 					},
 					data: {
 						xp: 0,
 						level: {
-							increment: 1
-						}
-					}
+							increment: 1,
+						},
+					},
 				});
 
 				cooldownGlobal.add(userId);
@@ -283,7 +276,7 @@ export class MessageUtils {
 				setTimeout(() => {
 					cooldownGlobal.delete(userId);
 				}, 60000); // 1 minute
-				
+
 				return;
 			}
 		}

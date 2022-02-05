@@ -17,7 +17,13 @@ import {
 	TriggerHandler,
 	ButtonHandler,
 	MessageDeleteHandler,
-	MessageUpdateHandler
+	MessageUpdateHandler,
+	GuildBanAddHandler,
+	GuildBanRemoveHandler,
+	GuildMemberUpdateHandler,
+	GuildRoleDeleteHandler,
+	GuildRoleUpdateHandler,
+	UserUpdateHandler,
 } from './events/index.js';
 import { CustomClient } from './extensions/index.js';
 import { Job } from './jobs/index.js';
@@ -56,7 +62,7 @@ async function start(): Promise<void> {
 	const buttons: Button[] = [
 		// TODO: Add new buttons here
 	];
-	
+
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -79,7 +85,13 @@ async function start(): Promise<void> {
 	const buttonHandler = new ButtonHandler(buttons);
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
-	
+	const guildBanAddHandler = new GuildBanAddHandler();
+	const guildBanRemoveHandler = new GuildBanRemoveHandler();
+	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
+	const guildRoleDeleteHandler = new GuildRoleDeleteHandler();
+	const guildRoleUpdateHandler = new GuildRoleUpdateHandler();
+	const userUpdateHandler = new UserUpdateHandler();
+
 	// Jobs
 	const jobs: Job[] = [
 		// TODO: Add new jobs here
@@ -99,7 +111,13 @@ async function start(): Promise<void> {
 		guildMemberAddHandler,
 		guildMemberRemoveHandler,
 		messageDeleteHandler,
-		messageUpdateHandler
+		messageUpdateHandler,
+		guildBanAddHandler,
+		guildBanRemoveHandler,
+		guildMemberUpdateHandler,
+		guildRoleDeleteHandler,
+		guildRoleUpdateHandler,
+		userUpdateHandler,
 	);
 
 	// Register
@@ -136,7 +154,6 @@ process.on(`unhandledRejection`, (reason, _promise) => {
 	console.log(reason);
 	Logger.error(`An unhandled promise rejection ocurred.`, reason);
 });
-
 
 start().catch((error) => {
 	Logger.error(`An unspecified error ocurred.`, error);

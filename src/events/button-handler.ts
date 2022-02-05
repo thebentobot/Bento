@@ -10,7 +10,7 @@ import { MessageUtils } from '../utils/index.js';
 export class ButtonHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
 		Config.rateLimiting.buttons.amount,
-		Config.rateLimiting.buttons.interval * 1000
+		Config.rateLimiting.buttons.interval * 1000,
 	);
 
 	constructor(private buttons: Button[]) {}
@@ -45,14 +45,14 @@ export class ButtonHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (button.deferType) {
-		case ButtonDeferType.REPLY: {
-			await MessageUtils.deferReply(intr);
-			break;
-		}
-		case ButtonDeferType.UPDATE: {
-			await MessageUtils.deferUpdate(intr);
-			break;
-		}
+			case ButtonDeferType.REPLY: {
+				await MessageUtils.deferReply(intr);
+				break;
+			}
+			case ButtonDeferType.UPDATE: {
+				await MessageUtils.deferUpdate(intr);
+				break;
+			}
 		}
 
 		// TODO: Get data from database
@@ -63,6 +63,6 @@ export class ButtonHandler implements EventHandler {
 	}
 
 	private findButton(id: string): Button | undefined {
-		return this.buttons.find(button => button.ids.includes(id));
+		return this.buttons.find((button) => button.ids.includes(id));
 	}
 }

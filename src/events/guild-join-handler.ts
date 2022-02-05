@@ -22,15 +22,16 @@ export class GuildJoinHandler implements EventHandler {
 					memberCount: guild.memberCount,
 					tiktok: true,
 					leaderboard: true,
-					media: true
-				}}),
+					media: true,
+				},
+			}),
 			prisma.caseGlobal.create({
 				data: {
 					guildID: BigInt(guild.id),
 					serverName: false,
-					reason: false
-				}
-			})
+					reason: false,
+				},
+			}),
 		]);
 
 		// Send welcome message to the server's notify channel
@@ -44,7 +45,7 @@ export class GuildJoinHandler implements EventHandler {
 			text: `Bento 🍱 is created by Banner#1017`,
 			iconURL: (await guild.client.users.fetch(`232584569289703424`)).avatarURL({
 				dynamic: true,
-			}) as string
+			}) as string,
 		};
 
 		const embed = new MessageEmbed()
@@ -76,10 +77,7 @@ export class GuildJoinHandler implements EventHandler {
 		// Send welcome message to owner
 		const owner = await guild.fetchOwner();
 		if (owner) {
-			await MessageUtils.send(
-				owner.user,
-				embed
-			);
+			await MessageUtils.send(owner.user, embed);
 		}
 	}
 }

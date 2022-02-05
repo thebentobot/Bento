@@ -36,11 +36,7 @@ export class HttpService {
 		});
 	}
 
-	public async delete(
-		url: string | URL,
-		authorization: string,
-		body?: object
-	): Promise<Response> {
+	public async delete(url: string | URL, authorization: string, body?: object): Promise<Response> {
 		return await fetch(`${url}`, {
 			method: `delete`,
 			headers: {

@@ -28,10 +28,7 @@ export class DevCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = await this.devCommand(intr);
-		await MessageUtils.sendIntr(
-			intr,
-			command
-		);
+		await MessageUtils.sendIntr(intr, command);
 	}
 
 	public async executeMsgCmd(msg: Message<boolean>): Promise<void> {
@@ -46,7 +43,7 @@ export class DevCommand implements Command {
 		if (element.client.shard) {
 			try {
 				serverCount = await ShardUtils.serverCount(element.client.shard);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch (error: any) {
 				// SHARDING_IN_PROCESS: Shards are still being spawned.
 				if (error.name.includes(`SHARDING_IN_PROCESS`)) {
@@ -61,9 +58,29 @@ export class DevCommand implements Command {
 
 		const memory = process.memoryUsage();
 		const embed = new MessageEmbed()
-			.setColor(`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)
+			.setColor(
+				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+			)
 			.setTitle(`${element.client.user?.username} - Runtime info`)
-			.setDescription(`**Versions**\n**Node.js**: ${process.version}\n**TypeScript**: v${typescript.version}\n**ECMAScript**: ${TsConfig.compilerOptions.target}\n**discord.js**: v${djs.version}\n\n**Stats**\n**Shards**: ${shardCount.toLocaleString()}\n**Servers**: ${serverCount.toLocaleString()} (${Math.round(serverCount / shardCount).toLocaleString()}/Shard)\n\n**Memory**\n**RSS**: ${fileSize(memory.rss)} (${serverCount > 0 ? fileSize(memory.rss / serverCount) : `N/A`}/Server)\n**Heap**: ${fileSize(memory.heapTotal)} (${serverCount > 0 ? fileSize(memory.heapTotal / serverCount) : `N/A`}/Server)\n**Used**: ${fileSize(memory.heapUsed)} (${serverCount > 0 ? fileSize(memory.heapUsed / serverCount) : `N/A`}/Server)\n\n**IDs**\n**Hostname**: ${os.hostname}\n**Shard ID**: ${(element.guild?.shardId ?? 0).toString()}\n**Server ID**: ${element.guild?.id ?? `N/A`}\n**Bot ID**: ${element.client.user?.id}\n**User ID**: ${element.member?.user.id}`);
+			.setDescription(
+				`**Versions**\n**Node.js**: ${process.version}\n**TypeScript**: v${typescript.version}\n**ECMAScript**: ${
+					TsConfig.compilerOptions.target
+				}\n**discord.js**: v${
+					djs.version
+				}\n\n**Stats**\n**Shards**: ${shardCount.toLocaleString()}\n**Servers**: ${serverCount.toLocaleString()} (${Math.round(
+					serverCount / shardCount,
+				).toLocaleString()}/Shard)\n\n**Memory**\n**RSS**: ${fileSize(memory.rss)} (${
+					serverCount > 0 ? fileSize(memory.rss / serverCount) : `N/A`
+				}/Server)\n**Heap**: ${fileSize(memory.heapTotal)} (${
+					serverCount > 0 ? fileSize(memory.heapTotal / serverCount) : `N/A`
+				}/Server)\n**Used**: ${fileSize(memory.heapUsed)} (${
+					serverCount > 0 ? fileSize(memory.heapUsed / serverCount) : `N/A`
+				}/Server)\n\n**IDs**\n**Hostname**: ${os.hostname}\n**Shard ID**: ${(
+					element.guild?.shardId ?? 0
+				).toString()}\n**Server ID**: ${element.guild?.id ?? `N/A`}\n**Bot ID**: ${
+					element.client.user?.id
+				}\n**User ID**: ${element.member?.user.id}`,
+			);
 		return embed;
 	}
 }

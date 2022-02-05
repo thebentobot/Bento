@@ -32,11 +32,18 @@ export class HelpCommand implements Command {
 	private async helpCommand(message: Message | CommandInteraction): Promise<MessageEmbed> {
 		const element = message;
 		const embed = new MessageEmbed()
-			.setColor(`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)
+			.setColor(
+				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+			)
 			.setTitle(`${element.client.user?.username} - Help`)
-			.setDescription(`[Bento](https://github.com/thebentobot/bento2) helps give developers a starting point for new Discord bots, so that much of the initial setup can be avoided and developers can instead focus on meaningful bot features.`)
+			.setDescription(
+				`[Bento](https://github.com/thebentobot/bento2) helps give developers a starting point for new Discord bots, so that much of the initial setup can be avoided and developers can instead focus on meaningful bot features.`,
+			)
 			.addField(`Commands`, `**/test** - Run the test command.\n**/info** - View bot info.`)
-			.addField(`Links`, `[View Documentation](https://top.gg/)\n[Join Support Server](https://support.discord.com/)\n[Invite My Bot to a Server](https://discord.com)`);
+			.addField(
+				`Links`,
+				`[View Documentation](https://top.gg/)\n[Join Support Server](https://support.discord.com/)\n[Invite My Bot to a Server](https://discord.com)`,
+			);
 		return embed;
 	}
 }

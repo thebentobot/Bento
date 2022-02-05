@@ -24,7 +24,7 @@ export class InfoCommand implements Command {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async executeMsgCmd(msg: Message<boolean>, args: string[],): Promise<void> {
+	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		const command = await this.infoCommand(msg);
 		await MessageUtils.send(msg.channel, command);
 	}
@@ -32,7 +32,9 @@ export class InfoCommand implements Command {
 	private async infoCommand(message: Message | CommandInteraction): Promise<MessageEmbed> {
 		const element = message;
 		const embed = new MessageEmbed()
-			.setColor(`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`)
+			.setColor(
+				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+			)
 			.setTitle(`${element.client.user?.username} - Info`)
 			.setDescription(`lmao`);
 		return embed;

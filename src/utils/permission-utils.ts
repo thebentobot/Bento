@@ -93,23 +93,15 @@ export class PermissionUtils {
 		}
 	}
 
-	public static hasPermission(
-		member: GuildMember,
-		guildData: guild,
-		command?: Command
-	): boolean {
+	public static hasPermission(member: GuildMember, guildData: guild, command?: Command): boolean {
 		if (!command || command.adminOnly) {
 			// Developers, server owners, and members with "Manage Server" have permission for all commands
-			if (
-				member.guild.ownerId === member.id ||
-                member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)
-			) {
+			if (member.guild.ownerId === member.id || member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
 				return true;
 			}
-			
+
 			return false;
 		}
 		return true;
 	}
-
 }

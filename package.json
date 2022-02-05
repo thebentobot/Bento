@@ -22,7 +22,7 @@
 		"start:shard": "npm run build && node --enable-source-maps dist/app.js",
 		"lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
 		"lint:fix": "npx eslint . --fix --ext .js,.jsx,.ts,.tsx",
-		"db": "npx prisma generate"
+		"db": "npx prisma db pull && npx prisma generate"
 	},
 	"keywords": [],
 	"author": "banner4422",
@@ -64,5 +64,8 @@
 		"pino": "^7.6.5",
 		"pino-pretty": "^7.5.1",
 		"remove-markdown": "^0.3.0"
+	},
+	"prisma": {
+		"schema": "prisma/schema.prisma"
 	}
 }
