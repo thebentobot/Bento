@@ -40,41 +40,41 @@ export class Logger {
 
 		// Otherwise log details about the error
 		switch (true) {
-			case error instanceof Response: {
-				let resText: string | undefined;
-				try {
-					resText = await error.text();
-				} catch {
-					// Ignore
-				}
-				logger
-					.child({
-						path: error.url,
-						statusCode: error.status,
-						statusName: error.statusText,
-						headers: error.headers.raw(),
-						body: resText,
-					})
-					.error(message);
-				break;
+		case error instanceof Response: {
+			let resText: string | undefined;
+			try {
+				resText = await error.text();
+			} catch {
+				// Ignore
 			}
-			case error instanceof DiscordAPIError: {
-				logger
-					.child({
-						message: error.message,
-						code: error.code,
-						statusCode: error.httpStatus,
-						method: error.method,
-						path: error.path,
-						stack: error.stack,
-					})
-					.error(message);
-				break;
-			}
-			default: {
-				logger.error(error, message);
-				break;
-			}
+			logger
+				.child({
+					path: error.url,
+					statusCode: error.status,
+					statusName: error.statusText,
+					headers: error.headers.raw(),
+					body: resText,
+				})
+				.error(message);
+			break;
+		}
+		case error instanceof DiscordAPIError: {
+			logger
+				.child({
+					message: error.message,
+					code: error.code,
+					statusCode: error.httpStatus,
+					method: error.method,
+					path: error.path,
+					stack: error.stack,
+				})
+				.error(message);
+			break;
+		}
+		default: {
+			logger.error(error, message);
+			break;
+		}
 		}
 	}
 

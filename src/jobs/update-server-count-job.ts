@@ -25,7 +25,7 @@ export class UpdateServerCountJob implements Job {
 
 		const type: ActivityType = `STREAMING`;
 		const name = `to ${serverCount.toLocaleString()} servers`;
-		const url = `https://www.youtube.com/watch?v=_qJEoSa3Ie0`;
+		const url = `https://youtu.be/eBPsaa0_RtQ`;
 
 		await this.shardManager.broadcastEval(
 			(client, context) => {
