@@ -1,12 +1,13 @@
-import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 import { Command, CommandDeferType } from './command.js';
 
 export class HelpCommand implements Command {
 	public name = `help`;
-	public metadata: ApplicationCommandData = {
+	public metadata: ChatInputApplicationCommandData = {
 		name: `help`,
 		description: `View help menu and list of commands.`,
 	};
@@ -20,7 +21,7 @@ export class HelpCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = await this.helpCommand(intr);
-		await MessageUtils.sendIntr(intr, command);
+		await InteractionUtils.send(intr, command);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -1,13 +1,14 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
-import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 import { Command, CommandDeferType } from './command.js';
 
 export class LinkCommand implements Command {
 	public name = `link`;
-	public metadata: ApplicationCommandData = {
+	public metadata: ChatInputApplicationCommandData = {
 		name: `link`,
 		description: `Get links to invite, support, etc.`,
 		options: [
@@ -54,7 +55,7 @@ export class LinkCommand implements Command {
 
 		const command = await this.linkCommand(link);
 
-		await MessageUtils.sendIntr(intr, command);
+		await InteractionUtils.send(intr, command);
 	}
 
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
@@ -73,29 +74,29 @@ export class LinkCommand implements Command {
 	private async linkCommand(link: string | null): Promise<MessageEmbed> {
 		let embed: MessageEmbed;
 		switch (link) {
-			case `docs`: {
-				embed = new MessageEmbed().setDescription(`docs`);
-				break;
-			}
-			case `donate`: {
-				embed = new MessageEmbed().setDescription(`donate`);
-				break;
-			}
-			case `invite`: {
-				embed = new MessageEmbed().setDescription(`invite`);
-				break;
-			}
-			case `support`: {
-				embed = new MessageEmbed().setDescription(`support`);
-				break;
-			}
-			case `vote`: {
-				embed = new MessageEmbed().setDescription(`vote`);
-				break;
-			}
-			default: {
-				embed = new MessageEmbed().setDescription(`Invalid link`);
-			}
+		case `docs`: {
+			embed = new MessageEmbed().setDescription(`docs`);
+			break;
+		}
+		case `donate`: {
+			embed = new MessageEmbed().setDescription(`donate`);
+			break;
+		}
+		case `invite`: {
+			embed = new MessageEmbed().setDescription(`invite`);
+			break;
+		}
+		case `support`: {
+			embed = new MessageEmbed().setDescription(`support`);
+			break;
+		}
+		case `vote`: {
+			embed = new MessageEmbed().setDescription(`vote`);
+			break;
+		}
+		default: {
+			embed = new MessageEmbed().setDescription(`Invalid link`);
+		}
 		}
 		return embed;
 	}

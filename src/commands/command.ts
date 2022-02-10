@@ -1,13 +1,15 @@
-import { ApplicationCommandData, CommandInteraction, Message, PermissionString } from 'discord.js';
+import { CommandInteraction, Message, PermissionString, ChatInputApplicationCommandData } from 'discord.js';
+import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
 
 export interface Command {
 	adminOnly?: boolean;
 	requireSetup?: boolean;
+	cooldown?: RateLimiter
 	name: string;
 	deferType: CommandDeferType;
 	aliases?: string[];
-	metadata: ApplicationCommandData;
+	metadata: ChatInputApplicationCommandData;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	requireDev: boolean;

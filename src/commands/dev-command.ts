@@ -1,4 +1,4 @@
-import djs, { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import djs, { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 import fileSize from 'filesize';
 import os from 'os';
 import { createRequire } from 'node:module';
@@ -7,6 +7,7 @@ import typescript from 'typescript';
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
 import { Command, CommandDeferType } from './command.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 
 const require = createRequire(import.meta.url);
 const TsConfig = require(`../../tsconfig.json`);
@@ -14,7 +15,7 @@ const TsConfig = require(`../../tsconfig.json`);
 export class DevCommand implements Command {
 	public name = `dev`;
 	public aliases = [`developer`];
-	public metadata: ApplicationCommandData = {
+	public metadata: ChatInputApplicationCommandData = {
 		name: `dev`,
 		description: `View developer info`,
 	};
@@ -28,7 +29,7 @@ export class DevCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = await this.devCommand(intr);
-		await MessageUtils.sendIntr(intr, command);
+		await InteractionUtils.send(intr, command);
 	}
 
 	public async executeMsgCmd(msg: Message<boolean>): Promise<void> {

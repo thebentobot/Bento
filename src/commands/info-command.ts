@@ -1,12 +1,13 @@
-import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 import { Command, CommandDeferType } from './command.js';
 
 export class InfoCommand implements Command {
 	public name = `info`;
-	public metadata: ApplicationCommandData = {
+	public metadata: ChatInputApplicationCommandData = {
 		name: `info`,
 		description: `View bot info.`,
 	};
@@ -20,7 +21,7 @@ export class InfoCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = await this.infoCommand(intr);
-		await MessageUtils.sendIntr(intr, command);
+		await InteractionUtils.send(intr, command);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

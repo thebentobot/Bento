@@ -1,6 +1,5 @@
 import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 import {
-	CommandInteraction,
 	DiscordAPIError,
 	EmojiResolvable,
 	Message,
@@ -8,7 +7,6 @@ import {
 	MessageOptions,
 	MessageReaction,
 	TextBasedChannel,
-	MessageComponentInteraction,
 	User,
 } from 'discord.js';
 import { prisma } from '../services/prisma.js';
@@ -47,44 +45,6 @@ export class MessageUtils {
 		}
 	}
 
-	public static async editReplyIntr(
-		intr: CommandInteraction,
-		content: string | MessageEmbed | MessageOptions,
-	): Promise<Message | void> {
-		try {
-			const msgOptions = this.messageOptions(content);
-			return (await intr.editReply({
-				...msgOptions,
-			})) as Message;
-		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
-	public static async sendIntr(
-		intr: CommandInteraction,
-		content: string | MessageEmbed | MessageOptions,
-		hidden = false,
-	): Promise<Message | void> {
-		try {
-			const msgOptions = this.messageOptions(content);
-			return (await intr.followUp({
-				...msgOptions,
-				ephemeral: hidden,
-			})) as Message;
-		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
 	public static async reply(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -114,53 +74,6 @@ export class MessageUtils {
 	public static async react(msg: Message, emoji: EmojiResolvable): Promise<MessageReaction | void> {
 		try {
 			return await msg.react(emoji);
-		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
-	public static async deferReply(
-		intr: CommandInteraction | MessageComponentInteraction,
-		hidden = false,
-	): Promise<void> {
-		try {
-			return await intr.deferReply({
-				ephemeral: hidden,
-			});
-		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
-	public static async deferUpdate(intr: MessageComponentInteraction): Promise<void> {
-		try {
-			return await intr.deferUpdate();
-		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
-	public static async updateIntr(
-		intr: MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions,
-	): Promise<void> {
-		try {
-			const msgOptions = this.messageOptions(content);
-			return await intr.update({
-				...msgOptions,
-			});
 		} catch (error) {
 			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
@@ -282,7 +195,7 @@ export class MessageUtils {
 		}
 	}
 
-	private static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
+	public static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
 		let options: MessageOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
