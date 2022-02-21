@@ -1,25 +1,28 @@
 import { ClientUser, CommandInteraction, GuildChannel, GuildMember, MessageEmbed, Permissions } from 'discord.js';
 
-import { MessageUtils } from '.';
-import { Command } from '../commands';
-import { Permission } from '../models/enums';
-import { EventData } from '../models/internal-models';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`../config/debug.json`);
+import { MessageUtils } from './index.js';
+import { Command } from '../commands/index.js';
+import { config as Config } from '../config/config.js';
+import { debug as Debug } from '../config/debug.js';
+import { Permission } from '../models/enums/index.js';
+import { EventData } from '../models/internal-models.js';
 
 export class CommandUtils {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static async runChecks(command: Command, intr: CommandInteraction, _data: EventData): Promise<boolean> {
 		if (command.requireDev && !Config.developers.includes(intr.user.id)) {
-			await MessageUtils.sendIntr(intr, new MessageEmbed().setDescription(`This command can only be used by developers.`).setColor(`#ffcc66`));
+			await MessageUtils.sendIntr(
+				intr,
+				new MessageEmbed().setDescription(`This command can only be used by developers.`).setColor(`#ffcc66`),
+			);
 			return false;
 		}
 
 		if (command.requireGuild && !intr.guild) {
-			await MessageUtils.sendIntr(intr, new MessageEmbed().setDescription(`This command can only be used in a server.`).setColor(`#ffcc66`));
+			await MessageUtils.sendIntr(
+				intr,
+				new MessageEmbed().setDescription(`This command can only be used in a server.`).setColor(`#ffcc66`),
+			);
 			return false;
 		}
 
@@ -29,7 +32,11 @@ export class CommandUtils {
 			!intr.channel.permissionsFor(intr.client.user as ClientUser)!.has(command.requireClientPerms)
 		) {
 			const embed = new MessageEmbed()
-				.setDescription(`I don't have all permissions required to run that command here! Please check the server and channel permissions to make sure I have the following permissions.\n\nRequired permissions: ${command.requireClientPerms.map((perm) => `**${Permission.Data[perm].displayName()}**`).join(`, `)}`)
+				.setDescription(
+					`I don't have all permissions required to run that command here! Please check the server and channel permissions to make sure I have the following permissions.\n\nRequired permissions: ${command.requireClientPerms
+						.map((perm) => `**${Permission.Data[perm].displayName()}**`)
+						.join(`, `)}`,
+				)
 				.setColor(`#ffcc66`);
 			await MessageUtils.sendIntr(intr, embed);
 			return false;

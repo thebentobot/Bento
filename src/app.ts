@@ -1,19 +1,15 @@
 import { ShardingManager } from 'discord.js';
 import 'reflect-metadata';
 
-import { Api } from './api';
-import { GuildsController, RootController, ShardsController } from './controllers';
-import { Job, UpdateServerCountJob } from './jobs';
-import { Manager } from './manager';
-import { HttpService, JobService, Logger, MasterApiService } from './services';
-import { MathUtils, ShardUtils } from './utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`./config/debug.json`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+import { Api } from './api.js';
+import { config as Config } from './config/config.js';
+import { debug as Debug } from './config/debug.js';
+import { GuildsController, RootController, ShardsController } from './controllers/index.js';
+import { Job, UpdateServerCountJob } from './jobs/index.js';
+import { logs as Logs } from './lang/logs.js';
+import { Manager } from './manager.js';
+import { HttpService, JobService, Logger, MasterApiService } from './services/index.js';
+import { MathUtils, ShardUtils } from './utils/index.js';
 
 async function start(): Promise<void> {
 	Logger.info(Logs.info.appStarted);

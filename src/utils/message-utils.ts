@@ -1,5 +1,5 @@
+import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 import {
-	CommandInteraction,
 	DiscordAPIError,
 	EmojiResolvable,
 	Message,
@@ -9,7 +9,17 @@ import {
 	TextBasedChannel,
 	User,
 } from 'discord.js';
-import { prisma } from '../services/prisma';
+import { prisma } from '../services/prisma.js';
+
+const IGNORED_ERRORS = [
+	DiscordApiErrors.UnknownMessage,
+	DiscordApiErrors.UnknownChannel,
+	DiscordApiErrors.UnknownGuild,
+	DiscordApiErrors.UnknownUser,
+	DiscordApiErrors.UnknownInteraction,
+	DiscordApiErrors.CannotSendMessagesToThisUser, // User blocked bot or DM disabled
+	DiscordApiErrors.ReactionWasBlocked, // User blocked bot or DM disabled
+];
 
 const cooldownServer = new Set();
 const cooldownGlobal = new Set();
@@ -35,34 +45,12 @@ export class MessageUtils {
 		}
 	}
 
-	public static async sendIntr(
-		intr: CommandInteraction,
-		content: string | MessageEmbed | MessageOptions,
-	): Promise<Message | void> {
-		try {
-			const msgOptions = this.messageOptions(content);
-			return (await intr.webhook.send(msgOptions)) as Message;
-		} catch (error) {
-			// 10003: "Unknown channel"
-			// 10004: "Unknown guild"
-			// 10013: "Unknown user"
-			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
-			if (error instanceof DiscordAPIError && [10003, 10004, 10013, 50007].includes(error.code)) {
-				return;
-			} else {
-				throw error;
-			}
-		}
-	}
-
 	public static async reply(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.reply(msgOptions);
 		} catch (error) {
-			// 10008: "Unknown Message" (Message was deleted)
-			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
-			if (error instanceof DiscordAPIError && [10008, 50007].includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -75,9 +63,7 @@ export class MessageUtils {
 			const msgOptions = this.messageOptions(content);
 			return await msg.edit(msgOptions);
 		} catch (error) {
-			// 10008: "Unknown Message" (Message was deleted)
-			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
-			if (error instanceof DiscordAPIError && [10008, 50007].includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -89,9 +75,7 @@ export class MessageUtils {
 		try {
 			return await msg.react(emoji);
 		} catch (error) {
-			// 10008: "Unknown Message" (Message was deleted)
-			// 90001: "Reaction Blocked" (User blocked bot)
-			if (error instanceof DiscordAPIError && [10008, 90001].includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -103,9 +87,7 @@ export class MessageUtils {
 		try {
 			return await msg.delete();
 		} catch (error) {
-			// 10008: "Unknown Message" (Message was deleted)
-			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
-			if (error instanceof DiscordAPIError && [10008, 50007].includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -119,13 +101,13 @@ export class MessageUtils {
 		} else {
 			const result = await prisma.guildMember.update({
 				where: {
-					guildMemberID: guildMemberId
+					guildMemberID: guildMemberId,
 				},
 				data: {
 					xp: {
-						increment: xp
-					}
-				}
+						increment: xp,
+					},
+				},
 			});
 
 			const guildMemberXp = result.xp;
@@ -136,14 +118,14 @@ export class MessageUtils {
 			if (guildMemberXp >= needed) {
 				await prisma.guildMember.update({
 					where: {
-						guildMemberID: guildMemberId
+						guildMemberID: guildMemberId,
 					},
 					data: {
 						xp: 0,
 						level: {
-							increment: 1
-						}
-					}
+							increment: 1,
+						},
+					},
 				});
 
 				cooldownServer.add(guildMemberId);
@@ -169,13 +151,13 @@ export class MessageUtils {
 		} else {
 			const result = await prisma.user.update({
 				where: {
-					userID: userId
+					userID: userId,
 				},
 				data: {
 					xp: {
-						increment: xp
-					}
-				}
+						increment: xp,
+					},
+				},
 			});
 
 			const userXp = result.xp;
@@ -186,14 +168,14 @@ export class MessageUtils {
 			if (userXp >= needed) {
 				await prisma.user.update({
 					where: {
-						userID: userId
+						userID: userId,
 					},
 					data: {
 						xp: 0,
 						level: {
-							increment: 1
-						}
-					}
+							increment: 1,
+						},
+					},
 				});
 
 				cooldownGlobal.add(userId);
@@ -207,13 +189,13 @@ export class MessageUtils {
 				setTimeout(() => {
 					cooldownGlobal.delete(userId);
 				}, 60000); // 1 minute
-				
+
 				return;
 			}
 		}
 	}
 
-	private static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
+	public static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
 		let options: MessageOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;

@@ -1,13 +1,14 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
-import { ApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 
-import { EventData } from '../models/internal-models';
-import { MessageUtils } from '../utils';
-import { Command } from './command';
+import { EventData } from '../models/internal-models.js';
+import { MessageUtils, stylingUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
+import { Command, CommandDeferType } from './command.js';
 
 export class LinkCommand implements Command {
 	public name = `link`;
-	public metadata: ApplicationCommandData = {
+	public metadata: ChatInputApplicationCommandData = {
 		name: `link`,
 		description: `Get links to invite, support, etc.`,
 		options: [
@@ -44,6 +45,7 @@ export class LinkCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
+	public deferType = CommandDeferType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
 
@@ -53,7 +55,7 @@ export class LinkCommand implements Command {
 
 		const command = await this.linkCommand(link);
 
-		await MessageUtils.sendIntr(intr, command);
+		await InteractionUtils.send(intr, command);
 	}
 
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
@@ -61,7 +63,12 @@ export class LinkCommand implements Command {
 
 		const command = await this.linkCommand(link);
 
-		await MessageUtils.send(msg.channel, command);
+		await MessageUtils.send(
+			msg.channel,
+			command.setColor(
+				`#${await stylingUtils.urlToColours(msg.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+			),
+		);
 	}
 
 	private async linkCommand(link: string | null): Promise<MessageEmbed> {

@@ -21,7 +21,8 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Test file (soon™️)
 
 **Test Configuration**:
-* Toolchain:
+
+- Toolchain:
 
 # Checklist:
 

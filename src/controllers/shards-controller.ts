@@ -1,17 +1,14 @@
 import { ActivityType, ShardingManager } from 'discord.js';
 import { Request, Response, Router } from 'express';
 import router from 'express-promise-router';
+import { config as Config } from '../config/config.js';
 
-import { CustomClient } from '../extensions';
-import { mapClass } from '../middleware';
-import { GetShardsResponse, SetShardPresencesRequest, ShardInfo, ShardStats } from '../models/cluster-api';
-import { Logger } from '../services';
-import { Controller } from './controller';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../../lang/logs.json`);
+import { CustomClient } from '../extensions/index.js';
+import { logs as Logs } from '../lang/logs.js';
+import { mapClass } from '../middleware/index.js';
+import { GetShardsResponse, SetShardPresencesRequest, ShardInfo, ShardStats } from '../models/cluster-api/index.js';
+import { Logger } from '../services/index.js';
+import { Controller } from './controller.js';
 
 export class ShardsController implements Controller {
 	public path = `/shards`;

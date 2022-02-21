@@ -1,9 +1,6 @@
 import { guild } from '@prisma/client';
 import { AnyChannel, ClientUser, DMChannel, GuildChannel, GuildMember, Permissions } from 'discord.js';
-import { Command } from '../commands';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`../config/config`);
+import { Command } from '../commands/index.js';
 
 export class PermissionUtils {
 	public static canSend(channel: AnyChannel, embedLinks = false): boolean {
@@ -96,24 +93,15 @@ export class PermissionUtils {
 		}
 	}
 
-	public static hasPermission(
-		member: GuildMember,
-		guildData: guild,
-		command?: Command
-	): boolean {
+	public static hasPermission(member: GuildMember, guildData: guild, command?: Command): boolean {
 		if (!command || command.adminOnly) {
 			// Developers, server owners, and members with "Manage Server" have permission for all commands
-			if (
-				member.guild.ownerId === member.id ||
-                member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) ||
-                Config.support.owners.includes(member.id)
-			) {
+			if (member.guild.ownerId === member.id || member.permissions.has(Permissions.FLAGS.MANAGE_GUILD)) {
 				return true;
 			}
-			
+
 			return false;
 		}
 		return true;
 	}
-
 }

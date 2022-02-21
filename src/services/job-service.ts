@@ -1,10 +1,8 @@
 import schedule from 'node-schedule';
 
-import { Logger } from '.';
-import { Job } from '../jobs';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../../lang/logs.json`);
+import { Logger } from './index.js';
+import { Job } from '../jobs/index.js';
+import { logs as Logs } from '../lang/logs.js';
 
 export class JobService {
 	constructor(private jobs: Job[]) {}

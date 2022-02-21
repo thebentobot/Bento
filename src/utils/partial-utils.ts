@@ -46,7 +46,9 @@ export class PartialUtils {
 		return msg as Message;
 	}
 
-	public static async fillReaction(msgReaction: MessageReaction | PartialMessageReaction): Promise<MessageReaction | void> {
+	public static async fillReaction(
+		msgReaction: MessageReaction | PartialMessageReaction,
+	): Promise<MessageReaction | void> {
 		if (msgReaction.partial) {
 			try {
 				msgReaction = await msgReaction.fetch();
@@ -59,7 +61,7 @@ export class PartialUtils {
 			}
 		}
 
-		msgReaction.message = await this.fillMessage(msgReaction.message) as Message;
+		msgReaction.message = (await this.fillMessage(msgReaction.message)) as Message;
 		if (!msgReaction.message) {
 			return;
 		}

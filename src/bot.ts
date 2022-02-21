@@ -2,25 +2,45 @@ import {
 	Client,
 	Constants,
 	Guild,
+	GuildMember,
 	Interaction,
 	Message,
 	MessageReaction,
+	PartialGuildMember,
 	PartialMessageReaction,
 	PartialUser,
 	RateLimitData,
 	User,
+	ButtonInteraction,
+	CommandInteraction,
+	PartialMessage,
+	GuildBan,
+	Role,
 } from 'discord.js';
+import { config as Config } from './config/config.js';
+import { debug as Debug } from './config/debug.js';
 
-import { CommandHandler, GuildJoinHandler, GuildLeaveHandler, MessageHandler, ReactionHandler } from './events';
-import { JobService, Logger } from './services';
-import { PartialUtils } from './utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Config = require(`./config/config`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Debug = require(`./config/debug.json`);
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Logs = require(`../lang/logs.json`);
+import {
+	GuildBanAddHandler,
+	GuildBanRemoveHandler,
+	GuildMemberUpdateHandler,
+	GuildRoleDeleteHandler,
+	GuildRoleUpdateHandler,
+	UserUpdateHandler,
+	ButtonHandler,
+	MessageDeleteHandler,
+	MessageUpdateHandler,
+	CommandHandler,
+	GuildJoinHandler,
+	GuildLeaveHandler,
+	MessageHandler,
+	ReactionHandler,
+	GuildMemberAddHandler,
+	GuildMemberRemoveHandler,
+} from './events';
+import { logs as Logs } from './lang/logs.js';
+import { JobService, Logger } from './services/index.js';
+import { PartialUtils } from './utils/index.js';
 
 export class Bot {
 	private ready = false;
@@ -32,8 +52,19 @@ export class Bot {
 		private guildLeaveHandler: GuildLeaveHandler,
 		private messageHandler: MessageHandler,
 		private commandHandler: CommandHandler,
+		private buttonHandler: ButtonHandler,
 		private reactionHandler: ReactionHandler,
 		private jobService: JobService,
+		private guildMemberAddHandler: GuildMemberAddHandler,
+		private guildMemberRemoveHandler: GuildMemberRemoveHandler,
+		private messageDeleteHandler: MessageDeleteHandler,
+		private messageUpdateHandler: MessageUpdateHandler,
+		private guildBanAddHandler: GuildBanAddHandler,
+		private guildBanRemoveHandler: GuildBanRemoveHandler,
+		private guildMemberUpdateHandler: GuildMemberUpdateHandler,
+		private guildRoleDeleteHandler: GuildRoleDeleteHandler,
+		private guildRoleUpdateHandler: GuildRoleUpdateHandler,
+		private userUpdateHandler: UserUpdateHandler,
 	) {}
 
 	public async start(): Promise<void> {
@@ -56,6 +87,32 @@ export class Bot {
 				this.onReaction(messageReaction, user),
 		);
 		this.client.on(Constants.Events.RATE_LIMIT, (rateLimitData: RateLimitData) => this.onRateLimit(rateLimitData));
+		this.client.on(Constants.Events.GUILD_MEMBER_ADD, (member: GuildMember) => this.onGuildMemberAdd(member));
+		this.client.on(Constants.Events.GUILD_MEMBER_REMOVE, (member: GuildMember | PartialGuildMember) =>
+			this.onGuildMemberRemove(member),
+		);
+		this.client.on(Constants.Events.MESSAGE_DELETE, (message: Message | PartialMessage) =>
+			this.onMessageDelete(message),
+		);
+		this.client.on(
+			Constants.Events.MESSAGE_UPDATE,
+			(oldMessage: Message<boolean> | PartialMessage, newMessage: Message<boolean> | PartialMessage) =>
+				this.onMessageUpdate(oldMessage, newMessage),
+		);
+		this.client.on(Constants.Events.GUILD_BAN_ADD, (ban: GuildBan) => this.onGuildBanAdd(ban));
+		this.client.on(Constants.Events.GUILD_BAN_REMOVE, (ban: GuildBan) => this.onGuildBanRemove(ban));
+		this.client.on(
+			Constants.Events.GUILD_MEMBER_UPDATE,
+			(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) =>
+				this.onGuildMemberUpdate(oldMember, newMember),
+		);
+		this.client.on(Constants.Events.GUILD_ROLE_DELETE, (role: Role) => this.onGuildRoleDelete(role));
+		this.client.on(Constants.Events.GUILD_ROLE_UPDATE, (oldRole: Role, newRole: Role) =>
+			this.onGuildRoleUpdate(oldRole, newRole),
+		);
+		this.client.on(Constants.Events.USER_UPDATE, (oldUser: User | PartialUser, newUser: User) =>
+			this.onUserUpdate(oldUser, newUser),
+		);
 	}
 
 	private async login(token: string): Promise<void> {
@@ -69,7 +126,7 @@ export class Bot {
 
 	private async onReady(): Promise<void> {
 		const userTag = this.client.user?.tag;
-		Logger.info(Logs.info.clientLogin.replaceAll(`{USER_TAG}`, userTag));
+		Logger.info(Logs.info.clientLogin.replaceAll(`{USER_TAG}`, userTag as string));
 
 		if (!Debug.dummyMode.enabled) {
 			this.jobService.start();
@@ -113,7 +170,7 @@ export class Bot {
 			return;
 		}
 
-		msg = await PartialUtils.fillMessage(msg) as Message;
+		msg = (await PartialUtils.fillMessage(msg)) as Message;
 		if (!msg) {
 			return;
 		}
@@ -126,18 +183,22 @@ export class Bot {
 	}
 
 	private async onInteraction(intr: Interaction): Promise<void> {
-		if (
-			!intr.isCommand() ||
-			!this.ready ||
-			(Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(intr.user.id))
-		) {
+		if (!this.ready || (Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(intr.user.id))) {
 			return;
 		}
 
-		try {
-			await this.commandHandler.processIntr(intr);
-		} catch (error) {
-			Logger.error(Logs.error.command, error);
+		if (intr instanceof CommandInteraction) {
+			try {
+				await this.commandHandler.processIntr(intr);
+			} catch (error) {
+				Logger.error(Logs.error.command, error);
+			}
+		} else if (intr instanceof ButtonInteraction) {
+			try {
+				await this.buttonHandler.process(intr, intr.message as Message);
+			} catch (error) {
+				Logger.error(Logs.error.button, error);
+			}
 		}
 	}
 
@@ -149,12 +210,12 @@ export class Bot {
 			return;
 		}
 
-		msgReaction = await PartialUtils.fillReaction(msgReaction) as MessageReaction;
+		msgReaction = (await PartialUtils.fillReaction(msgReaction)) as MessageReaction;
 		if (!msgReaction) {
 			return;
 		}
 
-		reactor = await PartialUtils.fillUser(reactor) as User;
+		reactor = (await PartialUtils.fillUser(reactor)) as User;
 		if (!reactor) {
 			return;
 		}
@@ -169,6 +230,132 @@ export class Bot {
 	private async onRateLimit(rateLimitData: RateLimitData): Promise<void> {
 		if (rateLimitData.timeout >= Config.logging.rateLimit.minTimeout * 1000) {
 			Logger.error(Logs.error.apiRateLimit, rateLimitData);
+		}
+	}
+
+	private async onGuildMemberAdd(member: GuildMember): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildMemberAddHandler.process(member);
+		} catch (error) {
+			Logger.error(Logs.error.guildMemberAdd, error);
+		}
+	}
+
+	private async onGuildMemberRemove(member: GuildMember | PartialGuildMember): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildMemberRemoveHandler.process(member);
+		} catch (error) {
+			Logger.error(Logs.error.guildMemberRemove, error);
+		}
+	}
+
+	private async onMessageDelete(message: Message | PartialMessage): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.messageDeleteHandler.process(message);
+		} catch (error) {
+			Logger.error(Logs.error.messageDelete, error);
+		}
+	}
+
+	private async onMessageUpdate(
+		oldMessage: Message | PartialMessage,
+		newMessage: Message | PartialMessage,
+	): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.messageUpdateHandler.process(oldMessage, newMessage);
+		} catch (error) {
+			Logger.error(Logs.error.messageUpdate, error);
+		}
+	}
+
+	private async onGuildBanAdd(ban: GuildBan): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildBanAddHandler.process(ban);
+		} catch (error) {
+			Logger.error(Logs.error.guildBanAdd, error);
+		}
+	}
+
+	private async onGuildBanRemove(ban: GuildBan): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildBanRemoveHandler.process(ban);
+		} catch (error) {
+			Logger.error(Logs.error.guildBanRemove, error);
+		}
+	}
+
+	private async onGuildMemberUpdate(
+		oldMember: GuildMember | PartialGuildMember,
+		newMember: GuildMember,
+	): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildMemberUpdateHandler.process(oldMember, newMember);
+		} catch (error) {
+			Logger.error(Logs.error.guildMemberUpdate, error);
+		}
+	}
+
+	private async onGuildRoleDelete(role: Role): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildRoleDeleteHandler.process(role);
+		} catch (error) {
+			Logger.error(Logs.error.guildRoleDelete, error);
+		}
+	}
+
+	private async onGuildRoleUpdate(oldRole: Role, newRole: Role): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.guildRoleUpdateHandler.process(oldRole, newRole);
+		} catch (error) {
+			Logger.error(Logs.error.guildRoleUpdate, error);
+		}
+	}
+
+	private async onUserUpdate(oldUser: User | PartialUser, newUser: User): Promise<void> {
+		if (!this.ready || Debug.dummyMode.enabled) {
+			return;
+		}
+
+		try {
+			await this.userUpdateHandler.process(oldUser, newUser);
+		} catch (error) {
+			Logger.error(Logs.error.userUpdate, error);
 		}
 	}
 }

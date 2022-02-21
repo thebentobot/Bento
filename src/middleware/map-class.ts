@@ -36,7 +36,7 @@ function formatValidationErrors(errors: ValidationError[] | undefined): Validati
 		return errors.map((error) => ({
 			property: error.property,
 			constraints: error.constraints,
-			children: error.children?.length as number > 0 ? formatValidationErrors(error.children) : undefined,
+			children: (error.children?.length as number) > 0 ? formatValidationErrors(error.children) : undefined,
 		}));
 	} else {
 		return;

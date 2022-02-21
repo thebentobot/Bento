@@ -1,1 +1,1 @@
-export { Permission } from './permission';
+export { Permission } from './permission.js';
