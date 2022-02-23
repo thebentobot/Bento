@@ -33,4 +33,6 @@ export class Api {
 			this.app.use(controller.path, controller.router);
 		}
 	}
+	// kofi
+	// topgg voting
 }

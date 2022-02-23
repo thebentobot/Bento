@@ -19,6 +19,7 @@ import { EventData } from '../models/internal-models.js';
 import { Logger } from '../services/index.js';
 import { prisma } from '../services/prisma.js';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 
 export class CommandHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -124,21 +125,21 @@ export class CommandHandler implements EventHandler {
 			Logger.error(
 				msg.channel instanceof TextChannel || msg.channel instanceof NewsChannel || msg.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
-							.replaceAll(`{MESSAGE_ID}`, msg.id)
-							.replaceAll(`{COMMAND_NAME}`, command?.name)
-							.replaceAll(`{USER_TAG}`, msg.author.tag)
-							.replaceAll(`{USER_ID}`, msg.author.id)
-							.replaceAll(`{CHANNEL_NAME}`, msg.channel.name)
-							.replaceAll(`{CHANNEL_ID}`, msg.channel.id)
-							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-							.replaceAll(`{GUILD_NAME}`, msg.guild!.name)
-							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-							.replaceAll(`{GUILD_ID}`, msg.guild!.id)
+						.replaceAll(`{MESSAGE_ID}`, msg.id)
+						.replaceAll(`{COMMAND_NAME}`, command?.name)
+						.replaceAll(`{USER_TAG}`, msg.author.tag)
+						.replaceAll(`{USER_ID}`, msg.author.id)
+						.replaceAll(`{CHANNEL_NAME}`, msg.channel.name)
+						.replaceAll(`{CHANNEL_ID}`, msg.channel.id)
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{GUILD_NAME}`, msg.guild!.name)
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{GUILD_ID}`, msg.guild!.id)
 					: Logs.error.commandOther
-							.replaceAll(`{MESSAGE_ID}`, msg.id)
-							.replaceAll(`{COMMAND_NAME}`, command?.aliases?.join(`, `) as string)
-							.replaceAll(`{USER_TAG}`, msg.author.tag)
-							.replaceAll(`{USER_ID}`, msg.author.id),
+						.replaceAll(`{MESSAGE_ID}`, msg.id)
+						.replaceAll(`{COMMAND_NAME}`, command?.aliases?.join(`, `) as string)
+						.replaceAll(`{USER_TAG}`, msg.author.tag)
+						.replaceAll(`{USER_ID}`, msg.author.id),
 				error,
 			);
 		}
@@ -190,14 +191,14 @@ export class CommandHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (command.deferType) {
-			case CommandDeferType.PUBLIC: {
-				await MessageUtils.deferReply(intr, false);
-				break;
-			}
-			case CommandDeferType.HIDDEN: {
-				await MessageUtils.deferReply(intr, true);
-				break;
-			}
+		case CommandDeferType.PUBLIC: {
+			await InteractionUtils.deferReply(intr, false);
+			break;
+		}
+		case CommandDeferType.HIDDEN: {
+			await InteractionUtils.deferReply(intr, true);
+			break;
+		}
 		}
 
 		// TODO: Get data from database
@@ -219,19 +220,19 @@ export class CommandHandler implements EventHandler {
 					intr.channel instanceof NewsChannel ||
 					intr.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
-							.replaceAll(`{INTERACTION_ID}`, intr.id)
-							.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
-							.replaceAll(`{USER_TAG}`, intr.user.tag)
-							.replaceAll(`{USER_ID}`, intr.user.id)
-							.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
-							.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
-							.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
-							.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
+						.replaceAll(`{INTERACTION_ID}`, intr.id)
+						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
+						.replaceAll(`{USER_TAG}`, intr.user.tag)
+						.replaceAll(`{USER_ID}`, intr.user.id)
+						.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
+						.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
+						.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
+						.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
 					: Logs.error.commandOther
-							.replaceAll(`{INTERACTION_ID}`, intr.id)
-							.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
-							.replaceAll(`{USER_TAG}`, intr.user.tag)
-							.replaceAll(`{USER_ID}`, intr.user.id),
+						.replaceAll(`{INTERACTION_ID}`, intr.id)
+						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
+						.replaceAll(`{USER_TAG}`, intr.user.tag)
+						.replaceAll(`{USER_ID}`, intr.user.id),
 				error,
 			);
 		}
@@ -245,7 +246,7 @@ export class CommandHandler implements EventHandler {
 				.addField(`Error code`, intr.id)
 				.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`)
 				.setColor(`#ff4a4a`);
-			await MessageUtils.sendIntr(intr, embed);
+			await InteractionUtils.send(intr, embed);
 		} catch {
 			// Ignore
 		}

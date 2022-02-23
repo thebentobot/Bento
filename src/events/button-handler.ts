@@ -6,6 +6,7 @@ import { Button, ButtonDeferType } from '../buttons/index.js';
 import { config as Config } from '../config/config.js';
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 
 export class ButtonHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -45,14 +46,14 @@ export class ButtonHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (button.deferType) {
-			case ButtonDeferType.REPLY: {
-				await MessageUtils.deferReply(intr);
-				break;
-			}
-			case ButtonDeferType.UPDATE: {
-				await MessageUtils.deferUpdate(intr);
-				break;
-			}
+		case ButtonDeferType.REPLY: {
+			await InteractionUtils.deferReply(intr);
+			break;
+		}
+		case ButtonDeferType.UPDATE: {
+			await InteractionUtils.deferUpdate(intr);
+			break;
+		}
 		}
 
 		// TODO: Get data from database

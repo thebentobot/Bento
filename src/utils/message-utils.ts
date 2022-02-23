@@ -6,7 +6,9 @@ import {
 	MessageEmbed,
 	MessageOptions,
 	MessageReaction,
+	StartThreadOptions,
 	TextBasedChannel,
+	ThreadChannel,
 	User,
 } from 'discord.js';
 import { prisma } from '../services/prisma.js';
@@ -49,6 +51,21 @@ export class MessageUtils {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.reply(msgOptions);
+		} catch (error) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+				return;
+			} else {
+				throw error;
+			}
+		}
+	}
+
+	public static async startThread(
+		msg: Message,
+		options: StartThreadOptions
+	): Promise<ThreadChannel | void> {
+		try {
+			return await msg.startThread(options);
 		} catch (error) {
 			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
 				return;

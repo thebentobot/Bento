@@ -6,12 +6,13 @@ import { config as Config } from '../config/config.js';
 import { debug as Debug } from '../config/debug.js';
 import { Permission } from '../models/enums/index.js';
 import { EventData } from '../models/internal-models.js';
+import { InteractionUtils } from './interaction-utils.js';
 
 export class CommandUtils {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static async runChecks(command: Command, intr: CommandInteraction, _data: EventData): Promise<boolean> {
 		if (command.requireDev && !Config.developers.includes(intr.user.id)) {
-			await MessageUtils.sendIntr(
+			await InteractionUtils.send(
 				intr,
 				new MessageEmbed().setDescription(`This command can only be used by developers.`).setColor(`#ffcc66`),
 			);
@@ -19,7 +20,7 @@ export class CommandUtils {
 		}
 
 		if (command.requireGuild && !intr.guild) {
-			await MessageUtils.sendIntr(
+			await InteractionUtils.send(
 				intr,
 				new MessageEmbed().setDescription(`This command can only be used in a server.`).setColor(`#ffcc66`),
 			);
@@ -38,7 +39,7 @@ export class CommandUtils {
 						.join(`, `)}`,
 				)
 				.setColor(`#ffcc66`);
-			await MessageUtils.sendIntr(intr, embed);
+			await InteractionUtils.send(intr, embed);
 			return false;
 		}
 
@@ -47,7 +48,7 @@ export class CommandUtils {
 			const embed = new MessageEmbed()
 				.setDescription(`You don't have permission to run that command!`)
 				.setColor(`#ffcc66`);
-			await MessageUtils.sendIntr(intr, embed);
+			await InteractionUtils.send(intr, embed);
 			return false;
 		}
 
