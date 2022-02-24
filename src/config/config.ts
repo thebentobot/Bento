@@ -31,6 +31,22 @@ interface IConfig {
 			schedule: string
 			log: boolean
 		}
+		checkMutes: {
+			schedule: string
+			log: boolean
+		}
+		checkReminders: {
+			schedule: string
+			log: boolean
+		}
+		checkScheduledAnnouncements: {
+			schedule: string
+			log: boolean
+		}
+		checkTimedAnnouncements: {
+			schedule: string
+			log: boolean
+		}
 	}
 	rateLimiting: {
 		commands: {
@@ -99,6 +115,22 @@ export const config: IConfig = {
 	jobs: {
 		updateServerCount: {
 			schedule: `0 */10 * * * *`,
+			log: false
+		},
+		checkMutes: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkReminders: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkScheduledAnnouncements: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkTimedAnnouncements: {
+			schedule: `* * * * *`,
 			log: false
 		}
 	},

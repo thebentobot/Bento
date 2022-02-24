@@ -93,6 +93,7 @@ async function start(): Promise<void> {
 	const userUpdateHandler = new UserUpdateHandler();
 
 	// Jobs
+	// reminder: this is shard-level jobs. For globals check app.ts
 	const jobs: Job[] = [
 		// TODO: Add new jobs here
 	];
