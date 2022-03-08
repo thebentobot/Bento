@@ -60,7 +60,7 @@
 		"express-promise-router": "^4.1.1",
 		"filesize": "^8.0.7",
 		"luxon": "^2.3.1",
-		"node-fetch": "^3.2.1",
+		"node-fetch": "^3.2.2",
 		"node-schedule": "^2.1.0",
 		"node-vibrant": "^3.2.1-alpha.1",
 		"pino": "^7.8.0",
