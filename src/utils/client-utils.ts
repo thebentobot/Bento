@@ -95,14 +95,9 @@ export class ClientUtils {
 			}
 
 			const search = input.toLowerCase();
-			return (await guild.roles.fetch()).find(role =>
-				role.name.toLowerCase().includes(search)
-			);
+			return (await guild.roles.fetch()).find((role) => role.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (
-				error instanceof DiscordAPIError &&
-                [DiscordApiErrors.UnknownRole].includes(error.code)
-			) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownRole].includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -110,10 +105,7 @@ export class ClientUtils {
 		}
 	}
 
-	public static async findTextChannel(
-		guild: Guild,
-		input: string
-	): Promise<NewsChannel | TextChannel | undefined> {
+	public static async findTextChannel(guild: Guild, input: string): Promise<NewsChannel | TextChannel | undefined> {
 		try {
 			const discordId = RegexUtils.discordId(input);
 			if (discordId) {
@@ -127,14 +119,11 @@ export class ClientUtils {
 
 			const search = input.toLowerCase().replaceAll(` `, `-`);
 			return [...(await guild.channels.fetch()).values()]
-				.filter(channel => channel instanceof NewsChannel || channel instanceof TextChannel)
-				.map(channel => channel as NewsChannel | TextChannel)
-				.find(channel => channel.name.toLowerCase().includes(search));
+				.filter((channel) => channel instanceof NewsChannel || channel instanceof TextChannel)
+				.map((channel) => channel as NewsChannel | TextChannel)
+				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (
-				error instanceof DiscordAPIError &&
-                [DiscordApiErrors.UnknownChannel].includes(error.code)
-			) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -142,10 +131,7 @@ export class ClientUtils {
 		}
 	}
 
-	public static async findVoiceChannel(
-		guild: Guild,
-		input: string
-	): Promise<StageChannel | VoiceChannel | undefined> {
+	public static async findVoiceChannel(guild: Guild, input: string): Promise<StageChannel | VoiceChannel | undefined> {
 		try {
 			const discordId = RegexUtils.discordId(input);
 			if (discordId) {
@@ -159,16 +145,11 @@ export class ClientUtils {
 
 			const search = input.toLowerCase();
 			return [...(await guild.channels.fetch()).values()]
-				.filter(
-					channel => channel instanceof StageChannel || channel instanceof VoiceChannel
-				)
-				.map(channel => channel as StageChannel | VoiceChannel)
-				.find(channel => channel.name.toLowerCase().includes(search));
+				.filter((channel) => channel instanceof StageChannel || channel instanceof VoiceChannel)
+				.map((channel) => channel as StageChannel | VoiceChannel)
+				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (
-				error instanceof DiscordAPIError &&
-                [DiscordApiErrors.UnknownChannel].includes(error.code)
-			) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(error.code)) {
 				return;
 			} else {
 				throw error;

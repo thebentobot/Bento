@@ -19,17 +19,18 @@ export class kofiController implements Controller {
 			if (!data) return;
 			const dataJSON = JSON.parse(data);
 			if (dataJSON.is_public === false) return;
-			this.shardManager.broadcastEval(
-				async (client) => {
-					const customClient = client as CustomClient;
-					const webhookChannel: TextChannel = customClient.channels.cache.get(`881566124993544232`) as TextChannel;
-					return await MessageUtils.send(webhookChannel, `"${dataJSON.message}"\nI have received a **${dataJSON.amount}$** **Ko-fi ☕ tip** from **${
+			this.shardManager.broadcastEval(async (client) => {
+				const customClient = client as CustomClient;
+				const webhookChannel: TextChannel = customClient.channels.cache.get(`881566124993544232`) as TextChannel;
+				return await MessageUtils.send(
+					webhookChannel,
+					`"${dataJSON.message}"\nI have received a **${dataJSON.amount}$** **Ko-fi ☕ tip** from **${
 						dataJSON.from_name
 					}**. Thank you so much! 🥺\nIn return, you will ASAP receive **${parseInt(
 						dataJSON.amount,
-					)} Bento** 🍱 in return, as a huge thanks 💖`);
-				}
-			);
+					)} Bento** 🍱 in return, as a huge thanks 💖`,
+				);
+			});
 		});
 	}
 }

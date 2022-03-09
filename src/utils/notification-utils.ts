@@ -76,8 +76,8 @@ export class notificationUtils {
 						url: `https://www.bentobot.xyz/`,
 						iconURL: msg.guild?.iconURL()
 							? (msg.guild.iconURL({
-									dynamic: true,
-									format: `png`,
+								dynamic: true,
+								format: `png`,
 							  }) as string)
 							: (msg.client?.user?.avatarURL({ format: `png` }) as string),
 					};

@@ -1,4 +1,10 @@
-import djs, { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import djs, {
+	ChatInputApplicationCommandData,
+	CommandInteraction,
+	Message,
+	MessageEmbed,
+	PermissionString,
+} from 'discord.js';
 import fileSize from 'filesize';
 import os from 'os';
 import { createRequire } from 'node:module';

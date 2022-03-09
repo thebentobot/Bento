@@ -16,15 +16,16 @@ export class TopggVotingController implements Controller {
 	constructor(private shardManager: ShardingManager) {}
 
 	public register(): void {
-		this.router.post(`/`, webhook.listener(async (vote) => {
-			const userID = vote.user;
-			console.log(userID + ` has voted on top.gg`);
-			await this.shardManager.broadcastEval(
-				async (client) => {
+		this.router.post(
+			`/`,
+			webhook.listener(async (vote) => {
+				const userID = vote.user;
+				console.log(userID + ` has voted on top.gg`);
+				await this.shardManager.broadcastEval(async (client) => {
 					const CustomClient = client as CustomClient;
 					return await CustomClient.topggVoting(userID, vote.isWeekend as boolean);
-				}
-			);
-		}));
+				});
+			}),
+		);
 	}
 }

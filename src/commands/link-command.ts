@@ -1,5 +1,11 @@
 import { ApplicationCommandOptionType } from 'discord-api-types';
-import { ChatInputApplicationCommandData, CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import {
+	ChatInputApplicationCommandData,
+	CommandInteraction,
+	Message,
+	MessageEmbed,
+	PermissionString,
+} from 'discord.js';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../utils/index.js';

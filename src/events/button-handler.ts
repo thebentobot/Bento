@@ -5,7 +5,6 @@ import { EventHandler } from './index.js';
 import { Button, ButtonDeferType } from '../buttons/index.js';
 import { config as Config } from '../config/config.js';
 import { EventData } from '../models/internal-models.js';
-import { MessageUtils } from '../utils/index.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
 
 export class ButtonHandler implements EventHandler {

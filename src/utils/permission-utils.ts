@@ -1,12 +1,12 @@
 import { guild } from '@prisma/client';
-import { AnyChannel, ClientUser, DMChannel, GuildChannel, GuildMember, Permissions } from 'discord.js';
+import { AnyChannel, ClientUser, DMChannel, GuildChannel, GuildMember, Permissions, ThreadChannel } from 'discord.js';
 import { Command } from '../commands/index.js';
 
 export class PermissionUtils {
 	public static canSend(channel: AnyChannel, embedLinks = false): boolean {
 		if (channel instanceof DMChannel) {
 			return true;
-		} else if (channel instanceof GuildChannel) {
+		} else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
 			const channelPerms = channel.permissionsFor(channel.client.user as ClientUser);
 			if (!channelPerms) {
 				// This can happen if the guild disconnected while a collector is running
@@ -29,7 +29,7 @@ export class PermissionUtils {
 	public static canMention(channel: AnyChannel): boolean {
 		if (channel instanceof DMChannel) {
 			return true;
-		} else if (channel instanceof GuildChannel) {
+		} else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
 			const channelPerms = channel.permissionsFor(channel.client.user as ClientUser);
 			if (!channelPerms) {
 				// This can happen if the guild disconnected while a collector is running
@@ -47,7 +47,7 @@ export class PermissionUtils {
 	public static canReact(channel: AnyChannel, removeOthers = false): boolean {
 		if (channel instanceof DMChannel) {
 			return true;
-		} else if (channel instanceof GuildChannel) {
+		} else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
 			const channelPerms = channel.permissionsFor(channel.client.user as ClientUser);
 			if (!channelPerms) {
 				// This can happen if the guild disconnected while a collector is running
@@ -73,7 +73,7 @@ export class PermissionUtils {
 	public static canPin(channel: AnyChannel, unpinOld = false): boolean {
 		if (channel instanceof DMChannel) {
 			return true;
-		} else if (channel instanceof GuildChannel) {
+		} else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
 			const channelPerms = channel.permissionsFor(channel.client.user as ClientUser);
 			if (!channelPerms) {
 				// This can happen if the guild disconnected while a collector is running
@@ -108,7 +108,7 @@ export class PermissionUtils {
 	public static canCreateThreads(channel: AnyChannel, manageThreads = false): boolean {
 		if (channel instanceof DMChannel) {
 			return false;
-		} else if (channel instanceof GuildChannel) {
+		} else if (channel instanceof GuildChannel || channel instanceof ThreadChannel) {
 			const channelPerms = channel.permissionsFor(channel.client.user as ClientUser);
 			if (!channelPerms) {
 				// This can happen if the guild disconnected while a collector is running

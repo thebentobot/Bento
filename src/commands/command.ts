@@ -5,7 +5,7 @@ import { EventData } from '../models/internal-models.js';
 export interface Command {
 	adminOnly?: boolean;
 	requireSetup?: boolean;
-	cooldown?: RateLimiter
+	cooldown?: RateLimiter;
 	name: string;
 	deferType: CommandDeferType;
 	aliases?: string[];

@@ -60,10 +60,7 @@ export class MessageUtils {
 		}
 	}
 
-	public static async startThread(
-		msg: Message,
-		options: StartThreadOptions
-	): Promise<ThreadChannel | void> {
+	public static async startThread(msg: Message, options: StartThreadOptions): Promise<ThreadChannel | void> {
 		try {
 			return await msg.startThread(options);
 		} catch (error) {

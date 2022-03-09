@@ -29,17 +29,17 @@ export class CustomClient extends Client {
 			create: {
 				userID: BigInt(user),
 				bento: isWeekend ? 10 : 5,
-				bentoDate: new Date(newUserDate)
+				bentoDate: new Date(newUserDate),
 			},
 			update: {
 				userID: BigInt(user),
 				bento: {
-					increment: isWeekend ? 10 : 5
-				}
+					increment: isWeekend ? 10 : 5,
+				},
 			},
 			where: {
-				userID: BigInt(user)
-			}
+				userID: BigInt(user),
+			},
 		});
 
 		const webhookChannel = this.channels.cache.get(`881566124993544232`) as TextChannel;
