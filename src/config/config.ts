@@ -13,6 +13,7 @@ interface IClient {
 }
 
 interface IConfig {
+	botName: string,
 	developers: string[]
 	client: IClient
 	api: { port: number, secret: string}
@@ -75,6 +76,7 @@ interface IConfig {
 }
 
 export const config: IConfig = {
+	botName: process.env.botName as string,
 	developers: [`232584569289703424`],
 	client: {
 		id: process.env.botId as string,

@@ -1,10 +1,11 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/rest/v9';
 import { Options } from 'discord.js';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { Bot } from './bot.js';
 import { Button } from './buttons/index.js';
-import { Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands/index.js';
+import { Ball8Command, Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
 	CommandHandler,
@@ -52,6 +53,7 @@ async function start(): Promise<void> {
 		new InfoCommand(),
 		new LinkCommand(),
 		new TestCommand(),
+		new Ball8Command(),
 		// TODO: Add new commands here
 	].sort((a, b) => (a.metadata.name > b.metadata.name ? 1 : -1));
 
@@ -125,13 +127,15 @@ async function start(): Promise<void> {
 	if (process.argv[2] === `--register`) {
 		await registerCommands(commands);
 		process.exit();
-	} else if (process.argv[2] === `--register:clear`) {
+	} else if (process.argv[2] === `--clear`) {
 		await clearCommands();
 		process.exit();
 	}
 
 	await bot.start();
 }
+
+const botDevServer = `790353119795871744`;
 
 async function registerCommands(commands: Command[]): Promise<void> {
 	const cmdDatas = commands.map((cmd) => cmd.metadata);
@@ -143,8 +147,13 @@ async function registerCommands(commands: Command[]): Promise<void> {
 
 	try {
 		const rest = new REST({ version: `9` }).setToken(Config.client.token);
-		await rest.put(Routes.applicationCommands(Config.client.id), { body: [] });
-		await rest.put(Routes.applicationCommands(Config.client.id), { body: cmdDatas });
+		if (process.env.NODE_ENV === `development`) {
+			await rest.put(Routes.applicationGuildCommands(Config.client.id, botDevServer), { body: [] });
+			await rest.put(Routes.applicationGuildCommands(Config.client.id, botDevServer), { body: cmdDatas });
+		} else {
+			await rest.put(Routes.applicationCommands(Config.client.id), { body: [] });
+			await rest.put(Routes.applicationCommands(Config.client.id), { body: cmdDatas });
+		}
 	} catch (error) {
 		Logger.error(Logs.error.commandsRegistering, error);
 		return;

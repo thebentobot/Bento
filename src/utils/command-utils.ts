@@ -26,9 +26,8 @@ export class CommandUtils {
 		}
 
 		if (
-			intr.channel instanceof GuildChannel || intr.channel instanceof ThreadChannel &&
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			!intr.channel.permissionsFor(intr.client.user as ClientUser)!.has(command.requireClientPerms)
+			(intr.channel instanceof GuildChannel || intr.channel instanceof ThreadChannel) && command.requireClientPerms.length &&
+            !intr.channel.permissionsFor(intr.client.user as ClientUser)?.has(command.requireClientPerms)
 		) {
 			const embed = new MessageEmbed()
 				.setDescription(
@@ -53,6 +52,35 @@ export class CommandUtils {
 		return true;
 	}
 
+	public static ball8Answers(): string[] {
+		return [
+			`Maybe.`,
+			`Certainly not.`,
+			`I hope so.`,
+			`Not in your wildest dreams.`,
+			`There is a good chance.`,
+			`Quite likely.`,
+			`I think so.`,
+			`I hope not.`,
+			`I hope so.`,
+			`Never!`,
+			`Fuhgeddaboudit.`,
+			`Ahaha! Really?!?`,
+			`Pfft.`,
+			`Sorry, bucko.`,
+			`Hell, yes.`,
+			`Hell to the no.`,
+			`The future is bleak.`,
+			`The future is uncertain.`,
+			`I would rather not say.`,
+			`Who cares?`,
+			`Possibly.`,
+			`Never, ever, ever.`,
+			`There is a small chance.`,
+			`Yes!`,
+		];
+	}
+
 	private static hasPermission(member: GuildMember, command: Command): boolean {
 		// Debug option to bypass permission checks
 		if (Debug.skip.checkPerms) {
@@ -75,4 +103,6 @@ export class CommandUtils {
 
 		return true;
 	}
+
+	
 }

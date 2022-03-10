@@ -62,9 +62,13 @@ export class CommandHandler implements EventHandler {
 			await this.helpCommand.executeMsgCmd(msg, args, data);
 			return;
 		}
-
+		args.shift();
+		const getCmd = args.shift()?.toLowerCase();
+		
+		if (!getCmd) return;
+		
 		// Try to find the command the user wants
-		const command = this.find(args[1]);
+		const command = this.find(getCmd);
 
 		if (!command) {
 			const customCommand = await prisma.tag.findFirst({
