@@ -6,10 +6,10 @@ import {
 	PermissionString,
 } from 'discord.js';
 
-import { EventData } from '../models/internal-models.js';
-import { MessageUtils, stylingUtils } from '../utils/index.js';
-import { InteractionUtils } from '../utils/interaction-utils.js';
-import { Command, CommandDeferType } from './command.js';
+import { EventData } from '../../models/internal-models.js';
+import { MessageUtils, stylingUtils } from '../../utils/index.js';
+import { InteractionUtils } from '../../utils/interaction-utils.js';
+import { Command, CommandDeferType } from '../command.js';
 
 export class HelpCommand implements Command {
 	public name = `help`;

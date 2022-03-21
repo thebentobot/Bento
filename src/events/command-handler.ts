@@ -59,7 +59,8 @@ export class CommandHandler implements EventHandler {
 		}
 
 		if (args.length === 1 && msg.mentions.users.has(msg.client?.user?.id as string)) {
-			await this.helpCommand.executeMsgCmd(msg, args, data);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			await this.helpCommand.executeMsgCmd!(msg, args, data);
 			return;
 		}
 		args.shift();
@@ -110,7 +111,7 @@ export class CommandHandler implements EventHandler {
 
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			await command!.executeMsgCmd(msg, args, data);
+			await command!.executeMsgCmd!(msg, args, data);
 		} catch (error) {
 			try {
 				await MessageUtils.send(
@@ -130,7 +131,7 @@ export class CommandHandler implements EventHandler {
 				msg.channel instanceof TextChannel || msg.channel instanceof NewsChannel || msg.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
 						.replaceAll(`{MESSAGE_ID}`, msg.id)
-						.replaceAll(`{COMMAND_NAME}`, command?.name)
+						.replaceAll(`{COMMAND_NAME}`, command?.name as string)
 						.replaceAll(`{USER_TAG}`, msg.author.tag)
 						.replaceAll(`{USER_ID}`, msg.author.id)
 						.replaceAll(`{CHANNEL_NAME}`, msg.channel.name)
@@ -182,7 +183,7 @@ export class CommandHandler implements EventHandler {
 		}
 
 		// Try to find the command the user wants
-		const command = this.commands.find((command) => command.metadata.name === intr.commandName);
+		const command = this.commands.find((command) => command.metadata?.name === intr.commandName);
 		if (!command) {
 			Logger.error(
 				Logs.error.commandNotFound
@@ -213,7 +214,8 @@ export class CommandHandler implements EventHandler {
 			const passesChecks = await CommandUtils.runChecks(command, intr, data);
 			if (passesChecks) {
 				// Execute the command
-				await command.executeIntr(intr, data);
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				await command.executeIntr!(intr, data);
 			}
 		} catch (error) {
 			await this.sendIntrError(intr, data);
@@ -225,7 +227,8 @@ export class CommandHandler implements EventHandler {
 					intr.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
-						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
 						.replaceAll(`{USER_TAG}`, intr.user.tag)
 						.replaceAll(`{USER_ID}`, intr.user.id)
 						.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
@@ -234,7 +237,8 @@ export class CommandHandler implements EventHandler {
 						.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
 					: Logs.error.commandOther
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
-						.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
 						.replaceAll(`{USER_TAG}`, intr.user.tag)
 						.replaceAll(`{USER_ID}`, intr.user.id),
 				error,

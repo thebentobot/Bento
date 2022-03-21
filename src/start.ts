@@ -5,7 +5,22 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import { Bot } from './bot.js';
 import { Button } from './buttons/index.js';
-import { Ball8Command, Command, DevCommand, HelpCommand, InfoCommand, LinkCommand, TestCommand } from './commands/index.js';
+import { 
+	EightBallCommand,
+	DogCommand,
+	CatCommand, 
+	Command, 
+	DevCommand, 
+	HelpCommand, 
+	LinkCommand,
+	ChooseCommand,
+	RollCommand,
+	MemberCommand,
+	UserCommand,
+	AvatarCommand,
+	WhoIsCommand,
+	ServerCommand
+} from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
 	CommandHandler,
@@ -50,12 +65,20 @@ async function start(): Promise<void> {
 	const commands: Command[] = [
 		new DevCommand(),
 		new HelpCommand(),
-		new InfoCommand(),
 		new LinkCommand(),
-		new TestCommand(),
-		new Ball8Command(),
+		new EightBallCommand(),
+		new CatCommand(),
+		new DogCommand(),
+		new ChooseCommand(),
+		new RollCommand(),
+		new MemberCommand(),
+		new UserCommand(),
+		new AvatarCommand(),
+		new WhoIsCommand(),
+		new ServerCommand()
 		// TODO: Add new commands here
-	].sort((a, b) => (a.metadata.name > b.metadata.name ? 1 : -1));
+	];
+	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));
 
 	const helpCommand = new HelpCommand();
 	//const guildRepo = new GuildRepo();
@@ -138,8 +161,10 @@ async function start(): Promise<void> {
 const botDevServer = `790353119795871744`;
 
 async function registerCommands(commands: Command[]): Promise<void> {
-	const cmdDatas = commands.map((cmd) => cmd.metadata);
-	const cmdNames = cmdDatas.map((cmdData) => cmdData.name);
+	const cmdFilter = commands.filter((cmd) => cmd.metadata);
+	const cmdDatas = cmdFilter.map((cmd) => cmd.metadata);
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	const cmdNames = cmdDatas.map((cmdData) => cmdData!.name);
 
 	Logger.info(
 		Logs.info.commandsRegistering.replaceAll(`{COMMAND_NAMES}`, cmdNames.map((cmdName) => `'${cmdName}'`).join(`, `)),

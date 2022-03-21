@@ -6,10 +6,10 @@ export interface Command {
 	adminOnly?: boolean;
 	requireSetup?: boolean;
 	cooldown?: RateLimiter;
-	name: string;
-	deferType: CommandDeferType;
+	name?: string;
+	deferType?: CommandDeferType;
 	aliases?: string[];
-	metadata: ChatInputApplicationCommandData;
+	metadata?: ChatInputApplicationCommandData;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	requireDev: boolean;
@@ -17,8 +17,8 @@ export interface Command {
 	requireClientPerms: PermissionString[];
 	requireUserPerms: PermissionString[];
 	requirePremium: boolean;
-	executeIntr(intr: CommandInteraction, data?: EventData): Promise<void>;
-	executeMsgCmd(msg: Message, args?: string[], data?: EventData): Promise<void>;
+	executeIntr?(intr: CommandInteraction, data?: EventData): Promise<void>;
+	executeMsgCmd?(msg: Message, args?: string[], data?: EventData): Promise<void>;
 }
 
 export enum CommandDeferType {
