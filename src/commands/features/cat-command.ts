@@ -28,6 +28,7 @@ export class CatCommand implements Command {
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = await this.catCommand();
 		await InteractionUtils.send(intr, command);
+		return;
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

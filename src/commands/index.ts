@@ -9,6 +9,9 @@ export { MemberCommand } from './info/member-command.js';
 export { UserCommand } from './info/user-command.js';
 export { WhoIsCommand } from './info/whois-command.js';
 export { ServerCommand } from './info/server-command.js';
+export { ServerInfoCommand } from './info/serverinfo-command.js';
+export { RolesCommand } from './info/roles-command.js';
+export { EmotesCommand } from './info/emotes-command.js';
 
 // feature commands
 export { EightBallCommand } from './features/eightball-command.js';

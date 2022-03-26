@@ -26,7 +26,24 @@ export class ServerCommand implements Command {
 			{
 				name: `emotes`,
 				description: `Show emotes for the server`,
-				type: ApplicationCommandOptionType.Subcommand.valueOf(),
+				type: ApplicationCommandOptionType.SubcommandGroup.valueOf(),
+				options: [
+					{
+						name: `all`,
+						description: `Show all emotes for the server`,
+						type: ApplicationCommandOptionType.Subcommand.valueOf(),
+					},
+					{
+						name: `animated`,
+						description: `Show all animated emotes for the server`,
+						type: ApplicationCommandOptionType.Subcommand.valueOf(),
+					},
+					{
+						name: `static`,
+						description: `Show all static emotes for the server`,
+						type: ApplicationCommandOptionType.Subcommand.valueOf(),
+					},
+				]
 			},
 			{
 				name: `roles`,
@@ -72,35 +89,101 @@ export class ServerCommand implements Command {
 			return;
 		}
 		
-		if (intr.options.getSubcommand() === `emotes`) {
-			const authorData: EmbedAuthorData = {
-				name: intr.guild!.name,
-				iconURL: intr.guild!.iconURL({format: `png`}) as string
-			};
-			const footerData: EmbedFooterData = {
-				text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
-			};
-			const embed = new MessageEmbed()
-				.setAuthor(authorData)
-				.setTitle(`All Emotes in ${intr.guild!.name}`)
-				.setThumbnail(
-							intr.guild!.iconURL({
-								format: `png`,
-								size: 1024,
-								dynamic: true,
-							}) as string,
-				)
-				.setFooter(footerData)
-				.setDescription(
-					stylingUtils.trim(
-								intr.guild!.emojis.cache
-									.map((emote) => (emote.animated ? `<a:${emote.name}:${emote.id}>` : `<:${emote.name}:${emote.id}>`))
-									.join(` `) as string,
-								4096,
-					),
-				);
-			await InteractionUtils.send(intr, embed);
-			return;
+		if (intr.options.getSubcommandGroup() === `emotes`) {
+			if (intr.options.getSubcommand() === `all`) {
+				const authorData: EmbedAuthorData = {
+					name: intr.guild!.name,
+					iconURL: intr.guild!.iconURL({format: `png`}) as string
+				};
+				const footerData: EmbedFooterData = {
+					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
+				};
+				const embed = new MessageEmbed()
+					.setAuthor(authorData)
+					.setTitle(`All Emotes in ${intr.guild!.name}`)
+					.setThumbnail(
+								intr.guild!.iconURL({
+									format: `png`,
+									size: 1024,
+									dynamic: true,
+								}) as string,
+					)
+					.setFooter(footerData)
+					.setDescription(
+						stylingUtils.trim(
+									intr.guild!.emojis.cache
+										.map((emote) => (emote.animated ? `<a:${emote.name}:${emote.id}>` : `<:${emote.name}:${emote.id}>`))
+										.join(` `) as string,
+									4096,
+						),
+					);
+				await InteractionUtils.send(intr, embed);
+				return;
+			}
+
+			if (intr.options.getSubcommand() === `animated`) {
+				const authorData: EmbedAuthorData = {
+					name: intr.guild!.name,
+					iconURL: intr.guild!.iconURL({format: `png`}) as string
+				};
+				const footerData: EmbedFooterData = {
+					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
+				};
+				const embed = new MessageEmbed()
+					.setAuthor(authorData)
+					.setTitle(`All Animated Emotes in ${intr.guild!.name}`)
+					.setThumbnail(
+								intr.guild!.iconURL({
+									format: `png`,
+									size: 1024,
+									dynamic: true,
+								}) as string,
+					)
+					.setFooter(footerData)
+					.setDescription(
+						stylingUtils.trim(
+									intr.guild!.emojis.cache
+										.filter((e) => e.animated === true)
+										.map((emote) => `<a:${emote.name}:${emote.id}>`)
+										.join(` `) as string,
+									4096,
+						),
+					);
+				await InteractionUtils.send(intr, embed);
+				return;
+			}
+
+			if (intr.options.getSubcommand() === `static`) {
+				const authorData: EmbedAuthorData = {
+					name: intr.guild!.name,
+					iconURL: intr.guild!.iconURL({format: `png`}) as string
+				};
+				const footerData: EmbedFooterData = {
+					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
+				};
+				const embed = new MessageEmbed()
+					.setAuthor(authorData)
+					.setTitle(`All Static Emotes in ${intr.guild!.name}`)
+					.setThumbnail(
+								intr.guild!.iconURL({
+									format: `png`,
+									size: 1024,
+									dynamic: true,
+								}) as string,
+					)
+					.setFooter(footerData)
+					.setDescription(
+						stylingUtils.trim(
+									intr.guild!.emojis.cache
+										.filter((e) => e.animated === false)
+										.map((emote) => `<:${emote.name}:${emote.id}>`)
+										.join(` `) as string,
+									4096,
+						),
+					);
+				await InteractionUtils.send(intr, embed);
+				return;
+			}
 		}
         
 		if (intr.options.getSubcommand() === `roles`) {

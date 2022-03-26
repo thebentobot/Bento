@@ -10,3 +10,4 @@ export { ShardUtils } from './shard-utils.js';
 export { StringUtils } from './string-utils.js';
 export { notificationUtils } from './notification-utils.js';
 export { stylingUtils } from './styling-utils.js';
+export { InteractionUtils } from './interaction-utils.js';
