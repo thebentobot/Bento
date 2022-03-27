@@ -19,7 +19,14 @@ import {
 	UserCommand,
 	AvatarCommand,
 	WhoIsCommand,
-	ServerCommand
+	ServerCommand,
+	PingCommand,
+	ServerInfoCommand,
+	RolesCommand,
+	EmotesCommand,
+	BannerCommand,
+	RpsCommand,
+	UrbanCommand
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -75,7 +82,14 @@ async function start(): Promise<void> {
 		new UserCommand(),
 		new AvatarCommand(),
 		new WhoIsCommand(),
-		new ServerCommand()
+		new ServerCommand(),
+		new PingCommand(),
+		new EmotesCommand(),
+		new RolesCommand(),
+		new ServerInfoCommand(),
+		new BannerCommand(),
+		new RpsCommand(),
+		new UrbanCommand()
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));

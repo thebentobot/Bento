@@ -1,7 +1,6 @@
 import {
 	ChatInputApplicationCommandData,
 	CommandInteraction,
-	EmbedAuthorData,
 	GuildMember,
 	MessageEmbed,
 	PermissionString,
@@ -17,18 +16,6 @@ export class MemberCommand implements Command {
 		name: `member`,
 		description: `Show info for a member`,
 		options: [
-			{
-				name: `avatar`,
-				description: `Show the avatar for a member`,
-				type: ApplicationCommandOptionType.Subcommand.valueOf(),
-				options: [
-					{
-						name: `user`,
-						description: `Check the avatar for a specific member`,
-						type: ApplicationCommandOptionType.User.valueOf(),
-					}
-				]
-			},
 			{
 				name: `info`,
 				description: `Show info for a member`,
@@ -51,50 +38,7 @@ export class MemberCommand implements Command {
 	public requireUserPerms: PermissionString[] = [];
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		let imageURL = ``;
-		let imageURLColour = ``;
-		let authorData: EmbedAuthorData = {
-			name: `inital ts annoying`
-		};
-
-		if (intr.options.getSubcommand() === `avatar`) {
-			if (intr.options.getMember(`user`)) {
-				const guildMember = intr.options.getMember(`user`) as GuildMember;
-				imageURL = guildMember.displayAvatarURL({format: `png`, dynamic: true, size: 1024});
-				imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
-				authorData = {
-					name: `${guildMember.displayName}'s avatar`,
-				};
-			} else {
-				const guildMember = intr.member as GuildMember;
-				imageURL = guildMember.displayAvatarURL({format: `png`, dynamic: true, size: 1024});
-				imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
-				authorData = {
-					name: `${guildMember.displayName}'s avatar`,
-				};
-			}
-		}
-		/*
-	if (intr.options.get(`banner`)) {
-		if (intr.options.get(`user`)?.member) {
-			const guildMember = intr.options.get(`user`)?.member as GuildMember;
-			imageURL = guildMember.displayAvatarURL({format: `png`, dynamic: true, size: 1024});
-			imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
-			authorData = {
-				name: `${guildMember.displayName}'s avatar`,
-			};
-		} else {
-			const guildMember = intr.member as GuildMember;
-			imageURL = guildMember.displayAvatarURL({format: `png`, dynamic: true, size: 1024});
-			imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
-			authorData = {
-				name: `${guildMember.displayName}'s avatar`,
-			};
-		}
-	}
-	*/
 		if (intr.options.getSubcommand() === `info`) {
 			let guildMember: GuildMember;
 			if (intr.options.getMember(`user`)) {
@@ -102,8 +46,8 @@ export class MemberCommand implements Command {
 			} else {
 				guildMember = intr.member as GuildMember;
 			}
-			imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
-			authorData = {
+			const imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
+			const authorData = {
 				name: guildMember.displayName,
 				iconURL: guildMember.displayAvatarURL({ dynamic: true})
 			};
@@ -136,12 +80,6 @@ export class MemberCommand implements Command {
 					}],
 				);
 			await InteractionUtils.send(intr, embed);
-		} else {
-			const embed = new MessageEmbed()
-				.setAuthor(authorData)
-				.setColor(`#${await stylingUtils.urlToColours(imageURLColour)}`)
-				.setImage(imageURL);
-			await InteractionUtils.send(intr, embed);
-		}
+		} 
 	}
 }

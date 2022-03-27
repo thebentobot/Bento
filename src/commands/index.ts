@@ -12,6 +12,8 @@ export { ServerCommand } from './info/server-command.js';
 export { ServerInfoCommand } from './info/serverinfo-command.js';
 export { RolesCommand } from './info/roles-command.js';
 export { EmotesCommand } from './info/emotes-command.js';
+export { PingCommand } from './info/ping-command.js';
+export { BannerCommand } from './info/banner-command.js';
 
 // feature commands
 export { EightBallCommand } from './features/eightball-command.js';
@@ -19,3 +21,6 @@ export { CatCommand } from './features/cat-command.js';
 export { DogCommand } from './features/dog-command.js';
 export { ChooseCommand } from './features/choose-command.js';
 export { RollCommand } from './features/roll-command.js';
+export { UrbanCommand } from './features/urban-command.js';
+export { RpsCommand } from './features/rps-command.js';
+
