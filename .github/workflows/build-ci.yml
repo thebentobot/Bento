@@ -15,16 +15,16 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  tsc:
-    name: tsc
+  building:
+    name: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: install node v16
       uses: actions/setup-node@v3
       with:
-        node-version: 16.6.0
+        node-version: 16
     - name: npm ci
       run: npm ci
-    - name: tsc
-      uses: icrawl/action-tsc@v1
+    - name: npm build
+      run: npm run build
