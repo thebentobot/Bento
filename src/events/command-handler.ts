@@ -11,7 +11,7 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from './index.js';
-import { CommandDeferAccessType, CommandType } from '../commands/command.js';
+import { CommandDeferAccessType } from '../commands/command.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { logs as Logs } from '../lang/logs.js';

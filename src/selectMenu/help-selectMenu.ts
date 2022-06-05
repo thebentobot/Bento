@@ -61,6 +61,7 @@ export class HelpSelectMenu implements SelectMenu {
 	public deferType = SelectMenuDeferType.UPDATE;
 	public requireGuild = false;
 	public requireEmbedAuthorTag = false;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async execute(intr: SelectMenuInteraction, _msg: Message, _data: EventData): Promise<void> {
 		if (intr.customId === this.ids[0]) {
 			const categorySelectMenuValue = intr.values.toString();
