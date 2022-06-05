@@ -16,3 +16,4 @@ export { GuildMemberUpdateHandler } from './guildmember-update-handler.js';
 export { GuildRoleDeleteHandler } from './guild-role-delete-handler.js';
 export { GuildRoleUpdateHandler } from './guild-role-update-handler.js';
 export { UserUpdateHandler } from './user-update-handler.js';
+export { SelectMenuHandler } from './selectMenu-handler.js';

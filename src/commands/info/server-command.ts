@@ -10,13 +10,16 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 
 export class ServerCommand implements Command {
+	public name = `server`;
+	public slashDescription = `Shows info for the current server`;
+	public commandType = CommandType.SlashCommand;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `server`,
-		description: `Show info for the current server`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `info`,
@@ -55,9 +58,13 @@ export class ServerCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Shows various information about the server.\nRoles, emotes, general information.`;
+	public usage = `/server <one of the options>`;
+	public website = `https://www.bentobot.xyz/commands#link`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

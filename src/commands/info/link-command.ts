@@ -5,17 +5,19 @@ import {
 	Message,
 	PermissionString,
 } from 'discord.js';
-
+import { config } from '../../config/config.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
 export class LinkCommand implements Command {
 	public name = `link`;
+	public slashDescription = `Get various links related to ${config.botName}`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `link`,
-		description: `Get various links related to Bento`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `link`,
@@ -50,9 +52,13 @@ export class LinkCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Get various links related to ${config.botName}.\nThe options are "website", "github", "patreon", "kofi" and "topgg".`;
+	public usage = `link <one of the options> | /link <choose an option>`;
+	public website = `https://www.bentobot.xyz/commands#link`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

@@ -8,13 +8,16 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 
 export class MemberCommand implements Command {
+	public name = `member`;
+	public slashDescription = `Show info for a member`;
+	public commandType = CommandType.SlashCommand;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `member`,
-		description: `Show info for a member`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `info`,
@@ -33,9 +36,13 @@ export class MemberCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Show info for a member`;
+	public usage = `/member`;
+	public website = `https://www.bentobot.xyz/commands#member`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
