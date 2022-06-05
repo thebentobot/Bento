@@ -7,16 +7,25 @@ import {
 	PermissionString,
 } from 'discord.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
+
+// FIX DISABLE OPTION
 
 export class EmotesCommand implements Command {
 	public name = `emotes`;
+	public aliases = [`emote`];
+	public slashDescription = `Shows list of emotes from the server.`;
+	public commandType = CommandType.MessageCommand;
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Shows list of emotes from the server.\nIt's both possible to see only the static emotes and animated emotes.`;
+	public usage = `emotes [animated | static]`;
+	public website = `https://www.bentobot.xyz/commands#emotes`;
+	public category = `info`;
 
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		if (!args.length || args[0] === `all`) {

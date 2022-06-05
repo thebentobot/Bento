@@ -9,15 +9,17 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import axios from 'axios';
 
 export class UrbanCommand implements Command {
 	public name = `urban`;
+	public slashDescription = `Search for definitions on Urban Dictionary`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `urban`,
-		description: `Search for definitions on Urban Dictionary`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `definition`,
@@ -30,9 +32,13 @@ export class UrbanCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Search for definitions on Urban Dictionary.\nIf the query you want to be defined doesn't exist, it won't return anything.`;
+	public usage = `urban <search input> | /urban <search input>`;
+	public website = `https://www.bentobot.xyz/commands#urban`;
+	public category = `features`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

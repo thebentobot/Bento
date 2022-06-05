@@ -12,7 +12,7 @@ import typescript from 'typescript';
 
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
-import { Command, CommandDeferType } from './command.js';
+import { Command, CommandDeferAccessType, CommandType } from './command.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
 
 const require = createRequire(import.meta.url);
@@ -21,16 +21,22 @@ const TsConfig = require(`../../tsconfig.json`);
 export class DevCommand implements Command {
 	public name = `dev`;
 	public aliases = [`developer`];
+	public slashDescription = `View system info`;
+	public commandType = CommandType.MessageCommand;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `dev`,
 		description: `View developer info`,
 	};
 	public requireDev = true;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireGuild = false;
 	public requirePremium = false;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `View system info`;
+	public usage = `dev | /dev`;
+	public website = `https://www.bentobot.xyz/commands#dev`;
+	public category = ``;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

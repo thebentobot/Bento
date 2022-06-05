@@ -8,15 +8,17 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 
 export class ChooseCommand implements Command {
 	public name = `choose`;
+	public slashDescription = `Make ${config.botName} choose one of your options`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `choose`,
-		description: `Make ${config.botName} choose one of the options`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `options`,
@@ -29,9 +31,13 @@ export class ChooseCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Make ${config.botName} choose one of your options.\nMake space between your options.\n**Maximum 20 options.**`;
+	public usage = `choose <option 1> <option 2> <option 20> | /choose <option 1> <option 2> <option 20>`;
+	public website = `https://www.bentobot.xyz/commands#choose`;
+	public category = `features`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

@@ -1,4 +1,5 @@
 import { DiscordAPIError } from 'discord.js';
+import { Response } from 'node-fetch';
 import pino from 'pino';
 
 let logger = pino(

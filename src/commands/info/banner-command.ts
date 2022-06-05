@@ -9,14 +9,16 @@ import {
 } from 'discord.js';
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { ClientUtils, InteractionUtils, MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { EventData } from '../../models/internal-models.js';
 
 export class BannerCommand implements Command {
 	public name = `banner`;
+	public slashDescription = `Show the banner for a user`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `banner`,
-		description: `Show the banner for a user`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `user`,
@@ -49,9 +51,13 @@ export class BannerCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Show the banner for a user.\nIf they don't have a banner, it will show their colour.\nIf they don't have a colour it won't show anything.`;
+	public usage = `banner [user id or mention user] | /banner <pick an option>`;
+	public website = `https://www.bentobot.xyz/commands#banner`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

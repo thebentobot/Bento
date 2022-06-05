@@ -16,6 +16,7 @@ import {
 	PartialMessage,
 	GuildBan,
 	Role,
+	SelectMenuInteraction,
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
@@ -37,6 +38,7 @@ import {
 	ReactionHandler,
 	GuildMemberAddHandler,
 	GuildMemberRemoveHandler,
+	SelectMenuHandler
 } from './events';
 import { logs as Logs } from './lang/logs.js';
 import { JobService, Logger } from './services/index.js';
@@ -65,6 +67,7 @@ export class Bot {
 		private guildRoleDeleteHandler: GuildRoleDeleteHandler,
 		private guildRoleUpdateHandler: GuildRoleUpdateHandler,
 		private userUpdateHandler: UserUpdateHandler,
+		private SelectMenuHandler: SelectMenuHandler
 	) {}
 
 	public async start(): Promise<void> {
@@ -198,6 +201,12 @@ export class Bot {
 				await this.buttonHandler.process(intr, intr.message as Message);
 			} catch (error) {
 				Logger.error(Logs.error.button, error);
+			}
+		} else if (intr instanceof SelectMenuInteraction) {
+			try {
+				await this.SelectMenuHandler.process(intr, intr.message as Message);
+			} catch (error) {
+				Logger.error(Logs.error.selectMenu, error);
 			}
 		}
 	}

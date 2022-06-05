@@ -47,13 +47,40 @@ import {
 	GuildRoleDeleteHandler,
 	GuildRoleUpdateHandler,
 	UserUpdateHandler,
+	SelectMenuHandler,
 } from './events/index.js';
 import { CustomClient } from './extensions/index.js';
 import { Job } from './jobs/index.js';
 import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
+import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
+import { SelectMenu } from './selectMenu/selectMenu.js';
 import { JobService, Logger } from './services/index.js';
 import { Trigger } from './triggers/index.js';
+
+export const commands: Command[] = [
+	new DevCommand(),
+	new HelpCommand(),
+	new LinkCommand(),
+	new EightBallCommand(),
+	new CatCommand(),
+	new DogCommand(),
+	new ChooseCommand(),
+	new RollCommand(),
+	new MemberCommand(),
+	new UserCommand(),
+	new AvatarCommand(),
+	new WhoIsCommand(),
+	new ServerCommand(),
+	new PingCommand(),
+	new EmotesCommand(),
+	new RolesCommand(),
+	new ServerInfoCommand(),
+	new BannerCommand(),
+	new RpsCommand(),
+	new UrbanCommand()
+	// TODO: Add new commands here
+];
 
 async function start(): Promise<void> {
 	// Client
@@ -102,6 +129,12 @@ async function start(): Promise<void> {
 		// TODO: Add new buttons here
 	];
 
+	// Select Menus replies
+	const selectMenus: SelectMenu[] = [
+		// TODO: Add new Select Menus here
+		new HelpSelectMenu()
+	];
+
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -130,6 +163,7 @@ async function start(): Promise<void> {
 	const guildRoleDeleteHandler = new GuildRoleDeleteHandler();
 	const guildRoleUpdateHandler = new GuildRoleUpdateHandler();
 	const userUpdateHandler = new UserUpdateHandler();
+	const selectMenuHandler = new SelectMenuHandler(selectMenus);
 
 	// Jobs
 	// reminder: this is shard-level jobs. For globals check app.ts
@@ -158,6 +192,7 @@ async function start(): Promise<void> {
 		guildRoleDeleteHandler,
 		guildRoleUpdateHandler,
 		userUpdateHandler,
+		selectMenuHandler
 	);
 
 	// Register
