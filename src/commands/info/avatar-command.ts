@@ -10,12 +10,14 @@ import {
 } from 'discord.js';
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { ClientUtils, InteractionUtils, MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { EventData } from '../../models/internal-models.js';
 
 export class AvatarCommand implements Command {
 	public name = `avatar`;
-	public aliases: string[] = [`pfp`];
+	public slashDescription = `Show the avatar for a user`;
+	public commandType = CommandType.Both;
+	public aliases: string[] = [`pfp`, `av`];
 	public metadata: ChatInputApplicationCommandData = {
 		name: `avatar`,
 		description: `Show the avatar for a user`,
@@ -49,9 +51,13 @@ export class AvatarCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Show user's avatars, or your own if you don't mention anyone.`;
+	public usage = `avatar [userID or mention a user] | /avatar <pick a user>`;
+	public website = `https://www.bentobot.xyz/commands#avatar`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

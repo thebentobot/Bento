@@ -6,23 +6,29 @@ import {
 } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import axios from 'axios';
 
 export class DogCommand implements Command {
 	public name = `dog`;
+	public slashDescription = `Make ${config.botName} send a random dog`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `dog`,
-		description: `Make ${config.botName} a random dog`
+		description: this.slashDescription
 	};
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Make ${config.botName} send a random dog 🐶🥺`;
+	public usage = `dog | /dog`;
+	public website = `https://www.bentobot.xyz/commands#dog`;
+	public category = `features`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

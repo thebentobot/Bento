@@ -11,7 +11,7 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from './index.js';
-import { CommandDeferType } from '../commands/command.js';
+import { CommandDeferAccessType } from '../commands/command.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { logs as Logs } from '../lang/logs.js';
@@ -60,7 +60,7 @@ export class CommandHandler implements EventHandler {
 
 		if (args.length === 1 && msg.mentions.users.has(msg.client?.user?.id as string)) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			await this.helpCommand.executeMsgCmd!(msg, args, data);
+			await this.helpCommand.executeMsgCmd!(msg, [], data);
 			return;
 		}
 		args.shift();
@@ -108,7 +108,12 @@ export class CommandHandler implements EventHandler {
 			await MessageUtils.send(msg.channel, `You don't have permission to run that command!`);
 			return;
 		}
-
+		/*
+		FIX
+		if (command.commandType !== CommandType.Both || CommandType.MessageCommand) {
+			return;
+		}
+		*/
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			await command!.executeMsgCmd!(msg, args, data);
@@ -192,15 +197,20 @@ export class CommandHandler implements EventHandler {
 			);
 			return;
 		}
-
+		/*
+		FIX
+		if (command.commandType !== CommandType.Both || CommandType.SlashCommand) {
+			return;
+		}
+		*/
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (command.deferType) {
-		case CommandDeferType.PUBLIC: {
+		case CommandDeferAccessType.PUBLIC: {
 			await InteractionUtils.deferReply(intr, false);
 			break;
 		}
-		case CommandDeferType.HIDDEN: {
+		case CommandDeferAccessType.HIDDEN: {
 			await InteractionUtils.deferReply(intr, true);
 			break;
 		}
@@ -254,6 +264,10 @@ export class CommandHandler implements EventHandler {
 				.addField(`Error code`, intr.id)
 				.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`)
 				.setColor(`#ff4a4a`);
+			if (intr.guild) {
+				embed.addField(`Guild ID`, intr.guild.id);
+				embed.addField(`Shard ID`, intr.guild.shardId.toString());
+			}
 			await InteractionUtils.send(intr, embed);
 		} catch {
 			// Ignore

@@ -7,23 +7,29 @@ import {
 } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import { prisma } from '../../services/prisma.js';
 
 export class PingCommand implements Command {
 	public name = `ping`;
+	public slashDescription = `Shows the latencies for ${config.botName}`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `ping`,
-		description: `Shows the latency for ${config.botName}, the Discord API and ${config.botName}'s database in PostgreSQL`
+		description: this.slashDescription
 	};
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Shows the latency for ${config.botName}, the Discord API and ${config.botName}'s database in PostgreSQL`;
+	public usage = `ping | /ping`;
+	public website = `https://www.bentobot.xyz/commands#ping`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

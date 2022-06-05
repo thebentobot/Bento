@@ -9,15 +9,17 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 
 export class RollCommand implements Command {
 	public name = `roll`;
+	public slashDescription = `Roll a random number between two numbers`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `roll`,
-		description: `Make ${config.botName} roll a random number between 1 and the value you set (max. 100)`,
+		description: this.slashDescription,
 		options: [
 			{
 				name: `number`,
@@ -30,9 +32,13 @@ export class RollCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Make ${config.botName} roll a random number between 1 and the value you set (max. 100)`;
+	public usage = `roll <number between 1-100> | /roll <number between 1-100>`;
+	public website = `https://www.bentobot.xyz/commands#roll`;
+	public category = `features`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

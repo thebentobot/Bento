@@ -8,13 +8,15 @@ import {
 import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import { prisma } from '../../services/prisma.js';
 
 export class RpsCommand implements Command {
 	public name = `rps`;
+	public slashDescription = `Play Rock, Paper, Scissors with ${config.botName}`;
+	public commandType = CommandType.Both;
 	public metadata: ChatInputApplicationCommandData = {
 		name: `rps`,
 		description: `Play Rock, Paper, Scissors with ${config.botName}`,
@@ -44,9 +46,13 @@ export class RpsCommand implements Command {
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Play Rock 🪨, Paper 🧻, Scissors ✂️ with ${config.botName}.\nPick one of the options and see if you win.\n**Warning** ${config.botName} can get a bit sassy if they're winning hehe.`;
+	public usage = `rps <rock, paper, scissors> | /rps <rock, paper, scissors>`;
+	public website = `https://www.bentobot.xyz/commands#rps`;
+	public category = `features`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {

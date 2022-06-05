@@ -5,16 +5,22 @@ import {
 	PermissionString,
 } from 'discord.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
-import { Command, CommandDeferType } from '../command.js';
+import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
 export class ServerInfoCommand implements Command {
 	public name = `serverinfo`;
+	public slashDescription = `Shows general info for the current server`;
+	public commandType = CommandType.MessageCommand;
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
-	public deferType = CommandDeferType.PUBLIC;
+	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
 	public requireUserPerms: PermissionString[] = [];
+	public description = `Shows general info for the current server`;
+	public usage = `serverinfo`;
+	public website = `https://www.bentobot.xyz/commands#serverinfo`;
+	public category = `info`;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
