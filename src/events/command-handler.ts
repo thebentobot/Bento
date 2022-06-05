@@ -11,7 +11,7 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from './index.js';
-import { CommandDeferAccessType } from '../commands/command.js';
+import { CommandDeferAccessType, CommandType } from '../commands/command.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { logs as Logs } from '../lang/logs.js';
@@ -108,12 +108,11 @@ export class CommandHandler implements EventHandler {
 			await MessageUtils.send(msg.channel, `You don't have permission to run that command!`);
 			return;
 		}
-		/*
-		FIX
-		if (command.commandType !== CommandType.Both || CommandType.MessageCommand) {
+		
+		if (command.commandType !== CommandType.Both || CommandType.SlashCommand) {
 			return;
 		}
-		*/
+		
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			await command!.executeMsgCmd!(msg, args, data);
@@ -197,12 +196,7 @@ export class CommandHandler implements EventHandler {
 			);
 			return;
 		}
-		/*
-		FIX
-		if (command.commandType !== CommandType.Both || CommandType.SlashCommand) {
-			return;
-		}
-		*/
+
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (command.deferType) {

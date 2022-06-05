@@ -14,7 +14,7 @@ export class RolesCommand implements Command {
 	public slashDescription = `Shows list of roles on the server.`;
 	public commandType = CommandType.MessageCommand;
 	public requireDev = false;
-	public requireGuild = false;
+	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];

@@ -12,7 +12,7 @@ export class ServerInfoCommand implements Command {
 	public slashDescription = `Shows general info for the current server`;
 	public commandType = CommandType.MessageCommand;
 	public requireDev = false;
-	public requireGuild = false;
+	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];

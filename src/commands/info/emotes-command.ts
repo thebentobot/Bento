@@ -9,15 +9,13 @@ import {
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
-// FIX DISABLE OPTION
-
 export class EmotesCommand implements Command {
 	public name = `emotes`;
 	public aliases = [`emote`];
 	public slashDescription = `Shows list of emotes from the server.`;
 	public commandType = CommandType.MessageCommand;
 	public requireDev = false;
-	public requireGuild = false;
+	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];

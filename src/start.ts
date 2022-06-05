@@ -26,7 +26,11 @@ import {
 	EmotesCommand,
 	BannerCommand,
 	RpsCommand,
-	UrbanCommand
+	UrbanCommand,
+	AboutCommand,
+	AdminTestCommand,
+	ModTestCommand,
+	UserTestCommand
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -78,7 +82,11 @@ export const commands: Command[] = [
 	new ServerInfoCommand(),
 	new BannerCommand(),
 	new RpsCommand(),
-	new UrbanCommand()
+	new UrbanCommand(),
+	new AboutCommand(),
+	new AdminTestCommand(),
+	new ModTestCommand(),
+	new UserTestCommand()
 	// TODO: Add new commands here
 ];
 
@@ -116,7 +124,11 @@ async function start(): Promise<void> {
 		new ServerInfoCommand(),
 		new BannerCommand(),
 		new RpsCommand(),
-		new UrbanCommand()
+		new UrbanCommand(),
+		new AboutCommand(),
+		new AdminTestCommand(),
+		new ModTestCommand(),
+		new UserTestCommand()
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));
@@ -131,8 +143,8 @@ async function start(): Promise<void> {
 
 	// Select Menus replies
 	const selectMenus: SelectMenu[] = [
-		// TODO: Add new Select Menus here
 		new HelpSelectMenu()
+		// TODO: Add new Select Menus here
 	];
 
 	// Reactions

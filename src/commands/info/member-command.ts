@@ -34,7 +34,7 @@ export class MemberCommand implements Command {
 		]
 	};
 	public requireDev = false;
-	public requireGuild = false;
+	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireClientPerms: PermissionString[] = [];
