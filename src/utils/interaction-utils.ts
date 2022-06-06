@@ -23,7 +23,7 @@ const IGNORED_ERRORS = [
 export class InteractionUtils {
 	public static async deferReply(
 		intr: CommandInteraction | MessageComponentInteraction,
-		hidden = false
+		hidden = false,
 	): Promise<void> {
 		try {
 			return await intr.deferReply({
@@ -53,7 +53,7 @@ export class InteractionUtils {
 	public static async send(
 		intr: CommandInteraction | MessageComponentInteraction,
 		content: string | MessageEmbed | MessageOptions,
-		hidden = false
+		hidden = false,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageOptions(content);
@@ -81,7 +81,7 @@ export class InteractionUtils {
 
 	public static async editReply(
 		intr: CommandInteraction | MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions
+		content: string | MessageEmbed | MessageOptions,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageOptions(content);
@@ -99,7 +99,7 @@ export class InteractionUtils {
 
 	public static async update(
 		intr: MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions
+		content: string | MessageEmbed | MessageOptions,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageOptions(content);

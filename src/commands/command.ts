@@ -2,14 +2,26 @@ import { CommandInteraction, Message, PermissionString, ChatInputApplicationComm
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
 
+export enum CommandType {
+	Both = `Both`,
+	MessageCommand = `MessageCommand`,
+	SlashCommand = `SlashCommand`
+}
+
 export interface Command {
 	adminOnly?: boolean;
 	requireSetup?: boolean;
-	cooldown?: RateLimiter
+	cooldown?: RateLimiter;
+	slashDescription: string;
+	description: string
+	usage: string
+	website: string
+	category: string
 	name: string;
-	deferType: CommandDeferType;
+	commandType: CommandType;
+	deferType?: CommandDeferAccessType;
 	aliases?: string[];
-	metadata: ChatInputApplicationCommandData;
+	metadata?: ChatInputApplicationCommandData;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	requireDev: boolean;
@@ -17,11 +29,11 @@ export interface Command {
 	requireClientPerms: PermissionString[];
 	requireUserPerms: PermissionString[];
 	requirePremium: boolean;
-	executeIntr(intr: CommandInteraction, data?: EventData): Promise<void>;
-	executeMsgCmd(msg: Message, args?: string[], data?: EventData): Promise<void>;
+	executeIntr?(intr: CommandInteraction, data?: EventData): Promise<void>;
+	executeMsgCmd?(msg: Message, args?: string[], data?: EventData): Promise<void>;
 }
 
-export enum CommandDeferType {
+export enum CommandDeferAccessType {
 	PUBLIC = `PUBLIC`,
 	HIDDEN = `HIDDEN`,
 	NONE = `NONE`,

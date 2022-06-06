@@ -1,4 +1,5 @@
 import { DiscordAPIError } from 'discord.js';
+import { Response } from 'node-fetch';
 import pino from 'pino';
 
 let logger = pino(
@@ -19,6 +20,8 @@ let logger = pino(
 	}),
 );
 
+// option to log data objects
+// https://github.com/KevinNovak/Discord-Bot-TypeScript-Template/commit/ff10c48beedf29a010143b85f78803b06016ebef
 export class Logger {
 	private static shardId: number;
 

@@ -11,7 +11,7 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from './index.js';
-import { CommandDeferType } from '../commands/command.js';
+import { CommandDeferAccessType, CommandType } from '../commands/command.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { logs as Logs } from '../lang/logs.js';
@@ -19,6 +19,7 @@ import { EventData } from '../models/internal-models.js';
 import { Logger } from '../services/index.js';
 import { prisma } from '../services/prisma.js';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils/index.js';
+import { InteractionUtils } from '../utils/interaction-utils.js';
 
 export class CommandHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -58,12 +59,17 @@ export class CommandHandler implements EventHandler {
 		}
 
 		if (args.length === 1 && msg.mentions.users.has(msg.client?.user?.id as string)) {
-			await this.helpCommand.executeMsgCmd(msg, args, data);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			await this.helpCommand.executeMsgCmd!(msg, [], data);
 			return;
 		}
-
+		args.shift();
+		const getCmd = args.shift()?.toLowerCase();
+		
+		if (!getCmd) return;
+		
 		// Try to find the command the user wants
-		const command = this.find(args[1]);
+		const command = this.find(getCmd);
 
 		if (!command) {
 			const customCommand = await prisma.tag.findFirst({
@@ -102,10 +108,14 @@ export class CommandHandler implements EventHandler {
 			await MessageUtils.send(msg.channel, `You don't have permission to run that command!`);
 			return;
 		}
-
+		
+		if (command.commandType !== CommandType.Both || CommandType.SlashCommand) {
+			return;
+		}
+		
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			await command!.executeMsgCmd(msg, args, data);
+			await command!.executeMsgCmd!(msg, args, data);
 		} catch (error) {
 			try {
 				await MessageUtils.send(
@@ -124,21 +134,21 @@ export class CommandHandler implements EventHandler {
 			Logger.error(
 				msg.channel instanceof TextChannel || msg.channel instanceof NewsChannel || msg.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
-							.replaceAll(`{MESSAGE_ID}`, msg.id)
-							.replaceAll(`{COMMAND_NAME}`, command?.name)
-							.replaceAll(`{USER_TAG}`, msg.author.tag)
-							.replaceAll(`{USER_ID}`, msg.author.id)
-							.replaceAll(`{CHANNEL_NAME}`, msg.channel.name)
-							.replaceAll(`{CHANNEL_ID}`, msg.channel.id)
-							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-							.replaceAll(`{GUILD_NAME}`, msg.guild!.name)
-							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-							.replaceAll(`{GUILD_ID}`, msg.guild!.id)
+						.replaceAll(`{MESSAGE_ID}`, msg.id)
+						.replaceAll(`{COMMAND_NAME}`, command?.name as string)
+						.replaceAll(`{USER_TAG}`, msg.author.tag)
+						.replaceAll(`{USER_ID}`, msg.author.id)
+						.replaceAll(`{CHANNEL_NAME}`, msg.channel.name)
+						.replaceAll(`{CHANNEL_ID}`, msg.channel.id)
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{GUILD_NAME}`, msg.guild!.name)
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{GUILD_ID}`, msg.guild!.id)
 					: Logs.error.commandOther
-							.replaceAll(`{MESSAGE_ID}`, msg.id)
-							.replaceAll(`{COMMAND_NAME}`, command?.aliases?.join(`, `) as string)
-							.replaceAll(`{USER_TAG}`, msg.author.tag)
-							.replaceAll(`{USER_ID}`, msg.author.id),
+						.replaceAll(`{MESSAGE_ID}`, msg.id)
+						.replaceAll(`{COMMAND_NAME}`, command?.aliases?.join(`, `) as string)
+						.replaceAll(`{USER_TAG}`, msg.author.tag)
+						.replaceAll(`{USER_ID}`, msg.author.id),
 				error,
 			);
 		}
@@ -177,7 +187,7 @@ export class CommandHandler implements EventHandler {
 		}
 
 		// Try to find the command the user wants
-		const command = this.commands.find((command) => command.metadata.name === intr.commandName);
+		const command = this.commands.find((command) => command.metadata?.name === intr.commandName);
 		if (!command) {
 			Logger.error(
 				Logs.error.commandNotFound
@@ -190,14 +200,14 @@ export class CommandHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (command.deferType) {
-			case CommandDeferType.PUBLIC: {
-				await MessageUtils.deferReply(intr, false);
-				break;
-			}
-			case CommandDeferType.HIDDEN: {
-				await MessageUtils.deferReply(intr, true);
-				break;
-			}
+		case CommandDeferAccessType.PUBLIC: {
+			await InteractionUtils.deferReply(intr, false);
+			break;
+		}
+		case CommandDeferAccessType.HIDDEN: {
+			await InteractionUtils.deferReply(intr, true);
+			break;
+		}
 		}
 
 		// TODO: Get data from database
@@ -208,7 +218,8 @@ export class CommandHandler implements EventHandler {
 			const passesChecks = await CommandUtils.runChecks(command, intr, data);
 			if (passesChecks) {
 				// Execute the command
-				await command.executeIntr(intr, data);
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				await command.executeIntr!(intr, data);
 			}
 		} catch (error) {
 			await this.sendIntrError(intr, data);
@@ -219,19 +230,21 @@ export class CommandHandler implements EventHandler {
 					intr.channel instanceof NewsChannel ||
 					intr.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
-							.replaceAll(`{INTERACTION_ID}`, intr.id)
-							.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
-							.replaceAll(`{USER_TAG}`, intr.user.tag)
-							.replaceAll(`{USER_ID}`, intr.user.id)
-							.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
-							.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
-							.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
-							.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
+						.replaceAll(`{INTERACTION_ID}`, intr.id)
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
+						.replaceAll(`{USER_TAG}`, intr.user.tag)
+						.replaceAll(`{USER_ID}`, intr.user.id)
+						.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
+						.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
+						.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
+						.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
 					: Logs.error.commandOther
-							.replaceAll(`{INTERACTION_ID}`, intr.id)
-							.replaceAll(`{COMMAND_NAME}`, command.metadata.name)
-							.replaceAll(`{USER_TAG}`, intr.user.tag)
-							.replaceAll(`{USER_ID}`, intr.user.id),
+						.replaceAll(`{INTERACTION_ID}`, intr.id)
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
+						.replaceAll(`{USER_TAG}`, intr.user.tag)
+						.replaceAll(`{USER_ID}`, intr.user.id),
 				error,
 			);
 		}
@@ -245,7 +258,11 @@ export class CommandHandler implements EventHandler {
 				.addField(`Error code`, intr.id)
 				.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`)
 				.setColor(`#ff4a4a`);
-			await MessageUtils.sendIntr(intr, embed);
+			if (intr.guild) {
+				embed.addField(`Guild ID`, intr.guild.id);
+				embed.addField(`Shard ID`, intr.guild.shardId.toString());
+			}
+			await InteractionUtils.send(intr, embed);
 		} catch {
 			// Ignore
 		}

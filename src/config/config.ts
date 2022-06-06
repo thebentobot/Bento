@@ -13,6 +13,7 @@ interface IClient {
 }
 
 interface IConfig {
+	botName: string,
 	developers: string[]
 	client: IClient
 	api: { port: number, secret: string}
@@ -28,6 +29,22 @@ interface IConfig {
 	}
 	jobs: {
 		updateServerCount: {
+			schedule: string
+			log: boolean
+		}
+		checkMutes: {
+			schedule: string
+			log: boolean
+		}
+		checkReminders: {
+			schedule: string
+			log: boolean
+		}
+		checkScheduledAnnouncements: {
+			schedule: string
+			log: boolean
+		}
+		checkTimedAnnouncements: {
 			schedule: string
 			log: boolean
 		}
@@ -59,6 +76,7 @@ interface IConfig {
 }
 
 export const config: IConfig = {
+	botName: process.env.botName as string,
 	developers: [`232584569289703424`],
 	client: {
 		id: process.env.botId as string,
@@ -79,7 +97,7 @@ export const config: IConfig = {
 		}
 	},
 	api: {
-		port: 8080,
+		port: 6969,
 		secret: `00000000-0000-0000-0000-000000000000`
 	},
 	sharding: {
@@ -99,6 +117,22 @@ export const config: IConfig = {
 	jobs: {
 		updateServerCount: {
 			schedule: `0 */10 * * * *`,
+			log: false
+		},
+		checkMutes: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkReminders: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkScheduledAnnouncements: {
+			schedule: `* * * * *`,
+			log: false
+		},
+		checkTimedAnnouncements: {
+			schedule: `* * * * *`,
 			log: false
 		}
 	},

@@ -255,7 +255,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 							muteData.NonBentoMute === true
 								? ``
 								: `Date for mute: <t:${Math.round(muteData.date.getTime() / 1000)}:R> (<t:${Math.round(
-										muteData.date.getTime() / 1000,
+									muteData.date.getTime() / 1000,
 								  )}:F>`
 						}`,
 					)

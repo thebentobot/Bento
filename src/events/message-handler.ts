@@ -125,17 +125,17 @@ export class MessageHandler implements EventHandler {
 		let mentionMsgCommand = false;
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		if (argsCheck[0].includes(`<@${msg.client.user!.id}>`) || argsCheck[0].includes(`<@!${msg.client.user!.id}>`)) {
+		if (argsCheck[0].includes(`<@${msg.client.user!.id}>`) || argsCheck[0].includes(`<@!${msg.client.user!.id}>`) && msg.type !== `REPLY`) {
 			mentionMsgCommand = true;
 		}
 
 		let args: string[];
 
 		if (mentionMsgCommand === true) {
-			args = msg.content.trim().split(` `);
+			args = msg.content.trim().split(/ +/g);
 		} else {
 			const getPrefix = (await new GuildRepo().getGuild(msg.guild?.id as string)).prefix;
-			args = msg.content.slice(getPrefix.length).trim().split(` `);
+			args = msg.content.slice(getPrefix.length).trim().split(/ +/g);
 			args.unshift(getPrefix);
 		}
 
