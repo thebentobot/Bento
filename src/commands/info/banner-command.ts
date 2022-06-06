@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	EmbedAuthorData,
 	Message,
@@ -16,7 +15,7 @@ export class BannerCommand implements Command {
 	public name = `banner`;
 	public slashDescription = `Show the banner for a user`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `banner`,
 		description: this.slashDescription,
 		options: [

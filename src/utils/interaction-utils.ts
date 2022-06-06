@@ -2,8 +2,10 @@ import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 import {
 	CommandInteraction,
 	DiscordAPIError,
+	InteractionReplyOptions,
 	Message,
 	MessageComponentInteraction,
+	MessageEditOptions,
 	MessageEmbed,
 	MessageOptions,
 } from 'discord.js';
@@ -52,11 +54,11 @@ export class InteractionUtils {
 
 	public static async send(
 		intr: CommandInteraction | MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions,
+		content: string | MessageEmbed | InteractionReplyOptions,
 		hidden = false,
 	): Promise<Message | undefined> {
 		try {
-			const msgOptions = MessageUtils.messageOptions(content);
+			const msgOptions = this.interactionReplyOptions(content);
 
 			if (intr.deferred || intr.replied) {
 				return (await intr.followUp({
@@ -99,10 +101,10 @@ export class InteractionUtils {
 
 	public static async update(
 		intr: MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions,
+		content: string | MessageEmbed | MessageEditOptions,
 	): Promise<Message | undefined> {
 		try {
-			const msgOptions = MessageUtils.messageOptions(content);
+			const msgOptions = MessageUtils.messageEditOptions(content);
 			return (await intr.update({
 				...msgOptions,
 				fetchReply: true,
@@ -114,5 +116,17 @@ export class InteractionUtils {
 				throw error;
 			}
 		}
+	}
+
+	private static interactionReplyOptions(content: string | MessageEmbed | InteractionReplyOptions): InteractionReplyOptions {
+		let options: InteractionReplyOptions = {};
+		if (typeof content === `string`) {
+			options.content = content;
+		} else if (content instanceof MessageEmbed) {
+			options.embeds = [content];
+		} else {
+			options = content;
+		}
+		return options;
 	}
 }

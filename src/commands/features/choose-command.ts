@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	MessageEmbed,
@@ -16,7 +15,7 @@ export class ChooseCommand implements Command {
 	public name = `choose`;
 	public slashDescription = `Make ${config.botName} choose one of your options`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `choose`,
 		description: this.slashDescription,
 		options: [

@@ -1,4 +1,5 @@
-import { CommandInteraction, Message, PermissionString, ChatInputApplicationCommandData } from 'discord.js';
+import { CommandInteraction, Message, PermissionString,  } from 'discord.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
 
@@ -21,7 +22,7 @@ export interface Command {
 	commandType: CommandType;
 	deferType?: CommandDeferAccessType;
 	aliases?: string[];
-	metadata?: ChatInputApplicationCommandData;
+	metadata?: RESTPostAPIChatInputApplicationCommandsJSONBody;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	requireDev: boolean;

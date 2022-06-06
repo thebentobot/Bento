@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	PermissionString,
@@ -17,7 +16,7 @@ export class RpsCommand implements Command {
 	public name = `rps`;
 	public slashDescription = `Play Rock, Paper, Scissors with ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `rps`,
 		description: `Play Rock, Paper, Scissors with ${config.botName}`,
 		options: [

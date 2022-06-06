@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	PermissionString,
@@ -25,7 +24,7 @@ export class CatCommand implements Command {
 	public usage = `cat | /cat`;
 	public website = `https://www.bentobot.xyz/commands#cat`;
 	public category = `features`;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `cat`,
 		description: this.slashDescription
 	};

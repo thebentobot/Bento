@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	EmbedAuthorData,
 	GuildMember,
@@ -18,7 +17,7 @@ export class AvatarCommand implements Command {
 	public slashDescription = `Show the avatar for a user`;
 	public commandType = CommandType.Both;
 	public aliases: string[] = [`pfp`, `av`];
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `avatar`,
 		description: `Show the avatar for a user`,
 		options: [

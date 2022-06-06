@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	GuildMember,
 	MessageEmbed,
@@ -15,7 +14,7 @@ export class MemberCommand implements Command {
 	public name = `member`;
 	public slashDescription = `Show info for a member`;
 	public commandType = CommandType.SlashCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `member`,
 		description: this.slashDescription,
 		options: [

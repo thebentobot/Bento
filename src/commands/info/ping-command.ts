@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	MessageEmbed,
@@ -16,7 +15,7 @@ export class PingCommand implements Command {
 	public name = `ping`;
 	public slashDescription = `Shows the latencies for ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `ping`,
 		description: this.slashDescription
 	};

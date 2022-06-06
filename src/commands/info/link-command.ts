@@ -1,6 +1,5 @@
-import { ApplicationCommandOptionType } from 'discord-api-types';
+import { ApplicationCommandOptionType } from 'discord-api-types/v9';
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	PermissionString,
@@ -15,7 +14,7 @@ export class LinkCommand implements Command {
 	public name = `link`;
 	public slashDescription = `Get various links related to ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `link`,
 		description: this.slashDescription,
 		options: [

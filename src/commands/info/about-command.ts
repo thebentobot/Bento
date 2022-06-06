@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	Client,
 	CommandInteraction,
 	EmbedFooterData,
@@ -27,7 +26,7 @@ export class AboutCommand implements Command {
 	public usage = `about | /about`;
 	public website = `https://www.bentobot.xyz/commands#about`;
 	public category = `info`;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `about`,
 		description: this.slashDescription
 	};

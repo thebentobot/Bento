@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	EmbedAuthorData,
 	Message,
@@ -17,7 +16,7 @@ export class RollCommand implements Command {
 	public name = `roll`;
 	public slashDescription = `Roll a random number between two numbers`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `roll`,
 		description: this.slashDescription,
 		options: [

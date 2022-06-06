@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	MessageEmbed,
 	PermissionString,
@@ -15,7 +14,7 @@ export class UserCommand implements Command {
 	public name = `user`;
 	public slashDescription = `Show info for a user`;
 	public commandType = CommandType.SlashCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `user`,
 		description: this.slashDescription,
 		options: [

@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	PermissionString,
@@ -15,7 +14,7 @@ export class DogCommand implements Command {
 	public name = `dog`;
 	public slashDescription = `Make ${config.botName} send a random dog`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `dog`,
 		description: this.slashDescription
 	};

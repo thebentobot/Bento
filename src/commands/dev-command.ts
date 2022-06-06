@@ -1,5 +1,4 @@
 import djs, {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	MessageEmbed,
@@ -23,7 +22,7 @@ export class DevCommand implements Command {
 	public aliases = [`developer`];
 	public slashDescription = `View system info`;
 	public commandType = CommandType.MessageCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `dev`,
 		description: `View developer info`,
 	};

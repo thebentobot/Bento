@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	EmbedAuthorData,
 	Message,
@@ -17,7 +16,7 @@ export class UrbanCommand implements Command {
 	public name = `urban`;
 	public slashDescription = `Search for definitions on Urban Dictionary`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `urban`,
 		description: this.slashDescription,
 		options: [

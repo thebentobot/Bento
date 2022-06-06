@@ -1,5 +1,5 @@
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/rest/v9';
+import { Routes } from 'discord-api-types/v9';
 import { Options } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -59,7 +59,7 @@ import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
 import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
 import { SelectMenu } from './selectMenu/selectMenu.js';
-import { JobService, Logger } from './services/index.js';
+import { JobService, Logger, CommandRegistrationService } from './services/index.js';
 import { Trigger } from './triggers/index.js';
 
 export const commands: Command[] = [
@@ -208,11 +208,16 @@ async function start(): Promise<void> {
 	);
 
 	// Register
-	if (process.argv[2] === `--register`) {
-		await registerCommands(commands);
-		process.exit();
-	} else if (process.argv[2] === `--clear`) {
-		await clearCommands();
+	if (process.argv[2] === `commands`) {
+		try {
+			const rest = new REST({ version: `10` }).setToken(Config.client.token);
+			const commandRegistrationService = new CommandRegistrationService(rest);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const localCmds = commands.map(cmd => cmd.metadata!);
+			await commandRegistrationService.process(localCmds, process.argv);
+		} catch (error) {
+			Logger.error(Logs.error.commandAction, error);
+		}
 		process.exit();
 	}
 

@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	Message,
 	MessageEmbed,
@@ -17,7 +16,7 @@ export class EightBallCommand implements Command {
 	public aliases = [`8ball`]; 
 	public slashDescription = `Ask ${config.botName} a question and you will get an answer`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `eightball`,
 		description: this.slashDescription,
 		options: [

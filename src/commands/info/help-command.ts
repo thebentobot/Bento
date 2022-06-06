@@ -1,5 +1,4 @@
 import {
-	ChatInputApplicationCommandData,
 	Client,
 	CommandInteraction,
 	EmbedAuthorData,
@@ -21,7 +20,7 @@ export class HelpCommand implements Command {
 	public aliases?: [`commands`];
 	public slashDescription = `Shows commands and info for ${config.botName} in general`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `help`,
 		description: this.slashDescription,
 	};

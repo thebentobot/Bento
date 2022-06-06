@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-	ChatInputApplicationCommandData,
 	CommandInteraction,
 	EmbedAuthorData,
 	EmbedFooterData,
@@ -17,7 +16,7 @@ export class ServerCommand implements Command {
 	public name = `server`;
 	public slashDescription = `Shows info for the current server`;
 	public commandType = CommandType.SlashCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata = {
 		name: `server`,
 		description: this.slashDescription,
 		options: [
