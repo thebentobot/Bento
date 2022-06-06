@@ -45,14 +45,14 @@ export class ButtonHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (button.deferType) {
-		case ButtonDeferType.REPLY: {
-			await InteractionUtils.deferReply(intr);
-			break;
-		}
-		case ButtonDeferType.UPDATE: {
-			await InteractionUtils.deferUpdate(intr);
-			break;
-		}
+			case ButtonDeferType.REPLY: {
+				await InteractionUtils.deferReply(intr);
+				break;
+			}
+			case ButtonDeferType.UPDATE: {
+				await InteractionUtils.deferUpdate(intr);
+				break;
+			}
 		}
 
 		// TODO: Get data from database

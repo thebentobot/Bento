@@ -16,7 +16,7 @@ export class stylingUtils {
 		const trimmed = str.length > max ? `${str.slice(0, max - 3)}...` : str;
 		return trimmed;
 	}
-	public static capitalizeFirstCharacter(s: string): string {	
+	public static capitalizeFirstCharacter(s: string): string {
 		return s.charAt(0).toUpperCase() + s.slice(1);
 	}
 }

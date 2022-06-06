@@ -1,11 +1,5 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	GuildMember,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
-import { ApplicationCommandOptionType } from 'discord-api-types/v9';
+import { CommandInteraction, GuildMember, MessageEmbed, PermissionString } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -15,7 +9,7 @@ export class MemberCommand implements Command {
 	public name = `member`;
 	public slashDescription = `Show info for a member`;
 	public commandType = CommandType.SlashCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `member`,
 		description: this.slashDescription,
 		options: [
@@ -28,10 +22,10 @@ export class MemberCommand implements Command {
 						name: `user`,
 						description: `Check info for a specific member`,
 						type: ApplicationCommandOptionType.User.valueOf(),
-					}
-				]
+					},
+				],
 			},
-		]
+		],
 	};
 	public requireDev = false;
 	public requireGuild = true;
@@ -53,10 +47,10 @@ export class MemberCommand implements Command {
 			} else {
 				guildMember = intr.member as GuildMember;
 			}
-			const imageURLColour = guildMember.displayAvatarURL({format: `png`}) as string;
+			const imageURLColour = guildMember.displayAvatarURL({ format: `png` }) as string;
 			const authorData = {
 				name: guildMember.displayName,
-				iconURL: guildMember.displayAvatarURL({ dynamic: true})
+				iconURL: guildMember.displayAvatarURL({ dynamic: true }),
 			};
 			const embed = new MessageEmbed()
 				.setAuthor(authorData)
@@ -65,28 +59,36 @@ export class MemberCommand implements Command {
 				.setThumbnail(guildMember.displayAvatarURL({ format: `png`, dynamic: true, size: 1024 }) as string)
 				.setTimestamp()
 				.addFields(
-					[{
-						name: `Nickname on the server`,
-						value: guildMember.nickname !== null ? guildMember.nickname : guildMember.displayName,
-					}],
+					[
+						{
+							name: `Nickname on the server`,
+							value: guildMember.nickname !== null ? guildMember.nickname : guildMember.displayName,
+						},
+					],
 					[{ name: `User ID`, value: guildMember.user.id }],
-					[{
-						name: `Account created on`,
-						value: `<t:${Math.round(guildMember.user.createdTimestamp / 1000)}:F>`,
-					}],
-					[{
-						name: `Joined server at`,
-						value: `<t:${Math.round(guildMember.joinedTimestamp as number / 1000)}:F>`,
-						inline: true,
-					}],
+					[
+						{
+							name: `Account created on`,
+							value: `<t:${Math.round(guildMember.user.createdTimestamp / 1000)}:F>`,
+						},
+					],
+					[
+						{
+							name: `Joined server at`,
+							value: `<t:${Math.round((guildMember.joinedTimestamp as number) / 1000)}:F>`,
+							inline: true,
+						},
+					],
 					[{ name: `Highest role`, value: `${guildMember.roles.highest}` }],
-					[{
-						name: `All roles`,
-						value: stylingUtils.trim(guildMember.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
-						inline: true,
-					}],
+					[
+						{
+							name: `All roles`,
+							value: stylingUtils.trim(guildMember.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
+							inline: true,
+						},
+					],
 				);
 			await InteractionUtils.send(intr, embed);
-		} 
+		}
 	}
 }

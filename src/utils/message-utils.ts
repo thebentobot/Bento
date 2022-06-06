@@ -3,6 +3,7 @@ import {
 	DiscordAPIError,
 	EmojiResolvable,
 	Message,
+	MessageEditOptions,
 	MessageEmbed,
 	MessageOptions,
 	MessageReaction,
@@ -72,9 +73,9 @@ export class MessageUtils {
 		}
 	}
 
-	public static async edit(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
+	public static async edit(msg: Message, content: string | MessageEmbed | MessageEditOptions): Promise<Message | void> {
 		try {
-			const msgOptions = this.messageOptions(content);
+			const msgOptions = this.messageEditOptions(content);
 			return await msg.edit(msgOptions);
 		} catch (error) {
 			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
@@ -211,6 +212,18 @@ export class MessageUtils {
 
 	public static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
 		let options: MessageOptions = {};
+		if (typeof content === `string`) {
+			options.content = content;
+		} else if (content instanceof MessageEmbed) {
+			options.embeds = [content];
+		} else {
+			options = content;
+		}
+		return options;
+	}
+
+	public static messageEditOptions(content: string | MessageEmbed | MessageEditOptions): MessageEditOptions {
+		let options: MessageEditOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
 		} else if (content instanceof MessageEmbed) {

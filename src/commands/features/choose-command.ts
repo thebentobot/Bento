@@ -1,11 +1,5 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
-import { ApplicationCommandOptionType } from 'discord-api-types/v9';
+import { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -16,7 +10,7 @@ export class ChooseCommand implements Command {
 	public name = `choose`;
 	public slashDescription = `Make ${config.botName} choose one of your options`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `choose`,
 		description: this.slashDescription,
 		options: [
@@ -24,9 +18,9 @@ export class ChooseCommand implements Command {
 				name: `options`,
 				description: `What you're asking ${config.botName} about`,
 				type: ApplicationCommandOptionType.String.valueOf(),
-				required: true
-			}
-		]
+				required: true,
+			},
+		],
 	};
 	public requireDev = false;
 	public requireGuild = false;
@@ -44,7 +38,10 @@ export class ChooseCommand implements Command {
 		const optionsContent = intr.options.get(`options`)?.value as string;
 		const args = optionsContent.trim().split(` `);
 		if (args.length < 2) {
-			await InteractionUtils.send(intr, `${intr.member} Well obviously the choice is **${args[0]}**, but perhaps you wanted me to choose between a few more options other than one? 🙄`);
+			await InteractionUtils.send(
+				intr,
+				`${intr.member} Well obviously the choice is **${args[0]}**, but perhaps you wanted me to choose between a few more options other than one? 🙄`,
+			);
 			return;
 		} else if (args.length > 20) {
 			await InteractionUtils.send(intr, `${intr.member} Too many choices 🤨`);
@@ -66,7 +63,10 @@ export class ChooseCommand implements Command {
 			await MessageUtils.send(msg.channel, `${msg.author} Give me some options!`);
 			return;
 		} else if (args.length < 2) {
-			await MessageUtils.send(msg.channel, `${msg.author} Well obviously the choice is **${args[0]}**, but perhaps you wanted me to choose between a few more options other than one? 🙄`);
+			await MessageUtils.send(
+				msg.channel,
+				`${msg.author} Well obviously the choice is **${args[0]}**, but perhaps you wanted me to choose between a few more options other than one? 🙄`,
+			);
 			return;
 		} else if (args.length > 20) {
 			await MessageUtils.send(msg.channel, `${msg.author} Too many choices 🤨`);

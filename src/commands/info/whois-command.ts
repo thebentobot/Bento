@@ -1,9 +1,4 @@
-import {
-	Message,
-	MessageEmbed,
-	PermissionString,
-	User,
-} from 'discord.js';
+import { Message, MessageEmbed, PermissionString, User } from 'discord.js';
 import { ClientUtils, MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
@@ -32,30 +27,38 @@ export class WhoIsCommand implements Command {
 				.setThumbnail(msg.author.displayAvatarURL({ format: `png`, dynamic: true, size: 1024 }) as string)
 				.setTimestamp()
 				.addFields(
-					[{
-						name: `Nickname on the server`,
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
-					}],
+					[
+						{
+							name: `Nickname on the server`,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+							value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
+						},
+					],
 					[{ name: `User ID`, value: msg.author.id }],
-					[{
-						name: `Account created on`,
-						value: `<t:${Math.round(msg.author.createdTimestamp / 1000)}:F>`,
-					}],
-					[{
-						name: `Joined server at`,
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						value: `<t:${Math.round(msg.member!.joinedTimestamp as number / 1000)}:F>`,
-						inline: true,
-					}],
+					[
+						{
+							name: `Account created on`,
+							value: `<t:${Math.round(msg.author.createdTimestamp / 1000)}:F>`,
+						},
+					],
+					[
+						{
+							name: `Joined server at`,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+							value: `<t:${Math.round((msg.member!.joinedTimestamp as number) / 1000)}:F>`,
+							inline: true,
+						},
+					],
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					[{ name: `Highest role`, value: `${msg.member!.roles.highest}` }],
-					[{
-						name: `All roles`,
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						value: stylingUtils.trim(msg.member!.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
-						inline: true,
-					}],
+					[
+						{
+							name: `All roles`,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+							value: stylingUtils.trim(msg.member!.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
+							inline: true,
+						},
+					],
 				);
 			await MessageUtils.send(msg.channel, embed);
 			return;
@@ -69,36 +72,44 @@ export class WhoIsCommand implements Command {
 						.setTitle(`Profile for ${user?.displayName}`)
 						.setThumbnail(user?.displayAvatarURL({ format: `png`, dynamic: true }) as string)
 						.addFields(
-							[{
-								name: `Nickname on the server`,
-								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-								value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
-							}],
+							[
+								{
+									name: `Nickname on the server`,
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
+								},
+							],
 							[{ name: `User ID`, value: msg.author.id }],
-							[{
-								name: `Account created on`,
-								value: `<t:${Math.round(msg.author.createdTimestamp / 1000)}:F>`,
-							}],
-							[{
-								name: `Joined server at`,
-								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-								value: `<t:${Math.round(msg.member!.joinedTimestamp as number / 1000)}:F>`,
-								inline: true,
-							}],
+							[
+								{
+									name: `Account created on`,
+									value: `<t:${Math.round(msg.author.createdTimestamp / 1000)}:F>`,
+								},
+							],
+							[
+								{
+									name: `Joined server at`,
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									value: `<t:${Math.round((msg.member!.joinedTimestamp as number) / 1000)}:F>`,
+									inline: true,
+								},
+							],
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							[{ name: `Highest role`, value: `${msg.member!.roles.highest}` }],
-							[{
-								name: `All roles`,
-								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-								value: stylingUtils.trim(msg.member!.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
-								inline: true,
-							}],
+							[
+								{
+									name: `All roles`,
+									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+									value: stylingUtils.trim(msg.member!.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
+									inline: true,
+								},
+							],
 						);
 					await MessageUtils.send(msg.channel, embed);
 					return;
 				} else {
 					try {
-						const globalUser = await ClientUtils.getUser(msg.client, userID) as User;
+						const globalUser = (await ClientUtils.getUser(msg.client, userID)) as User;
 						if (globalUser.bot === true) return;
 						const embed = new MessageEmbed()
 							.setColor(`#${await stylingUtils.urlToColours(globalUser.displayAvatarURL({ format: `png` }) as string)}`)
@@ -107,10 +118,12 @@ export class WhoIsCommand implements Command {
 							.setTimestamp()
 							.addFields(
 								[{ name: `User ID`, value: globalUser.id }],
-								[{
-									name: `Account created on`,
-									value: `<t:${Math.round(globalUser.createdTimestamp / 1000)}:F>`,
-								}],
+								[
+									{
+										name: `Account created on`,
+										value: `<t:${Math.round(globalUser.createdTimestamp / 1000)}:F>`,
+									},
+								],
 							);
 						await MessageUtils.send(msg.channel, embed);
 						return;
@@ -119,7 +132,7 @@ export class WhoIsCommand implements Command {
 						return;
 					}
 				}
-			}			
+			}
 		}
 	}
 

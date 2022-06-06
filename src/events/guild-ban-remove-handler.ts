@@ -37,7 +37,7 @@ export class GuildBanRemoveHandler implements EventHandler {
 					`**The reason the user was banned:**\n${ban.reason ? ban.reason : `No reason specified`}${
 						banCaseData
 							? `\nNotes about the user ban case:\n${
-								banCaseData.note !== null ? banCaseData.note : `No notes written for this case`
+									banCaseData.note !== null ? banCaseData.note : `No notes written for this case`
 							  }`
 							: ``
 					}`,
@@ -50,7 +50,7 @@ export class GuildBanRemoveHandler implements EventHandler {
 					`Mod who banned the user`,
 					banCaseData.actor !== null
 						? `${ban.client.users.cache.get(`${banCaseData.actor}`)?.username}#${
-							ban.client.users.cache.get(`${banCaseData.actor}`)?.discriminator
+								ban.client.users.cache.get(`${banCaseData.actor}`)?.discriminator
 						  }`
 						: `Not specified`,
 				);

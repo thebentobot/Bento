@@ -1,23 +1,19 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	PermissionString,
-} from 'discord.js';
+import { CommandInteraction, Message, PermissionString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import axios from 'axios';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
 
 export class DogCommand implements Command {
 	public name = `dog`;
 	public slashDescription = `Make ${config.botName} send a random dog`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `dog`,
-		description: this.slashDescription
+		description: this.slashDescription,
 	};
 	public requireDev = false;
 	public requireGuild = false;

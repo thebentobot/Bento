@@ -1,10 +1,4 @@
-import djs, {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
+import djs, { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 import fileSize from 'filesize';
 import os from 'os';
 import { createRequire } from 'node:module';
@@ -14,6 +8,7 @@ import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from './command.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
 
 const require = createRequire(import.meta.url);
 const TsConfig = require(`../../tsconfig.json`);
@@ -23,7 +18,7 @@ export class DevCommand implements Command {
 	public aliases = [`developer`];
 	public slashDescription = `View system info`;
 	public commandType = CommandType.MessageCommand;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `dev`,
 		description: `View developer info`,
 	};

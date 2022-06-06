@@ -1,10 +1,5 @@
-import { ApplicationCommandOptionType } from 'discord-api-types';
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	PermissionString,
-} from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { CommandInteraction, Message, PermissionString } from 'discord.js';
 import { config } from '../../config/config.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
@@ -15,7 +10,7 @@ export class LinkCommand implements Command {
 	public name = `link`;
 	public slashDescription = `Get various links related to ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `link`,
 		description: this.slashDescription,
 		options: [
@@ -44,7 +39,7 @@ export class LinkCommand implements Command {
 					{
 						name: `top.gg`,
 						value: `https://top.gg/bot/787041583580184609`,
-					}
+					},
 				],
 			},
 		],
@@ -68,42 +63,39 @@ export class LinkCommand implements Command {
 
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		const command = this.linkCommand(args[0]);
-		await MessageUtils.send(
-			msg.channel,
-			command
-		);
+		await MessageUtils.send(msg.channel, command);
 	}
 
 	private linkCommand(link: string | null): string {
 		let returnLink: string;
 		switch (link) {
-		case `bento`: {
-			returnLink = `https://www.bentobot.xyz/`;
-			break;
-		}
-		case `github`: {
-			returnLink = `https://github.com/thebentobot`;
-			break;
-		}
-		case `patreon`: {
-			returnLink = `https://www.patreon.com/bentobot`;
-			break;
-		}
-		case `kofi`: {
-			returnLink = `https://ko-fi.com/bentobot`;
-			break;
-		}
-		case `topgg`: {
-			returnLink = `https://top.gg/bot/787041583580184609`;
-			break;
-		}
-		case `invite`: {
-			returnLink = `https://discord.com/oauth2/authorize?client_id=787041583580184609&permissions=261926943991&scope=bot%20applications.commands`;
-			break;
-		}
-		default: {
-			returnLink = `\`${link}\` is an **invalid link**\nPossible links: \`bento\`, \`github\`, \`patreon\`, \`kofi\`, \`topgg\` and \`invite\`.`;
-		}
+			case `bento`: {
+				returnLink = `https://www.bentobot.xyz/`;
+				break;
+			}
+			case `github`: {
+				returnLink = `https://github.com/thebentobot`;
+				break;
+			}
+			case `patreon`: {
+				returnLink = `https://www.patreon.com/bentobot`;
+				break;
+			}
+			case `kofi`: {
+				returnLink = `https://ko-fi.com/bentobot`;
+				break;
+			}
+			case `topgg`: {
+				returnLink = `https://top.gg/bot/787041583580184609`;
+				break;
+			}
+			case `invite`: {
+				returnLink = `https://discord.com/oauth2/authorize?client_id=787041583580184609&permissions=261926943991&scope=bot%20applications.commands`;
+				break;
+			}
+			default: {
+				returnLink = `\`${link}\` is an **invalid link**\nPossible links: \`bento\`, \`github\`, \`patreon\`, \`kofi\`, \`topgg\` and \`invite\`.`;
+			}
 		}
 		return returnLink;
 	}

@@ -38,7 +38,7 @@ import {
 	ReactionHandler,
 	GuildMemberAddHandler,
 	GuildMemberRemoveHandler,
-	SelectMenuHandler
+	SelectMenuHandler,
 } from './events';
 import { logs as Logs } from './lang/logs.js';
 import { JobService, Logger } from './services/index.js';
@@ -67,7 +67,7 @@ export class Bot {
 		private guildRoleDeleteHandler: GuildRoleDeleteHandler,
 		private guildRoleUpdateHandler: GuildRoleUpdateHandler,
 		private userUpdateHandler: UserUpdateHandler,
-		private SelectMenuHandler: SelectMenuHandler
+		private SelectMenuHandler: SelectMenuHandler,
 	) {}
 
 	public async start(): Promise<void> {

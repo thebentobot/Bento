@@ -1,13 +1,9 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	PermissionString,
-} from 'discord.js';
+import { CommandInteraction, Message, PermissionString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
 
 export class UserTestCommand implements Command {
 	public name = `usertest`;
@@ -23,9 +19,9 @@ export class UserTestCommand implements Command {
 	public usage = `usertest | /usertest`;
 	public website = `https://www.bentobot.xyz/commands#cat`;
 	public category = `usertest`;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `usertest`,
-		description: this.slashDescription
+		description: this.slashDescription,
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
