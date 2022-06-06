@@ -45,14 +45,14 @@ export class SelectMenuHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (selectMenuReply.deferType) {
-		case SelectMenuDeferType.REPLY: {
-			await InteractionUtils.deferReply(intr);
-			break;
-		}
-		case SelectMenuDeferType.UPDATE: {
-			await InteractionUtils.deferUpdate(intr);
-			break;
-		}
+			case SelectMenuDeferType.REPLY: {
+				await InteractionUtils.deferReply(intr);
+				break;
+			}
+			case SelectMenuDeferType.UPDATE: {
+				await InteractionUtils.deferUpdate(intr);
+				break;
+			}
 		}
 
 		// TODO: Get data from database

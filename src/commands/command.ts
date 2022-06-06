@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, PermissionString,  } from 'discord.js';
+import { CommandInteraction, Message, PermissionString } from 'discord.js';
 import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
@@ -6,7 +6,7 @@ import { EventData } from '../models/internal-models.js';
 export enum CommandType {
 	Both = `Both`,
 	MessageCommand = `MessageCommand`,
-	SlashCommand = `SlashCommand`
+	SlashCommand = `SlashCommand`,
 }
 
 export interface Command {
@@ -14,10 +14,10 @@ export interface Command {
 	requireSetup?: boolean;
 	cooldown?: RateLimiter;
 	slashDescription: string;
-	description: string
-	usage: string
-	website: string
-	category: string
+	description: string;
+	usage: string;
+	website: string;
+	category: string;
 	name: string;
 	commandType: CommandType;
 	deferType?: CommandDeferAccessType;

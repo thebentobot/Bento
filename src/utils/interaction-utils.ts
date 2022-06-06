@@ -118,7 +118,9 @@ export class InteractionUtils {
 		}
 	}
 
-	private static interactionReplyOptions(content: string | MessageEmbed | InteractionReplyOptions): InteractionReplyOptions {
+	private static interactionReplyOptions(
+		content: string | MessageEmbed | InteractionReplyOptions,
+	): InteractionReplyOptions {
 		let options: InteractionReplyOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;

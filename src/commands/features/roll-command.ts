@@ -1,11 +1,5 @@
-import {
-	CommandInteraction,
-	EmbedAuthorData,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
-import { ApplicationCommandOptionType } from 'discord-api-types/v9';
+import { CommandInteraction, EmbedAuthorData, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -16,7 +10,7 @@ export class RollCommand implements Command {
 	public name = `roll`;
 	public slashDescription = `Roll a random number between two numbers`;
 	public commandType = CommandType.Both;
-	public metadata = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `roll`,
 		description: this.slashDescription,
 		options: [
@@ -24,9 +18,9 @@ export class RollCommand implements Command {
 				name: `number`,
 				description: `Pick a number for ${config.botName} to roll with`,
 				type: ApplicationCommandOptionType.Integer.valueOf(),
-				required: true
-			}
-		]
+				required: true,
+			},
+		],
 	};
 	public requireDev = false;
 	public requireGuild = false;
@@ -53,7 +47,7 @@ export class RollCommand implements Command {
 		const command = this.rollCommand(userNumber);
 		const authorData: EmbedAuthorData = {
 			name: `I rolled between 1 and ${userNumber}...`,
-			iconURL: intr.client.user?.avatarURL({format: `png`}) as string
+			iconURL: intr.client.user?.avatarURL({ format: `png` }) as string,
 		};
 		const embed = new MessageEmbed()
 			.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ format: `png` }) as string)}`)

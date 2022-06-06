@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-	EmbedAuthorData,
-	EmbedFooterData,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
+import { EmbedAuthorData, EmbedFooterData, Message, MessageEmbed, PermissionString } from 'discord.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
@@ -28,7 +22,7 @@ export class RolesCommand implements Command {
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		const authorData: EmbedAuthorData = {
 			name: msg.guild!.name,
-			iconURL: msg.guild!.iconURL({format: `png`}) as string
+			iconURL: msg.guild!.iconURL({ format: `png` }) as string,
 		};
 		const footerData: EmbedFooterData = {
 			text: `Amount of roles - ${msg.guild!.roles.cache.size}`,
@@ -37,11 +31,11 @@ export class RolesCommand implements Command {
 			.setAuthor(authorData)
 			.setTitle(`All roles in ${msg.guild!.name}`)
 			.setThumbnail(
-                msg.guild!.iconURL({
-            	format: `png`,
-            	size: 1024,
-            	dynamic: true,
-                }) as string,
+				msg.guild!.iconURL({
+					format: `png`,
+					size: 1024,
+					dynamic: true,
+				}) as string,
 			)
 			.setFooter(footerData)
 			.setDescription(stylingUtils.trim(msg.guild!.roles.cache.map((role) => `${role}`).join(` | `) as string, 4096));

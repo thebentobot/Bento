@@ -1,23 +1,19 @@
-import {
-	CommandInteraction,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
+import { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import { prisma } from '../../services/prisma.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
 
 export class PingCommand implements Command {
 	public name = `ping`;
 	public slashDescription = `Shows the latencies for ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `ping`,
-		description: this.slashDescription
+		description: this.slashDescription,
 	};
 	public requireDev = false;
 	public requireGuild = false;

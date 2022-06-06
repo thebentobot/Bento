@@ -71,10 +71,10 @@ export class CheckMutesJob implements Job {
 										`Muted by`,
 										guild?.members.cache.get(`${unmute.actor}`)?.nickname
 											? `${guild?.members.cache.get(`${unmute.actor}`)?.nickname} (${
-												guild?.members.cache.get(`${unmute.actor}`)?.user.username
+													guild?.members.cache.get(`${unmute.actor}`)?.user.username
 											  }#${guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator})`
 											: `${guild?.members.cache.get(`${unmute.actor}`)?.user.username}#${
-												guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator
+													guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator
 											  }`,
 									)
 									.addField(
@@ -87,7 +87,7 @@ export class CheckMutesJob implements Job {
 										`Original mute end date`,
 										unmute.muteEnd !== null
 											? `<t:${Math.round(unmute.muteEnd.getTime() / 1000)}:R> (<t:${Math.round(
-												unmute.muteEnd.getTime() / 1000,
+													unmute.muteEnd.getTime() / 1000,
 											  )}:F>`
 											: `The mute was on indefinite time`,
 									)

@@ -1,12 +1,5 @@
-import {
-	CommandInteraction,
-	EmbedAuthorData,
-	Message,
-	MessageEmbed,
-	PermissionString,
-	User,
-} from 'discord.js';
-import { ApplicationCommandOptionType } from 'discord-api-types/v9';
+import { CommandInteraction, EmbedAuthorData, Message, MessageEmbed, PermissionString, User } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ClientUtils, InteractionUtils, MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { EventData } from '../../models/internal-models.js';
@@ -15,7 +8,7 @@ export class BannerCommand implements Command {
 	public name = `banner`;
 	public slashDescription = `Show the banner for a user`;
 	public commandType = CommandType.Both;
-	public metadata = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `banner`,
 		description: this.slashDescription,
 		options: [
@@ -28,8 +21,8 @@ export class BannerCommand implements Command {
 						name: `user`,
 						description: `Check the banner for a specific user`,
 						type: ApplicationCommandOptionType.User.valueOf(),
-					}
-				]
+					},
+				],
 			},
 			/*
 			{
@@ -45,7 +38,7 @@ export class BannerCommand implements Command {
 				]
 			},
             */
-		]
+		],
 	};
 	public requireDev = false;
 	public requireGuild = true;
@@ -63,24 +56,24 @@ export class BannerCommand implements Command {
 		let imageURL: string | null = ``;
 		let imageURLColour: string | null = ``;
 		let authorData: EmbedAuthorData = {
-			name: `inital ts annoying`
+			name: `inital ts annoying`,
 		};
 
 		if (intr.options.getSubcommand() === `user`) {
 			if (intr.options.getUser(`user`)) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const interactionUser = await intr.options.getUser(`user`)!.fetch(true) as User;
-				const user = await intr.client.users.fetch(interactionUser,{ force: true });
-				imageURL = user.bannerURL({format: `png`, dynamic: true, size: 1024});
-				imageURLColour = user.bannerURL({format: `png`});
+				const interactionUser = (await intr.options.getUser(`user`)!.fetch(true)) as User;
+				const user = await intr.client.users.fetch(interactionUser, { force: true });
+				imageURL = user.bannerURL({ format: `png`, dynamic: true, size: 1024 });
+				imageURLColour = user.bannerURL({ format: `png` });
 				authorData = {
 					name: `${user.tag}'s banner`,
 				};
 			} else {
 				const interactionUser = intr.user as User;
-				const user = await intr.client.users.fetch(interactionUser,{ force: true });
-				imageURL = user.bannerURL({format: `png`, dynamic: true, size: 1024});
-				imageURLColour = user.bannerURL({format: `png`});
+				const user = await intr.client.users.fetch(interactionUser, { force: true });
+				imageURL = user.bannerURL({ format: `png`, dynamic: true, size: 1024 });
+				imageURLColour = user.bannerURL({ format: `png` });
 				authorData = {
 					name: `${user.tag}'s banner`,
 				};
@@ -204,7 +197,7 @@ export class BannerCommand implements Command {
 				} else {
 					return;
 				}
-			}			
+			}
 		}
 	}
 

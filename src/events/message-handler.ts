@@ -125,7 +125,10 @@ export class MessageHandler implements EventHandler {
 		let mentionMsgCommand = false;
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		if (argsCheck[0].includes(`<@${msg.client.user!.id}>`) || argsCheck[0].includes(`<@!${msg.client.user!.id}>`) && msg.type !== `REPLY`) {
+		if (
+			argsCheck[0].includes(`<@${msg.client.user!.id}>`) ||
+			(argsCheck[0].includes(`<@!${msg.client.user!.id}>`) && msg.type !== `REPLY`)
+		) {
 			mentionMsgCommand = true;
 		}
 

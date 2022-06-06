@@ -1,4 +1,12 @@
-import { ClientUser, CommandInteraction, GuildChannel, GuildMember, MessageEmbed, Permissions, ThreadChannel } from 'discord.js';
+import {
+	ClientUser,
+	CommandInteraction,
+	GuildChannel,
+	GuildMember,
+	MessageEmbed,
+	Permissions,
+	ThreadChannel,
+} from 'discord.js';
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { debug as Debug } from '../config/debug.js';
@@ -26,8 +34,9 @@ export class CommandUtils {
 		}
 
 		if (
-			(intr.channel instanceof GuildChannel || intr.channel instanceof ThreadChannel) && command.requireClientPerms.length &&
-            !intr.channel.permissionsFor(intr.client.user as ClientUser)?.has(command.requireClientPerms)
+			(intr.channel instanceof GuildChannel || intr.channel instanceof ThreadChannel) &&
+			command.requireClientPerms.length &&
+			!intr.channel.permissionsFor(intr.client.user as ClientUser)?.has(command.requireClientPerms)
 		) {
 			const embed = new MessageEmbed()
 				.setDescription(
@@ -103,6 +112,4 @@ export class CommandUtils {
 
 		return true;
 	}
-
-	
 }

@@ -1,12 +1,9 @@
-import {
-	CommandInteraction,
-	Message,
-	PermissionString,
-} from 'discord.js';
+import { CommandInteraction, Message, PermissionString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
 
 export class ModTestCommand implements Command {
 	public name = `modtest`;
@@ -22,9 +19,9 @@ export class ModTestCommand implements Command {
 	public usage = `modtest | /modtest`;
 	public website = `https://www.bentobot.xyz/commands#cat`;
 	public category = `modtest`;
-	public metadata = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `modtest`,
-		description: this.slashDescription
+		description: this.slashDescription,
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
