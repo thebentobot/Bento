@@ -14,7 +14,7 @@ import { InteractionUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { config } from '../../config/config.js';
 import { EventData } from '../../models/internal-models.js';
-import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 export class HelpCommand implements Command {
 	public name = `help`;

@@ -52,6 +52,7 @@ export class CommandRegistrationService {
 						await this.rest.post(Routes.applicationGuildCommands(Config.client.id, botDevServer), {
 							body: localCmd,
 						});
+						Logger.info(Logs.info.commandActionCreatedIndividual.replaceAll(`{COMMAND_NAME}`, this.formatCommandList([localCmd])));
 					}
 					Logger.info(Logs.info.commandActionCreated);
 				}
@@ -64,6 +65,7 @@ export class CommandRegistrationService {
 						await this.rest.post(Routes.applicationGuildCommands(Config.client.id, botDevServer), {
 							body: localCmd,
 						});
+						Logger.info(Logs.info.commandActionCreatedIndividual.replaceAll(`{COMMAND_NAME}`, this.formatCommandList([localCmd])));
 					}
 					Logger.info(Logs.info.commandActionUpdated);
 				}
@@ -76,6 +78,7 @@ export class CommandRegistrationService {
 						await this.rest.post(Routes.applicationCommands(Config.client.id), {
 							body: localCmd,
 						});
+						Logger.info(Logs.info.commandActionCreatedIndividual.replaceAll(`{COMMAND_NAME}`, this.formatCommandList([localCmd])));
 					}
 					Logger.info(Logs.info.commandActionCreated);
 				}
@@ -88,6 +91,7 @@ export class CommandRegistrationService {
 						await this.rest.post(Routes.applicationCommands(Config.client.id), {
 							body: localCmd,
 						});
+						Logger.info(Logs.info.commandActionCreatedIndividual.replaceAll(`{COMMAND_NAME}`, this.formatCommandList([localCmd])));
 					}
 					Logger.info(Logs.info.commandActionUpdated);
 				}

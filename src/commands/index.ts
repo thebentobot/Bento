@@ -11,6 +11,7 @@ export { ChooseCommand } from './features/choose-command.js';
 export { RollCommand } from './features/roll-command.js';
 export { UrbanCommand } from './features/urban-command.js';
 export { RpsCommand } from './features/rps-command.js';
+export { StreamableCommand } from './features/streamable-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';

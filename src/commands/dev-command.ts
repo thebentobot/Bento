@@ -8,7 +8,7 @@ import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from './command.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
-import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 const require = createRequire(import.meta.url);
 const TsConfig = require(`../../tsconfig.json`);

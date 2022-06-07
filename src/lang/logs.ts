@@ -9,6 +9,7 @@ export const logs = {
 		commandActionView: `\nLocal and remote:\n    {LOCAL_AND_REMOTE_LIST}\nLocal only:\n    {LOCAL_ONLY_LIST}\nRemote only:\n    {REMOTE_ONLY_LIST}`,
 		commandActionCreating: `Creating commands: {COMMAND_LIST}`,
 		commandActionCreated: `Commands created.`,
+		commandActionCreatedIndividual: `{COMMAND_NAME} created`,
 		commandActionUpdating: `Updating commands: {COMMAND_LIST}`,
 		commandActionUpdated: `Commands updated.`,
 		commandActionRenaming: `Renaming command: '{OLD_COMMAND_NAME}' --> '{NEW_COMMAND_NAME}'`,
