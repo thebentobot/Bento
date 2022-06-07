@@ -5,9 +5,12 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
+COPY prisma ./prisma/
 
 # Install packages
 RUN npm install
+
+RUN npx prisma generate
 
 # Copy the app code
 COPY . .
