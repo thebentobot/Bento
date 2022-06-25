@@ -69,7 +69,7 @@
 		"node-fetch": "^3.2.6",
 		"node-schedule": "^2.1.0",
 		"node-vibrant": "^3.2.1-alpha.1",
-		"pino": "^8.0.0",
+		"pino": "^8.1.0",
 		"pino-pretty": "^8.1.0",
 		"remove-markdown": "^0.5.0"
 	},
