@@ -31,6 +31,8 @@ import {
 	ModTestCommand,
 	UserTestCommand,
 	StreamableCommand,
+	WeatherCommand,
+	ColourCommand
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -88,6 +90,8 @@ export const commands: Command[] = [
 	new ModTestCommand(),
 	new UserTestCommand(),
 	new StreamableCommand(),
+	new WeatherCommand(),
+	new ColourCommand()
 	// TODO: Add new commands here
 ];
 
@@ -131,6 +135,8 @@ async function start(): Promise<void> {
 		new ModTestCommand(),
 		new UserTestCommand(),
 		new StreamableCommand(),
+		new WeatherCommand(),
+		new ColourCommand()
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));

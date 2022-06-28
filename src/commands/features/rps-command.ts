@@ -91,204 +91,62 @@ export class RpsCommand implements Command {
 
 		if (result === choice) {
 			switch (choice) {
-				case `rock`:
-					{
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 0,
-								rockTies: 1,
-								paperLosses: 0,
-								paperTies: 0,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
-							},
-							update: {
-								userID: BigInt(user.id),
-								rockTies: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-					}
-					break;
-				case `paper`:
-					{
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 0,
-								rockTies: 0,
-								paperLosses: 0,
-								paperTies: 1,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
-							},
-							update: {
-								userID: BigInt(user.id),
-								paperTies: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-					}
-					break;
-				case `scissors`: {
-					{
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 0,
-								rockTies: 0,
-								paperLosses: 0,
-								paperTies: 0,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 1,
-							},
-							update: {
-								userID: BigInt(user.id),
-								scissorsTies: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-					}
-				}
-			}
-			message = `Its a tie 👔! We had the same choice 😂`;
-		}
-
-		switch (choice) {
 			case `rock`:
 				{
-					if (result === `paper`) {
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 1,
-								rockWins: 0,
-								rockTies: 0,
-								paperLosses: 0,
-								paperTies: 0,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 0,
+							rockTies: 1,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							rockTies: {
+								increment: 1,
 							},
-							update: {
-								userID: BigInt(user.id),
-								rockLosses: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-						message = `I got ${bentoResult} I won! 🤣`;
-					} else {
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 1,
-								rockTies: 0,
-								paperLosses: 0,
-								paperTies: 0,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
-							},
-							update: {
-								userID: BigInt(user.id),
-								rockWins: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-						message = `I got ${bentoResult} You won! 😔`;
-					}
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
 				}
 				break;
 			case `paper`:
 				{
-					if (result === `scissors`) {
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 0,
-								rockTies: 0,
-								paperLosses: 1,
-								paperTies: 0,
-								paperWins: 0,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 1,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							paperTies: {
+								increment: 1,
 							},
-							update: {
-								userID: BigInt(user.id),
-								paperLosses: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-						message = `I got ${bentoResult} I won! 🤣`;
-					} else {
-						await prisma.rpsGame.upsert({
-							create: {
-								userID: BigInt(user.id),
-								rockLosses: 0,
-								rockWins: 0,
-								rockTies: 0,
-								paperLosses: 0,
-								paperTies: 0,
-								paperWins: 1,
-								scissorWins: 0,
-								scissorsLosses: 0,
-								scissorsTies: 0,
-							},
-							update: {
-								userID: BigInt(user.id),
-								paperWins: {
-									increment: 1,
-								},
-							},
-							where: {
-								userID: BigInt(user.id),
-							},
-						});
-						message = `I got ${bentoResult} You won! 😔`;
-					}
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
 				}
 				break;
 			case `scissors`: {
-				if (result === `rock`) {
+				{
 					await prisma.rpsGame.upsert({
 						create: {
 							userID: BigInt(user.id),
@@ -299,12 +157,100 @@ export class RpsCommand implements Command {
 							paperTies: 0,
 							paperWins: 0,
 							scissorWins: 0,
-							scissorsLosses: 1,
+							scissorsLosses: 0,
+							scissorsTies: 1,
+						},
+						update: {
+							userID: BigInt(user.id),
+							scissorsTies: {
+								increment: 1,
+							},
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+				}
+			}
+			}
+			message = `Its a tie 👔! We had the same choice 😂`;
+		}
+
+		switch (choice) {
+		case `rock`:
+			{
+				if (result === `paper`) {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 1,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
 							scissorsTies: 0,
 						},
 						update: {
 							userID: BigInt(user.id),
-							scissorsLosses: {
+							rockLosses: {
+								increment: 1,
+							},
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} I won! 🤣`;
+				} else {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 1,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							rockWins: {
+								increment: 1,
+							},
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} You won! 😔`;
+				}
+			}
+			break;
+		case `paper`:
+			{
+				if (result === `scissors`) {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 1,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							paperLosses: {
 								increment: 1,
 							},
 						},
@@ -322,14 +268,14 @@ export class RpsCommand implements Command {
 							rockTies: 0,
 							paperLosses: 0,
 							paperTies: 0,
-							paperWins: 0,
-							scissorWins: 1,
+							paperWins: 1,
+							scissorWins: 0,
 							scissorsLosses: 0,
 							scissorsTies: 0,
 						},
 						update: {
 							userID: BigInt(user.id),
-							scissorWins: {
+							paperWins: {
 								increment: 1,
 							},
 						},
@@ -340,6 +286,60 @@ export class RpsCommand implements Command {
 					message = `I got ${bentoResult} You won! 😔`;
 				}
 			}
+			break;
+		case `scissors`: {
+			if (result === `rock`) {
+				await prisma.rpsGame.upsert({
+					create: {
+						userID: BigInt(user.id),
+						rockLosses: 0,
+						rockWins: 0,
+						rockTies: 0,
+						paperLosses: 0,
+						paperTies: 0,
+						paperWins: 0,
+						scissorWins: 0,
+						scissorsLosses: 1,
+						scissorsTies: 0,
+					},
+					update: {
+						userID: BigInt(user.id),
+						scissorsLosses: {
+							increment: 1,
+						},
+					},
+					where: {
+						userID: BigInt(user.id),
+					},
+				});
+				message = `I got ${bentoResult} I won! 🤣`;
+			} else {
+				await prisma.rpsGame.upsert({
+					create: {
+						userID: BigInt(user.id),
+						rockLosses: 0,
+						rockWins: 0,
+						rockTies: 0,
+						paperLosses: 0,
+						paperTies: 0,
+						paperWins: 0,
+						scissorWins: 1,
+						scissorsLosses: 0,
+						scissorsTies: 0,
+					},
+					update: {
+						userID: BigInt(user.id),
+						scissorWins: {
+							increment: 1,
+						},
+					},
+					where: {
+						userID: BigInt(user.id),
+					},
+				});
+				message = `I got ${bentoResult} You won! 😔`;
+			}
+		}
 		}
 
 		return message;

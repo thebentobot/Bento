@@ -2,6 +2,7 @@ import { GuildMember, MessageEmbed, TextChannel, EmbedFooterData, PartialGuildMe
 
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
+import { botColours } from '../utils/styling-utils.js';
 import { EventHandler } from './event-handler.js';
 
 export class GuildMemberRemoveHandler implements EventHandler {
@@ -51,7 +52,7 @@ export class GuildMemberRemoveHandler implements EventHandler {
 						size: 1024,
 					})}`,
 				)
-				.setColor(`#FF0000`)
+				.setColor(botColours.error)
 				.setFooter(EmbedFooterData)
 				.setTimestamp()
 				.setDescription(

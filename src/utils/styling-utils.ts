@@ -1,5 +1,6 @@
 //import axios from 'axios';
 //import color from 'color';
+import { HexColorString } from 'discord.js';
 import Vibrant from 'node-vibrant';
 
 export class stylingUtils {
@@ -20,3 +21,8 @@ export class stylingUtils {
 		return s.charAt(0).toUpperCase() + s.slice(1);
 	}
 }
+
+export const botColours = {
+	openWeatherAPI: `#EB6E4B` as HexColorString,
+	error: `#FF0000` as HexColorString
+};
