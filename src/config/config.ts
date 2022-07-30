@@ -48,6 +48,10 @@ interface IConfig {
 			schedule: string
 			log: boolean
 		}
+		deleteExpiredGfycatPosts: {
+			schedule: string
+			log: boolean
+		}
 	}
 	rateLimiting: {
 		commands: {
@@ -133,6 +137,10 @@ export const config: IConfig = {
 		},
 		checkTimedAnnouncements: {
 			schedule: `* * * * *`,
+			log: false
+		},
+		deleteExpiredGfycatPosts: {
+			schedule: `0 */12 * * *`,
 			log: false
 		}
 	},

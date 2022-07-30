@@ -27,5 +27,5 @@
 		"varchar"
 	],
 	"typescript.preferences.importModuleSpecifierEnding": "js",
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"typescript.tsdk": "node_modules/typescript/lib",
 }

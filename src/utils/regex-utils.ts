@@ -1,3 +1,5 @@
+import { ParseUtils } from "./parse-utils.js";
+
 export class RegexUtils {
 	public static regex(input: string): RegExp | void {
 		// eslint-disable-next-line no-useless-escape
@@ -24,5 +26,24 @@ export class RegexUtils {
 			username: match[1],
 			discriminator: match[2],
 		};
+	}
+
+	public static pageNumber(input: string): number | undefined {
+		const match = this.findMatch(input, /Page (\d+)\/(\d+)/);
+		if (!match) {
+			return;
+		}
+
+		// Remove commas
+		return ParseUtils.parseInt(match);
+	}
+
+	private static findMatch(input: string, regex: RegExp): string | undefined {
+		const match = regex.exec(input);
+		if (match) {
+			return match[1];
+		} else {
+			return;
+		}
 	}
 }

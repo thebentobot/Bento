@@ -3,7 +3,7 @@ import { Options } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { Bot } from './bot.js';
-import { Button } from './buttons/index.js';
+import { Button, GfycatSearchButton, GfycatUserFeedButton } from './buttons/index.js';
 import {
 	EightBallCommand,
 	DogCommand,
@@ -32,7 +32,8 @@ import {
 	UserTestCommand,
 	StreamableCommand,
 	WeatherCommand,
-	ColourCommand
+	ColourCommand,
+	GfycatCommand
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -91,7 +92,8 @@ export const commands: Command[] = [
 	new UserTestCommand(),
 	new StreamableCommand(),
 	new WeatherCommand(),
-	new ColourCommand()
+	new ColourCommand(),
+	new GfycatCommand()
 	// TODO: Add new commands here
 ];
 
@@ -136,7 +138,8 @@ async function start(): Promise<void> {
 		new UserTestCommand(),
 		new StreamableCommand(),
 		new WeatherCommand(),
-		new ColourCommand()
+		new ColourCommand(),
+		new GfycatCommand()
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));
@@ -146,6 +149,8 @@ async function start(): Promise<void> {
 
 	// Buttons
 	const buttons: Button[] = [
+		new GfycatUserFeedButton(),
+		new GfycatSearchButton()
 		// TODO: Add new buttons here
 	];
 

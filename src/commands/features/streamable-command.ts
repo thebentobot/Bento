@@ -1,6 +1,6 @@
 import { CommandInteraction, Message, PermissionString, User, MessageEmbed } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
-import { MessageUtils } from '../../utils/index.js';
+import { CommandUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import axios from 'axios';
@@ -97,10 +97,10 @@ export class StreamableCommand implements Command {
 				switch (loopCount) {
 				case 0:
 				case 1:
-					await this.sleep(60000);
+					await CommandUtils.sleep(60000);
 					break;
 				default:
-					await this.sleep(120000);
+					await CommandUtils.sleep(120000);
 				}
 				if (loopCount === 1) {
 					(waitingMessage as Message).edit(`Approx. 2 minutes has gone by since Streamable started processing the video ⌛`);
@@ -137,19 +137,14 @@ export class StreamableCommand implements Command {
 			}
 
 			if (TMRError === true || streamableStatus === false) {
-				request.type === `interaction` ? (waitingMessage as Message).edit(`Processing of the video is finished 😬`)  : (waitingMessage as Message).delete();
+				request.type === `interaction` ? await (waitingMessage as Message).edit(`Processing of the video is finished 😬`)  : await (waitingMessage as Message).delete();
 				return `${user} Error - Too many requests 😔 either your video is too big or Streamable is just stressed 🥺 I am sorry.`;
 			} else {
-				request.type === `interaction` ? (waitingMessage as Message).edit(`Processing of the video is finished 🎉`)  : (waitingMessage as Message).delete();
+				request.type === `interaction` ? await (waitingMessage as Message).edit(`Processing of the video is finished 🎉`)  : await (waitingMessage as Message).delete();
 				return `${user} your streamable is done now! https://streamable.com/${response.data?.shortcode}`;
 			}
 		} else {
 			return `${user} Either your URL was invalid, or Streamable doesn't answer right now, try again 😔`;
 		}
-	}
-	private sleep(ms: number) {
-		return new Promise((resolve) => {
-			setTimeout(resolve, ms);
-		});
 	}
 }
