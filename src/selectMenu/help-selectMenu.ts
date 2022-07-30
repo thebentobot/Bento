@@ -136,8 +136,8 @@ export class HelpSelectMenu implements SelectMenu {
 					getCommand.commandType === CommandType.Both
 						? `💬  Message command | / Slash command`
 						: getCommand.commandType === CommandType.MessageCommand
-						? `💬 Message command`
-						: `**/** Slash command`,
+							? `💬 Message command`
+							: `**/** Slash command`,
 			};
 			const footerData: EmbedFooterData = {
 				text: `<> = REQUIRED | [] = OPTIONAL`,
@@ -151,8 +151,8 @@ export class HelpSelectMenu implements SelectMenu {
 				getCommand.commandType === CommandType.Both
 					? `${guildData?.prefix}` + getCommand.usage
 					: getCommand.commandType === CommandType.MessageCommand
-					? `${guildData?.prefix}` + getCommand.usage
-					: getCommand.usage;
+						? `${guildData?.prefix}` + getCommand.usage
+						: getCommand.usage;
 			const embed = new MessageEmbed()
 				.setAuthor(authorData)
 				.setTitle(stylingUtils.capitalizeFirstCharacter(getCommand.name))
@@ -160,9 +160,9 @@ export class HelpSelectMenu implements SelectMenu {
 					`${
 						getCommand.aliases
 							? `${
-									getCommand.aliases.length > 1
-										? `**Aliases:** ${getCommand.aliases.join(`, `)}\n`
-										: `**Alias:** ${getCommand.aliases[0]}`
+								getCommand.aliases.length > 1
+									? `**Aliases:** ${getCommand.aliases.join(`, `)}\n`
+									: `**Alias:** ${getCommand.aliases[0]}`
 							  }\n`
 							: ``
 					}${getCommand.description}\n\n**Usage**\n${usageText}\n\n[Click here to check the command on the website](${

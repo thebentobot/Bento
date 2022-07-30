@@ -18,8 +18,8 @@ export class CheckRemindersJob implements Job {
 	public async run(): Promise<void> {
 		const remindersData: reminder[] = await prisma.$queryRaw`
             SELECT *
-            FROM reminder
-            WHERE reminder.date < now()::timestamp at time zone 'utc';`;
+            FROM "reminder"
+            WHERE "reminder".date < now()::timestamp at time zone 'utc';`;
 		if (remindersData) {
 			for (const reminder of remindersData) {
 				await this.shardManager.broadcastEval(async (client) => {

@@ -41,6 +41,7 @@ export class HelpCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const selectMenu = this.commandsSelectMenu(intr.client);
+		// there's an option for ephemeral if we deprecate message commands in the future
 		await InteractionUtils.send(intr, { embeds: selectMenu.embeds, components: selectMenu.components });
 	}
 

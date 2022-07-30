@@ -41,6 +41,7 @@
 		"@types/node-schedule": "^2.1.0",
 		"@types/remove-markdown": "^0.3.1",
 		"@types/tz-lookup": "^6.1.0",
+		"@types/utf8": "^3.0.1",
 		"@typescript-eslint/eslint-plugin": "^5.30.0",
 		"@typescript-eslint/parser": "^5.30.0",
 		"eslint": "^8.18.0",
@@ -68,13 +69,15 @@
 		"express-promise-router": "^4.1.1",
 		"filesize": "^9.0.11",
 		"luxon": "^2.4.0",
+		"naughty-words": "^1.2.0",
 		"node-fetch": "^3.2.6",
 		"node-schedule": "^2.1.0",
 		"node-vibrant": "^3.2.1-alpha.1",
 		"pino": "^8.1.0",
 		"pino-pretty": "^8.1.0",
 		"remove-markdown": "^0.5.0",
-		"tz-lookup": "^6.1.25"
+		"tz-lookup": "^6.1.25",
+		"utf8": "^3.0.0"
 	},
 	"prisma": {
 		"schema": "prisma/schema.prisma"

@@ -14,6 +14,7 @@ export { RpsCommand } from './features/rps-command.js';
 export { StreamableCommand } from './features/streamable-command.js';
 export { WeatherCommand } from './features/weather-command.js';
 export { ColourCommand } from './features/colour-command.js';
+export { GfycatCommand } from './features/gfycat-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';
