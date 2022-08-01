@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedAuthorData, EmbedFooterData, Message, MessageEmbed, PermissionString, User } from 'discord.js';
+import { CommandInteraction, EmbedAuthorData, EmbedFooterData, Message, EmbedBuilder, PermissionsString, User } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -25,8 +25,8 @@ export class WeatherCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Displays info about the weather at the city saved for the user, or at the specified city.\nIf it shows a city from another country than the one you expected, try to add a country code (e.g. US, GB, DE) beside the city (remember a comma after city), as shown below\nIf it does not show up either, it may not be included in the OpenWeather API.`;
 	public slashDescription = `Check the weather at a city`;
 	public commandType = CommandType.Both;
@@ -72,24 +72,15 @@ export class WeatherCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		let cmd: MessageEmbed;
-		switch (intr.options.getSubcommand()) {
-		case `city`: {
-			cmd = await this.cityOption(intr.options.getString(`input`), intr.user);
-		}
-			break;
-		case `save`: {
-			cmd = await this.saveOption(intr.options.getString(`input`, true), intr.user);
-		}
-			break;
-		case `remove`: {
+		let cmd: EmbedBuilder;
+		if (intr.options.get(`city`)) {
+			cmd = await this.cityOption(intr.options.get(`input`)?.value as string, intr.user);
+		} else if (intr.options.get(`save`)) {
+			cmd = await this.saveOption(intr.options.get(`input`, true).value as string, intr.user);
+		} else if (intr.options.get(`remove`)) {
 			cmd = await this.removeOption(intr.user);
-		}
-			break;
-		default: {
+		} else {
 			cmd = await this.defaultOption(intr.user);
-		}
-			break;
 		}
 		await InteractionUtils.send(intr, cmd);
 		return;
@@ -97,7 +88,7 @@ export class WeatherCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
-		let cmd: MessageEmbed;
+		let cmd: EmbedBuilder;
 		if (!args.length) {
 			cmd = await this.defaultOption(msg.author);
 			await MessageUtils.send(msg.channel, cmd);
@@ -126,7 +117,7 @@ export class WeatherCommand implements Command {
 		}
 	}
 
-	private async weatherCommand(city: string, userWeather: boolean, user: User): Promise<MessageEmbed> {
+	private async weatherCommand(city: string, userWeather: boolean, user: User): Promise<EmbedBuilder> {
 		const openWeatherFetch = await openWeatherAPI.get<IWeatherAPIObjectInterface>(`/weather?`, {
 			params: {
 				q: city,
@@ -137,22 +128,22 @@ export class WeatherCommand implements Command {
 		});
 		switch (openWeatherFetch.status) {
 		case 401: 
-			return new MessageEmbed().setDescription(`The API key is invalid 🤔`).setTitle(`Error`).setColor(botColours.error);
+			return new EmbedBuilder().setDescription(`The API key is invalid 🤔`).setTitle(`Error`).setColor(botColours.error);
 		case 404:
-			return new MessageEmbed().setDescription(`Your city input is invalid`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
+			return new EmbedBuilder().setDescription(`Your city input is invalid`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
 		case 429:
-			return new MessageEmbed().setDescription(`${config.botName} has received more than 60 weather API calls the last minute, please wait 🙏🏻`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
+			return new EmbedBuilder().setDescription(`${config.botName} has received more than 60 weather API calls the last minute, please wait 🙏🏻`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
 		case 500:
 		case 502:
 		case 503:
 		case 504:
-			return new MessageEmbed().setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
+			return new EmbedBuilder().setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
 		}
 		if (openWeatherFetch.status === 200) {
 			const response = openWeatherFetch.data;
 			const userAuthorData: EmbedAuthorData = {
 				name: userWeather ? user.tag : `OpenWeather`,
-				iconURL: userWeather ? user.displayAvatarURL({dynamic: true}) : `https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg`,
+				iconURL: userWeather ? user.displayAvatarURL({forceStatic: false}) : `https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg`,
 			};
 			const footerData: EmbedFooterData = {
 				text: `Last updated at ${this.toTimeZone(
@@ -161,7 +152,7 @@ export class WeatherCommand implements Command {
 				)} local time`,
 				iconURL: userWeather ? `https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg` : ``
 			};
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setColor(botColours.openWeatherAPI)
 				.setAuthor(userAuthorData)
 				.setTitle(
@@ -196,11 +187,11 @@ export class WeatherCommand implements Command {
 				.setTimestamp();
 			return embed;
 		} else {
-			return new MessageEmbed().setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
+			return new EmbedBuilder().setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
 		}
 	}
 
-	private async cityOption(input: string | null, intrUser: User): Promise<MessageEmbed> {
+	private async cityOption(input: string | null, intrUser: User): Promise<EmbedBuilder> {
 		if (input === null) {
 			const getIntrUserWeatherData = await prisma.weather.findUnique({
 				where: {
@@ -208,7 +199,7 @@ export class WeatherCommand implements Command {
 				}
 			});
 			if (getIntrUserWeatherData === null) {
-				return new MessageEmbed().setDescription(`You haven't specified a city, user nor saved a city to show.`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
+				return new EmbedBuilder().setDescription(`You haven't specified a city, user nor saved a city to show.`).setTitle(`Error`).setColor(botColours.openWeatherAPI);
 			} else {
 				const weatherEmbed = await this.weatherCommand(getIntrUserWeatherData.city, true, intrUser);
 				return weatherEmbed;
@@ -219,7 +210,7 @@ export class WeatherCommand implements Command {
 		}
 	}
 
-	private async saveOption(input: string, user: User): Promise<MessageEmbed> {
+	private async saveOption(input: string, user: User): Promise<EmbedBuilder> {
 		const saveWeatherUser = await prisma.weather.upsert({
 			create: {
 				city: input,
@@ -233,27 +224,27 @@ export class WeatherCommand implements Command {
 				userID: BigInt(user.id)
 			}
 		});
-		return new MessageEmbed().setTitle(`Your weather city was saved!`).setDescription(`**${stylingUtils.capitalizeFirstCharacter(saveWeatherUser.city)}** was saved.\nYou can now use the weather command without any input, if you want to instantly check the weather at your saved location 😎`).setColor(botColours.openWeatherAPI);
+		return new EmbedBuilder().setTitle(`Your weather city was saved!`).setDescription(`**${stylingUtils.capitalizeFirstCharacter(saveWeatherUser.city)}** was saved.\nYou can now use the weather command without any input, if you want to instantly check the weather at your saved location 😎`).setColor(botColours.openWeatherAPI);
 	}
 
-	private async removeOption(user: User): Promise<MessageEmbed> {
+	private async removeOption(user: User): Promise<EmbedBuilder> {
 		await prisma.weather.delete({
 
 			where: {
 				userID: BigInt(user.id)
 			}
 		});
-		return new MessageEmbed().setTitle(`Your weather city was deleted!`).setColor(botColours.openWeatherAPI);
+		return new EmbedBuilder().setTitle(`Your weather city was deleted!`).setColor(botColours.openWeatherAPI);
 	}
 
-	private async defaultOption(user: User): Promise<MessageEmbed> {
+	private async defaultOption(user: User): Promise<EmbedBuilder> {
 		const getIntrUserWeatherData = await prisma.weather.findUnique({
 			where: {
 				userID: BigInt(user.id)
 			}
 		});
 		if (getIntrUserWeatherData === null) {
-			return new MessageEmbed().setDescription(`You haven't specified a city, user nor saved a city to show.`).setTitle(`Error`).setColor(`#EB6E4B`);
+			return new EmbedBuilder().setDescription(`You haven't specified a city, user nor saved a city to show.`).setTitle(`Error`).setColor(`#EB6E4B`);
 		} else {
 			const weatherEmbed = await this.weatherCommand(getIntrUserWeatherData.city, true, user);
 			return weatherEmbed;

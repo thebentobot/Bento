@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, PermissionString, User, MessageEmbed } from 'discord.js';
+import { CommandInteraction, Message, PermissionsString, User, EmbedBuilder } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { CommandUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -18,8 +18,8 @@ export class StreamableCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Get a Streamable link of your desired video. There is a 250 MB / 10 minute / up to 720p 60 fps limit per video.\nAttachments for slash commands are currently not possible. Will be implemented when possible.`;
 	public slashDescription = `Get a Streamable link of your desired video`;
 	public commandType = CommandType.Both;
@@ -87,7 +87,7 @@ export class StreamableCommand implements Command {
 				},
 			});
 		if (response?.data.status === 1) {
-			const embed = new MessageEmbed().setDescription(`Waiting for Streamable to process the video... ⌛`);
+			const embed = new EmbedBuilder().setDescription(`Waiting for Streamable to process the video... ⌛`);
 			const waitingMessage = request.type === `interaction` ? await InteractionUtils.send((request.context as CommandInteraction), embed) : await MessageUtils.send((request.context as Message).channel, embed);
 			let streamableStatus = false;
 			let TMRError = false;

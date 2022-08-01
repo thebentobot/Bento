@@ -6,8 +6,9 @@ import {
 	Message,
 	MessageComponentInteraction,
 	MessageEditOptions,
-	MessageEmbed,
+	EmbedBuilder,
 	MessageOptions,
+	InteractionResponse,
 } from 'discord.js';
 
 import { MessageUtils } from './index.js';
@@ -26,13 +27,13 @@ export class InteractionUtils {
 	public static async deferReply(
 		intr: CommandInteraction | MessageComponentInteraction,
 		hidden = false,
-	): Promise<void> {
+	): Promise<void | InteractionResponse<boolean>> {
 		try {
 			return await intr.deferReply({
 				ephemeral: hidden,
 			});
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -40,11 +41,11 @@ export class InteractionUtils {
 		}
 	}
 
-	public static async deferUpdate(intr: MessageComponentInteraction): Promise<void> {
+	public static async deferUpdate(intr: MessageComponentInteraction): Promise<void | InteractionResponse<boolean>> {
 		try {
 			return await intr.deferUpdate();
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -54,7 +55,7 @@ export class InteractionUtils {
 
 	public static async send(
 		intr: CommandInteraction | MessageComponentInteraction,
-		content: string | MessageEmbed | InteractionReplyOptions,
+		content: string | EmbedBuilder | InteractionReplyOptions,
 		hidden = false,
 	): Promise<Message | undefined> {
 		try {
@@ -73,7 +74,7 @@ export class InteractionUtils {
 				})) as Message;
 			}
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -83,7 +84,7 @@ export class InteractionUtils {
 
 	public static async editReply(
 		intr: CommandInteraction | MessageComponentInteraction,
-		content: string | MessageEmbed | MessageOptions,
+		content: string | EmbedBuilder | MessageOptions,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageOptions(content);
@@ -91,7 +92,7 @@ export class InteractionUtils {
 				...msgOptions,
 			})) as Message;
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -101,7 +102,7 @@ export class InteractionUtils {
 
 	public static async update(
 		intr: MessageComponentInteraction,
-		content: string | MessageEmbed | MessageEditOptions,
+		content: string | EmbedBuilder | MessageEditOptions,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageEditOptions(content);
@@ -110,7 +111,7 @@ export class InteractionUtils {
 				fetchReply: true,
 			})) as Message;
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -119,12 +120,12 @@ export class InteractionUtils {
 	}
 
 	private static interactionReplyOptions(
-		content: string | MessageEmbed | InteractionReplyOptions,
+		content: string | EmbedBuilder | InteractionReplyOptions,
 	): InteractionReplyOptions {
 		let options: InteractionReplyOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
-		} else if (content instanceof MessageEmbed) {
+		} else if (content instanceof EmbedBuilder) {
 			options.embeds = [content];
 		} else {
 			options = content;

@@ -1,4 +1,4 @@
-import { GuildMember, MessageEmbed, Role, TextChannel, EmbedFooterData } from 'discord.js';
+import { GuildMember, EmbedBuilder, Role, TextChannel, EmbedFooterData, PermissionFlagsBits } from 'discord.js';
 
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
@@ -22,7 +22,7 @@ export class GuildMemberAddHandler implements EventHandler {
 
 			const role = member.guild.roles.cache.get(`${muteRoleData?.roleID}`);
 
-			if (member.guild.me?.permissions.has(`MANAGE_ROLES`)) {
+			if (member.guild.members.me?.permissions.has(PermissionFlagsBits.ManageRoles)) {
 				try {
 					await member.roles.add(role as Role);
 				} catch {
@@ -45,7 +45,7 @@ export class GuildMemberAddHandler implements EventHandler {
 			const iterator = autoRoleData.values();
 
 			for (const value of iterator) {
-				if (member.guild.me?.permissions.has(`MANAGE_ROLES`)) {
+				if (member.guild.members.me?.permissions.has(PermissionFlagsBits.ManageRoles)) {
 					try {
 						await member.roles.add(`${value.roleID}`);
 					} catch {
@@ -102,12 +102,12 @@ export class GuildMemberAddHandler implements EventHandler {
 				text: `UserID: ${member.user.id}`,
 			};
 
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setTitle(`${member} joined the server!`)
 				.setThumbnail(
 					`${member.user.avatarURL({
-						format: `png`,
-						dynamic: true,
+						extension: `png`,
+						forceStatic: false,
 						size: 1024,
 					})}`,
 				)
@@ -136,8 +136,8 @@ export class GuildMemberAddHandler implements EventHandler {
 
 		if (welcomeData && welcomeData.message && welcomeData.channel) {
 			const channel = member.guild.channels.cache.get(`${welcomeData.channel}`) as TextChannel;
-			if (!channel.permissionsFor(member.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-			if (!channel.permissionsFor(member.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 			const msg = welcomeData.message;
 			const msgClean = msg
 				.replace(`{user}`, `${member.user}`)

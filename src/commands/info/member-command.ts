@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildMember, MessageEmbed, PermissionString } from 'discord.js';
+import { CommandInteraction, GuildMember, EmbedBuilder, PermissionsString } from 'discord.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { stylingUtils } from '../../utils/index.js';
@@ -31,8 +31,8 @@ export class MemberCommand implements Command {
 	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Show info for a member`;
 	public usage = `/member`;
 	public website = `https://www.bentobot.xyz/commands#member`;
@@ -40,53 +40,50 @@ export class MemberCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		if (intr.options.getSubcommand() === `info`) {
+		if (intr.options.get(`info`)) {
 			let guildMember: GuildMember;
 			if (intr.options.getMember(`user`)) {
 				guildMember = intr.options.getMember(`user`) as GuildMember;
 			} else {
 				guildMember = intr.member as GuildMember;
 			}
-			const imageURLColour = guildMember.displayAvatarURL({ format: `png` }) as string;
+			const imageURLColour = guildMember.displayAvatarURL({ extension: `png` }) as string;
 			const authorData = {
 				name: guildMember.displayName,
-				iconURL: guildMember.displayAvatarURL({ dynamic: true }),
+				iconURL: guildMember.displayAvatarURL({ forceStatic: false }),
 			};
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
 				.setColor(`#${await stylingUtils.urlToColours(imageURLColour)}`)
 				.setTitle(`Profile for ${guildMember.displayName}`)
-				.setThumbnail(guildMember.displayAvatarURL({ format: `png`, dynamic: true, size: 1024 }) as string)
+				.setThumbnail(guildMember.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
 				.setTimestamp()
 				.addFields(
-					[
-						{
-							name: `Nickname on the server`,
-							value: guildMember.nickname !== null ? guildMember.nickname : guildMember.displayName,
-						},
-					],
-					[{ name: `User ID`, value: guildMember.user.id }],
-					[
-						{
-							name: `Account created on`,
-							value: `<t:${Math.round(guildMember.user.createdTimestamp / 1000)}:F>`,
-						},
-					],
-					[
-						{
-							name: `Joined server at`,
-							value: `<t:${Math.round((guildMember.joinedTimestamp as number) / 1000)}:F>`,
-							inline: true,
-						},
-					],
-					[{ name: `Highest role`, value: `${guildMember.roles.highest}` }],
-					[
-						{
-							name: `All roles`,
-							value: stylingUtils.trim(guildMember.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
-							inline: true,
-						},
-					],
+					{
+						name: `Nickname on the server`,
+						value: guildMember.nickname !== null ? guildMember.nickname : guildMember.displayName,
+					},
+					{ 
+						name: `User ID`, 
+						value: guildMember.user.id },
+					{
+						name: `Account created on`,
+						value: `<t:${Math.round(guildMember.user.createdTimestamp / 1000)}:F>`,
+					},
+					{
+						name: `Joined server at`,
+						value: `<t:${Math.round((guildMember.joinedTimestamp as number) / 1000)}:F>`,
+						inline: true,
+					},
+					{ 
+						name: `Highest role`, 
+						value: `${guildMember.roles.highest}` 
+					},
+					{
+						name: `All roles`,
+						value: stylingUtils.trim(guildMember.roles.cache.map((r) => `${r}`).join(` | `) as string, 1024),
+						inline: true,
+					},
 				);
 			await InteractionUtils.send(intr, embed);
 		}

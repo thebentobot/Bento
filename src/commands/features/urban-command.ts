@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedAuthorData, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { CommandInteraction, EmbedAuthorData, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
@@ -26,8 +26,8 @@ export class UrbanCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Search for definitions on Urban Dictionary.\nIf the query you want to be defined doesn't exist, it won't return anything.`;
 	public usage = `urban <search input> | /urban <search input>`;
 	public website = `https://www.bentobot.xyz/commands#urban`;
@@ -53,7 +53,7 @@ export class UrbanCommand implements Command {
 		return;
 	}
 
-	private async urbanCommand(content: string): Promise<MessageEmbed | string> {
+	private async urbanCommand(content: string): Promise<EmbedBuilder | string> {
 		const response = await axios.get(`https://api.urbandictionary.com/v0/define?`, { params: { term: content } });
 
 		if (!response.data.list.length) {
@@ -77,7 +77,7 @@ export class UrbanCommand implements Command {
 			url: `https://www.urbandictionary.com/`,
 		};
 
-		const exampleEmbed = new MessageEmbed()
+		const exampleEmbed = new EmbedBuilder()
 			.setColor(`#1c9fea`)
 			.setAuthor(authorData)
 			.setTitle(answer.word)

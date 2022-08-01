@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { CommandInteraction, EmbedAuthorData, EmbedFooterData, MessageEmbed, PermissionString } from 'discord.js';
+import { CommandInteraction, EmbedAuthorData, EmbedFooterData, EmbedBuilder, PermissionsString } from 'discord.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { stylingUtils } from '../../utils/index.js';
@@ -52,8 +52,8 @@ export class ServerCommand implements Command {
 	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Shows various information about the server.\nRoles, emotes, general information.`;
 	public usage = `/server <one of the options>`;
 	public website = `https://www.bentobot.xyz/commands#link`;
@@ -61,57 +61,82 @@ export class ServerCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		if (intr.options.getSubcommand() === `info`) {
-			const embed = new MessageEmbed()
+		if (intr.options.get(`info`)) {
+			const embed = new EmbedBuilder()
 				.setTitle(intr.guild!.name)
-				.setColor(`#${await stylingUtils.urlToColours(intr.guild!.iconURL({ format: `png` }) as string)}`)
-				.setThumbnail(intr.guild!.iconURL({ dynamic: true, format: `png`, size: 1024 }) as string)
-				.addField(`Server ID`, intr.guild!.id)
-				.addField(
-					`Server owner`,
-					`${(await intr.guild!.fetchOwner({ force: true })).user.tag} (${
-						(await intr.guild!.fetchOwner({ force: true })).user.id
-					})`,
-				)
-				.addField(`Total members`, `${intr.guild!.memberCount}`)
-				.addField(`Server boost level`, intr.guild!.premiumTier)
-				.addField(`Server boosters`, `${intr.guild!.premiumSubscriptionCount}`, true)
-				.addField(
-					`Text channels | Voice channels`,
-					`${intr.guild!.channels.cache.filter((channel) => channel.isText()).size} | ${
-						intr.guild!.channels.cache.filter((channel) => channel.isVoice()).size
-					}`,
-				)
-				.addField(`Amount of roles`, `${intr.guild!.roles.cache.size}`)
-				.addField(`Created at`, `<t:${Math.round(intr.guild!.createdTimestamp / 1000)}:F>`)
-				.addField(
-					`Emotes`,
-					`${intr.guild!.emojis.cache.size} in total.\n${intr.guild!.emojis.cache.reduce(
-						(acc, emoji) => (emoji.animated ? acc + 1 : acc + 0),
-						0,
-					)} animated emotes.`,
+				.setColor(`#${await stylingUtils.urlToColours(intr.guild!.iconURL({ extension: `png` }) as string)}`)
+				.setThumbnail(intr.guild!.iconURL({ forceStatic: false, extension: `png`, size: 1024 }) as string)
+				.addFields(
+					{
+						name: `Server ID`,
+						value: intr.guild!.id
+					},
+					{
+						name: `Created at`,
+						value: `<t:${Math.round(intr.guild!.createdTimestamp / 1000)}:F>`
+					},
+					{
+						name: `Server owner`,
+						value: `${(await intr.guild!.fetchOwner({ force: true })).user.tag} (${
+							(await intr.guild!.fetchOwner({ force: true })).user.id
+						})`,
+					},
+					{
+						name: `Total members`,
+						value: `${intr.guild!.memberCount}`
+					},
+					{
+						name: `Server boost level`,
+						value: intr.guild!.premiumTier.toString()
+					},
+					{
+						name: `Server boosters`,
+						value: `${intr.guild!.premiumSubscriptionCount}`,
+						inline: true
+					},
+					{
+						name: `Text channels | Voice channels`,
+						value: `${intr.guild!.channels.cache.filter((channel) => channel.isTextBased()).size} | ${
+							intr.guild!.channels.cache.filter((channel) => channel.isVoiceBased()).size
+						}`,
+					},
+					{
+						name: `Amount of roles`,
+						value: `${intr.guild!.roles.cache.size}`
+					},
+					{
+						name: `Emotes`,
+						value: `${intr.guild!.emojis.cache.size} in total.\n${intr.guild!.emojis.cache.reduce(
+							(acc, emoji) => (emoji.animated ? acc + 1 : acc + 0),
+							0,
+						)} animated emotes.`,
+					},
+					{
+						name: `Features`,
+						value: `\`${intr.guild!.features.join(` `)}\``
+					},
 				);
 			await InteractionUtils.send(intr, embed);
 			return;
 		}
 
-		if (intr.options.getSubcommandGroup() === `emotes`) {
-			if (intr.options.getSubcommand() === `all`) {
+		if (intr.options.get(`emotes`)) {
+			if (intr.options.get(`all`)) {
 				const authorData: EmbedAuthorData = {
 					name: intr.guild!.name,
-					iconURL: intr.guild!.iconURL({ format: `png` }) as string,
+					iconURL: intr.guild!.iconURL({ extension: `png` }) as string,
 				};
 				const footerData: EmbedFooterData = {
 					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(authorData)
 					.setTitle(`All Emotes in ${intr.guild!.name}`)
 					.setThumbnail(
 						intr.guild!.iconURL({
-							format: `png`,
+							extension: `png`,
 							size: 1024,
-							dynamic: true,
+							forceStatic: false,
 						}) as string,
 					)
 					.setFooter(footerData)
@@ -129,22 +154,22 @@ export class ServerCommand implements Command {
 				return;
 			}
 
-			if (intr.options.getSubcommand() === `animated`) {
+			if (intr.options.get(`animated`)) {
 				const authorData: EmbedAuthorData = {
 					name: intr.guild!.name,
-					iconURL: intr.guild!.iconURL({ format: `png` }) as string,
+					iconURL: intr.guild!.iconURL({ extension: `png` }) as string,
 				};
 				const footerData: EmbedFooterData = {
 					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(authorData)
 					.setTitle(`All Animated Emotes in ${intr.guild!.name}`)
 					.setThumbnail(
 						intr.guild!.iconURL({
-							format: `png`,
+							extension: `png`,
 							size: 1024,
-							dynamic: true,
+							forceStatic: false,
 						}) as string,
 					)
 					.setFooter(footerData)
@@ -161,22 +186,22 @@ export class ServerCommand implements Command {
 				return;
 			}
 
-			if (intr.options.getSubcommand() === `static`) {
+			if (intr.options.get(`static`)) {
 				const authorData: EmbedAuthorData = {
 					name: intr.guild!.name,
-					iconURL: intr.guild!.iconURL({ format: `png` }) as string,
+					iconURL: intr.guild!.iconURL({ extension: `png` }) as string,
 				};
 				const footerData: EmbedFooterData = {
 					text: `Amount of emotes - ${intr.guild!.emojis.cache.size}`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(authorData)
 					.setTitle(`All Static Emotes in ${intr.guild!.name}`)
 					.setThumbnail(
 						intr.guild!.iconURL({
-							format: `png`,
+							extension: `png`,
 							size: 1024,
-							dynamic: true,
+							forceStatic: false,
 						}) as string,
 					)
 					.setFooter(footerData)
@@ -194,22 +219,22 @@ export class ServerCommand implements Command {
 			}
 		}
 
-		if (intr.options.getSubcommand() === `roles`) {
+		if (intr.options.get(`roles`)) {
 			const authorData: EmbedAuthorData = {
 				name: intr.guild!.name,
-				iconURL: intr.guild!.iconURL({ format: `png` }) as string,
+				iconURL: intr.guild!.iconURL({ extension: `png` }) as string,
 			};
 			const footerData: EmbedFooterData = {
 				text: `Amount of roles - ${intr.guild!.roles.cache.size}`,
 			};
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
 				.setTitle(`All roles in ${intr.guild!.name}`)
 				.setThumbnail(
 					intr.guild!.iconURL({
-						format: `png`,
+						extension: `png`,
 						size: 1024,
-						dynamic: true,
+						forceStatic: false,
 					}) as string,
 				)
 				.setFooter(footerData)

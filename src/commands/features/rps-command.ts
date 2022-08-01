@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, PermissionString, User } from 'discord.js';
+import { CommandInteraction, Message, PermissionsString, User } from 'discord.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
@@ -41,8 +41,8 @@ export class RpsCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Play Rock 🪨, Paper 🧻, Scissors ✂️ with ${config.botName}.\nPick one of the options and see if you win.\n**Warning** ${config.botName} can get a bit sassy if they're winning hehe.`;
 	public usage = `rps <rock, paper, scissors> | /rps <rock, paper, scissors>`;
 	public website = `https://www.bentobot.xyz/commands#rps`;

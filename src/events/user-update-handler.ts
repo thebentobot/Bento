@@ -12,8 +12,8 @@ export class UserUpdateHandler implements EventHandler {
 				},
 				data: {
 					avatarURL: newUser.avatarURL({
-						format: `png`,
-						dynamic: true,
+						extension: `png`,
+						forceStatic: false,
 						size: 1024,
 					}),
 				},

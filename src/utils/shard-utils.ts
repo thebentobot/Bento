@@ -1,4 +1,4 @@
-import { ShardClientUtil, ShardingManager, Util } from 'discord.js';
+import { ShardClientUtil, ShardingManager, fetchRecommendedShardCount } from 'discord.js';
 import { MathUtils } from './index.js';
 
 const MAX_SERVERS_PER_SHARD = 2500;
@@ -9,7 +9,7 @@ export class ShardUtils {
 	}
 
 	public static async recommendedShardCount(token: string, serversPerShard: number): Promise<number> {
-		return Math.ceil(await Util.fetchRecommendedShards(token, { guildsPerShard: serversPerShard }));
+		return Math.ceil(await fetchRecommendedShardCount(token, { guildsPerShard: serversPerShard }));
 	}
 
 	public static shardIds(shardInterface: ShardingManager | ShardClientUtil): number[] {

@@ -1,4 +1,4 @@
-import djs, { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import djs, { CommandInteraction, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import fileSize from 'filesize';
 import os from 'os';
 import { createRequire } from 'node:module';
@@ -26,8 +26,8 @@ export class DevCommand implements Command {
 	public deferType = CommandDeferAccessType.PUBLIC;
 	public requireGuild = false;
 	public requirePremium = false;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `View system info`;
 	public usage = `dev | /dev`;
 	public website = `https://www.bentobot.xyz/commands#dev`;
@@ -44,7 +44,7 @@ export class DevCommand implements Command {
 		await MessageUtils.send(msg.channel, command);
 	}
 
-	private async devCommand(message: Message | CommandInteraction): Promise<MessageEmbed | string> {
+	private async devCommand(message: Message | CommandInteraction): Promise<EmbedBuilder | string> {
 		const element = message;
 		const shardCount = element.client.shard?.count ?? 1;
 		let serverCount: number;
@@ -65,9 +65,9 @@ export class DevCommand implements Command {
 		}
 
 		const memory = process.memoryUsage();
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(
-				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ format: `png` }) as string)}`,
+				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ extension: `png` }) as string)}`,
 			)
 			.setTitle(`${element.client.user?.username} - Runtime info`)
 			.setDescription(

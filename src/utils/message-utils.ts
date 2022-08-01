@@ -4,7 +4,7 @@ import {
 	EmojiResolvable,
 	Message,
 	MessageEditOptions,
-	MessageEmbed,
+	EmbedBuilder,
 	MessageOptions,
 	MessageReaction,
 	StartThreadOptions,
@@ -30,7 +30,7 @@ const cooldownGlobal = new Set();
 export class MessageUtils {
 	public static async send(
 		target: User | TextBasedChannel,
-		content: string | MessageEmbed | MessageOptions,
+		content: string | EmbedBuilder | MessageOptions,
 	): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -40,7 +40,7 @@ export class MessageUtils {
 			// 10004: "Unknown guild"
 			// 10013: "Unknown user"
 			// 50007: "Cannot send messages to this user" (User blocked bot or DM disabled)
-			if (error instanceof DiscordAPIError && [10003, 10004, 10013, 50007].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [10003, 10004, 10013, 50007].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -48,12 +48,12 @@ export class MessageUtils {
 		}
 	}
 
-	public static async reply(msg: Message, content: string | MessageEmbed | MessageOptions): Promise<Message | void> {
+	public static async reply(msg: Message, content: string | EmbedBuilder | MessageOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.reply(msgOptions);
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -65,7 +65,7 @@ export class MessageUtils {
 		try {
 			return await msg.startThread(options);
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -73,12 +73,12 @@ export class MessageUtils {
 		}
 	}
 
-	public static async edit(msg: Message, content: string | MessageEmbed | MessageEditOptions): Promise<Message | void> {
+	public static async edit(msg: Message, content: string | EmbedBuilder | MessageEditOptions): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageEditOptions(content);
 			return await msg.edit(msgOptions);
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -90,7 +90,7 @@ export class MessageUtils {
 		try {
 			return await msg.react(emoji);
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -102,7 +102,7 @@ export class MessageUtils {
 		try {
 			return await msg.delete();
 		} catch (error) {
-			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(error.code)) {
+			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -210,11 +210,11 @@ export class MessageUtils {
 		}
 	}
 
-	public static messageOptions(content: string | MessageEmbed | MessageOptions): MessageOptions {
+	public static messageOptions(content: string | EmbedBuilder | MessageOptions): MessageOptions {
 		let options: MessageOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
-		} else if (content instanceof MessageEmbed) {
+		} else if (content instanceof EmbedBuilder) {
 			options.embeds = [content];
 		} else {
 			options = content;
@@ -222,11 +222,11 @@ export class MessageUtils {
 		return options;
 	}
 
-	public static messageEditOptions(content: string | MessageEmbed | MessageEditOptions): MessageEditOptions {
+	public static messageEditOptions(content: string | EmbedBuilder | MessageEditOptions): MessageEditOptions {
 		let options: MessageEditOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
-		} else if (content instanceof MessageEmbed) {
+		} else if (content instanceof EmbedBuilder) {
 			options.embeds = [content];
 		} else {
 			options = content;

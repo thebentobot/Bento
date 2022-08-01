@@ -1,12 +1,12 @@
 import {
 	CommandInteraction,
-	MessageEmbed,
+	EmbedBuilder,
 	NewsChannel,
 	TextChannel,
 	ThreadChannel,
 	Message,
 	GuildMember,
-	Permissions,
+	PermissionFlagsBits,
 } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
@@ -120,11 +120,19 @@ export class CommandHandler implements EventHandler {
 			try {
 				await MessageUtils.send(
 					msg.channel,
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setDescription(`Something went wrong!`)
 						.setColor(`#ff4a4a`)
-						.addField(`Error code`, `${error}`)
-						.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`),
+						.addFields(
+							{
+								name: `Error code`,
+								value: `${error}`
+							},
+							{
+								name: `Contact support`,
+								value: `[Support Server](https://discord.gg/dd68WwP)`
+							},
+						)
 				);
 				// eslint-disable-next-line no-empty
 			} catch {
@@ -164,7 +172,7 @@ export class CommandHandler implements EventHandler {
 
 	private hasPermission(member: GuildMember, command: Command): boolean {
 		// Developers and members with "Manage Server" have permission for all commands
-		if (member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) || Config.developers.includes(member.id)) {
+		if (member.permissions.has(PermissionFlagsBits.ManageGuild) || Config.developers.includes(member.id)) {
 			return true;
 		}
 		// Check if member has required permissions for command
@@ -253,14 +261,30 @@ export class CommandHandler implements EventHandler {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	private async sendIntrError(intr: CommandInteraction, _data: EventData): Promise<void> {
 		try {
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setDescription(`Something went wrong!`)
-				.addField(`Error code`, intr.id)
-				.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`)
+				.addFields(
+					{
+						name: `Error code`,
+						value: intr.id
+					},
+					{
+						name: `Contact support`,
+						value: `[Support Server](https://discord.gg/dd68WwP)`
+					},
+				)
 				.setColor(`#ff4a4a`);
 			if (intr.guild) {
-				embed.addField(`Guild ID`, intr.guild.id);
-				embed.addField(`Shard ID`, intr.guild.shardId.toString());
+				embed.addFields(
+					{
+						name: `Guild ID`,
+						value: intr.guild.id
+					},
+					{
+						name: `Shard ID`,
+						value: intr.guild.shardId.toString()
+					},
+				);
 			}
 			await InteractionUtils.send(intr, embed);
 		} catch {
