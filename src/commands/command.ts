@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, PermissionString } from 'discord.js';
+import { CommandInteraction, Message, PermissionsString } from 'discord.js';
 import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
@@ -27,8 +27,8 @@ export interface Command {
 	guildOnly?: boolean;
 	requireDev: boolean;
 	requireGuild: boolean;
-	requireClientPerms: PermissionString[];
-	requireUserPerms: PermissionString[];
+	requireClientPerms: PermissionsString[];
+	requireUserPerms: PermissionsString[];
 	requirePremium: boolean;
 	executeIntr?(intr: CommandInteraction, data?: EventData): Promise<void>;
 	executeMsgCmd?(msg: Message, args?: string[], data?: EventData): Promise<void>;

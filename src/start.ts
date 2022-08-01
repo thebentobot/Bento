@@ -28,7 +28,6 @@ import {
 	UrbanCommand,
 	AboutCommand,
 	AdminTestCommand,
-	ModTestCommand,
 	UserTestCommand,
 	StreamableCommand,
 	WeatherCommand,
@@ -48,8 +47,6 @@ import {
 	ButtonHandler,
 	MessageDeleteHandler,
 	MessageUpdateHandler,
-	GuildBanAddHandler,
-	GuildBanRemoveHandler,
 	GuildMemberUpdateHandler,
 	GuildRoleDeleteHandler,
 	GuildRoleUpdateHandler,
@@ -88,7 +85,6 @@ export const commands: Command[] = [
 	new UrbanCommand(),
 	new AboutCommand(),
 	new AdminTestCommand(),
-	new ModTestCommand(),
 	new UserTestCommand(),
 	new StreamableCommand(),
 	new WeatherCommand(),
@@ -104,7 +100,7 @@ async function start(): Promise<void> {
 		partials: Config.client.partials,
 		makeCache: Options.cacheWithLimits({
 			// Keep default caching behavior
-			...Options.defaultMakeCacheSettings,
+			...Options.DefaultMakeCacheSettings,
 			// Override specific options from config
 			...Config.client.caches,
 		}),
@@ -134,7 +130,6 @@ async function start(): Promise<void> {
 		new UrbanCommand(),
 		new AboutCommand(),
 		new AdminTestCommand(),
-		new ModTestCommand(),
 		new UserTestCommand(),
 		new StreamableCommand(),
 		new WeatherCommand(),
@@ -182,8 +177,6 @@ async function start(): Promise<void> {
 	const buttonHandler = new ButtonHandler(buttons);
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
-	const guildBanAddHandler = new GuildBanAddHandler();
-	const guildBanRemoveHandler = new GuildBanRemoveHandler();
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
 	const guildRoleDeleteHandler = new GuildRoleDeleteHandler();
 	const guildRoleUpdateHandler = new GuildRoleUpdateHandler();
@@ -211,8 +204,6 @@ async function start(): Promise<void> {
 		guildMemberRemoveHandler,
 		messageDeleteHandler,
 		messageUpdateHandler,
-		guildBanAddHandler,
-		guildBanRemoveHandler,
 		guildMemberUpdateHandler,
 		guildRoleDeleteHandler,
 		guildRoleUpdateHandler,

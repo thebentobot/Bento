@@ -3,10 +3,10 @@ import {
 	CommandInteraction,
 	EmbedAuthorData,
 	Message,
-	MessageActionRow,
-	MessageEmbed,
-	MessageSelectMenu,
-	PermissionString,
+	ActionRowBuilder,
+	EmbedBuilder,
+	SelectMenuBuilder,
+	PermissionsString,
 } from 'discord.js';
 import { CommandHandler } from '../../events/command-handler.js';
 
@@ -29,8 +29,8 @@ export class HelpCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Shows commands and info for ${config.botName} in general`;
 	public usage = `help | /help`;
 	public website = `https://www.bentobot.xyz/commands#help`;
@@ -54,15 +54,15 @@ export class HelpCommand implements Command {
 	private commandsSelectMenu(client: Client) {
 		const authorData: EmbedAuthorData = {
 			name: client.user?.username as string,
-			iconURL: client.user?.avatarURL({ format: `png` }) as string,
+			iconURL: client.user?.avatarURL({ extension: `png` }) as string,
 		};
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setAuthor(authorData)
 			.setTitle(`Let me help you!`)
 			.setDescription(`Pick a command category and command!`);
 
-		const row = new MessageActionRow().addComponents(
-			new MessageSelectMenu()
+		const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+			new SelectMenuBuilder()
 				.setCustomId(`selectMenu_helpCMD_category_initial`)
 				.setPlaceholder(`Pick a command category`)
 				.addOptions([

@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { CommandInteraction, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
@@ -26,8 +26,8 @@ export class ChooseCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Make ${config.botName} choose one of your options.\nMake space between your options.\n**Maximum 20 options.**`;
 	public usage = `choose <option 1> <option 2> <option 20> | /choose <option 1> <option 2> <option 20>`;
 	public website = `https://www.bentobot.xyz/commands#choose`;
@@ -48,8 +48,8 @@ export class ChooseCommand implements Command {
 			return;
 		} else {
 			const command = await this.chooseCommand(args);
-			const embed = new MessageEmbed()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ format: `png` }) as string)}`)
+			const embed = new EmbedBuilder()
+				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
 				.setTitle(`I've chosen ${command}`)
 				.setDescription(`The choices were:\n${args.join(`, `)}`);
 			await InteractionUtils.send(intr, embed);

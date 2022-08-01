@@ -2,9 +2,10 @@ import {
 	EmbedAuthorData,
 	EmbedFooterData,
 	GuildMember,
-	MessageEmbed,
+	EmbedBuilder,
 	PartialGuildMember,
 	TextChannel,
+	PermissionFlagsBits,
 } from 'discord.js';
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/message-utils.js';
@@ -27,17 +28,17 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				`${memberLogChannelData.channel}`,
 			) as TextChannel;
 			if (oldMember.nickname !== newMember.nickname) {
-				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
-					iconURL: oldMember.displayAvatarURL({ dynamic: true }),
+					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
 				};
 
 				const embedFooterData: EmbedFooterData = {
 					text: `Updated at`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(embedAuthorData)
 					.setColor(`#39FF14`)
 					.setDescription(
@@ -81,37 +82,37 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				},
 				data: {
 					avatarURL: newMember.displayAvatarURL({
-						dynamic: true,
-						format: `png`,
+						forceStatic: false,
+						extension: `png`,
 						size: 1024,
 					}),
 				},
 			});
 			if (memberLog === true) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
-					iconURL: oldMember.displayAvatarURL({ dynamic: true }),
+					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
 				};
 
 				const embedFooterData: EmbedFooterData = {
 					text: `Updated at`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(embedAuthorData)
-					.setThumbnail(newMember.displayAvatarURL({ dynamic: true, format: `png`, size: 1024 }))
+					.setThumbnail(newMember.displayAvatarURL({ forceStatic: false, extension: `png`, size: 1024 }))
 					.setColor(`#39FF14`)
 					.setDescription(
 						`Avatar updated for this user.\n**Previous avatar:**\n${oldMember.user.displayAvatarURL({
-							dynamic: true,
-							format: `png`,
+							forceStatic: false,
+							extension: `png`,
 							size: 1024,
 						})}\n**New avatar:**\n${newMember.user.displayAvatarURL({
-							dynamic: true,
-							format: `png`,
+							forceStatic: false,
+							extension: `png`,
 							size: 1024,
 						})}`,
 					)
@@ -142,25 +143,30 @@ export class GuildMemberUpdateHandler implements EventHandler {
 			});
 			if (modLog) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
-					iconURL: oldMember.displayAvatarURL({ dynamic: true }),
+					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
 				};
 
 				const embedFooterData: EmbedFooterData = {
 					text: `Mute Case Number: ${muteData.muteCase}`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(embedAuthorData)
-					.setThumbnail(oldMember.displayAvatarURL({ dynamic: true, format: `png`, size: 1024 }))
+					.setThumbnail(oldMember.displayAvatarURL({ forceStatic: false, extension: `png`, size: 1024 }))
 					.setColor(`#000000`)
-					.addField(`User ID`, oldMember.id)
-					.addField(
-						`Amount of times muted on this server`,
-						muteDataCount > 1 ? `${muteDataCount} times` : `${muteDataCount} time`,
+					.addFields(
+						{
+							name: `User ID`,
+							value: oldMember.id
+						},
+						{
+							name: `Amount of times muted on this server`,
+							value: muteDataCount > 1 ? `${muteDataCount} times` : `${muteDataCount} time`,
+						},
 					)
 					.setTitle(`${oldMember.displayName} (${oldMember.user.username}#${oldMember.user.discriminator}) was muted!`)
 					.setDescription(
@@ -225,25 +231,30 @@ export class GuildMemberUpdateHandler implements EventHandler {
 			});
 			if (modLog) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
-					iconURL: oldMember.displayAvatarURL({ dynamic: true }),
+					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
 				};
 
 				const embedFooterData: EmbedFooterData = {
 					text: `Mute Case Number: ${muteData.muteCase}`,
 				};
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 					.setAuthor(embedAuthorData)
-					.setThumbnail(oldMember.displayAvatarURL({ dynamic: true, format: `png`, size: 1024 }))
+					.setThumbnail(oldMember.displayAvatarURL({ forceStatic: false, extension: `png`, size: 1024 }))
 					.setColor(`#00ff4a`)
-					.addField(`User ID`, oldMember.id)
-					.addField(
-						`Amount of times muted on this server`,
-						muteDataCount > 1 ? `${muteDataCount} times` : `${muteDataCount} time`,
+					.addFields(
+						{
+							name: `User ID`,
+							value: oldMember.id
+						},
+						{
+							name: `Amount of times muted on this server`,
+							value: muteDataCount > 1 ? `${muteDataCount} times` : `${muteDataCount} time`,
+						},
 					)
 					.setTitle(
 						`${oldMember.displayName} (${oldMember.user.username}#${oldMember.user.discriminator}) was unmuted!`,
@@ -255,7 +266,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 							muteData.NonBentoMute === true
 								? ``
 								: `Date for mute: <t:${Math.round(muteData.date.getTime() / 1000)}:R> (<t:${Math.round(
-										muteData.date.getTime() / 1000,
+									muteData.date.getTime() / 1000,
 								  )}:F>`
 						}`,
 					)

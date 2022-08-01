@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, PermissionString } from 'discord.js';
+import { CommandInteraction, Message, PermissionsString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -19,8 +19,8 @@ export class DogCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Make ${config.botName} send a random dog 🐶🥺`;
 	public usage = `dog | /dog`;
 	public website = `https://www.bentobot.xyz/commands#dog`;

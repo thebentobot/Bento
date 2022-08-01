@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import { BitFieldResolvable, CacheWithLimitsOptions, IntentsString, PartialTypes } from 'discord.js';
+import { BitFieldResolvable, CacheWithLimitsOptions, Partials, GatewayIntentsString } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -8,8 +8,8 @@ interface IClient {
 	caches: CacheWithLimitsOptions
 	id: string
 	token: string
-	intents: BitFieldResolvable<IntentsString, number>
-	partials: PartialTypes[] | undefined
+	intents: BitFieldResolvable<GatewayIntentsString, number>
+	partials: Partials[] | undefined
 }
 
 interface IConfig {
@@ -85,8 +85,8 @@ export const config: IConfig = {
 	client: {
 		id: process.env.botId as string,
 		token: process.env.botToken as string,
-		intents: [`GUILDS`, `GUILD_MESSAGES`, `GUILD_MESSAGE_REACTIONS`, `DIRECT_MESSAGES`, `DIRECT_MESSAGE_REACTIONS`],
-		partials: [`MESSAGE`, `CHANNEL`, `REACTION`],
+		intents: [`Guilds`, `GuildMessages`, `GuildMessageReactions`, `DirectMessages`, `DirectMessageReactions`],
+		partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 		caches: {
 			BaseGuildEmojiManager: 0,
 			GuildBanManager: 0,

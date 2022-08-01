@@ -1,4 +1,4 @@
-import { BaseMessageComponentOptions, ButtonInteraction, Message, MessageActionRowOptions } from "discord.js";
+import { APIActionRowComponent, APIButtonComponentWithCustomId, ButtonInteraction, ButtonStyle, ComponentType, Message } from "discord.js";
 import { EventData } from "../models/internal-models.js";
 import { prisma } from "../services/prisma.js";
 import { ButtonUtils } from "../utils/button-utils.js";
@@ -52,27 +52,29 @@ export class GfycatUserFeedButton implements Button {
 				messageId: BigInt(msg.id)
 			}
 		});
-		let buttonComponents: (Required<BaseMessageComponentOptions> & MessageActionRowOptions) = {
-			type: `ACTION_ROW`,
+		let buttonComponents: APIActionRowComponent<APIButtonComponentWithCustomId> = {
+			type: ComponentType.ActionRow,
 			components: []
 		};
 		const lastPageNumber = gfycatUserFeedData.length;
 		switch (newPageNum) {
-		case 0: {
+		case 1: {
 			buttonComponents = {
-				type: `ACTION_ROW`,
+				type: ComponentType.ActionRow,
 				components: [
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_next`,
-						emoji: `➡️`,
-						style: `PRIMARY`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_next`,
+						emoji: {
+							id: `arrow_right`
+						},
+						style: ButtonStyle.Primary,
 					},
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_delete`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_delete`,
 						label: `Close embed`,
-						style: `DANGER`,
+						style: ButtonStyle.Danger,
 					},
 				]
 			};
@@ -80,19 +82,21 @@ export class GfycatUserFeedButton implements Button {
 			break;
 		case lastPageNumber: {
 			buttonComponents = {
-				type: `ACTION_ROW`,
+				type: ComponentType.ActionRow,
 				components: [
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_previous`,
-						emoji: `⬅️`,
-						style: `PRIMARY`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_previous`,
+						emoji: {
+							id: `arrow_left`
+						},
+						style: ButtonStyle.Primary,
 					},
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_delete`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_delete`,
 						label: `Close embed`,
-						style: `DANGER`,
+						style: ButtonStyle.Danger,
 					},
 				]
 			};
@@ -100,25 +104,29 @@ export class GfycatUserFeedButton implements Button {
 			break;
 		default: {
 			buttonComponents = {
-				type: `ACTION_ROW`,
+				type: ComponentType.ActionRow,
 				components: [
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_previous`,
-						emoji: `⬅️`,
-						style: `PRIMARY`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_previous`,
+						emoji: {
+							id: `arrow_left`
+						},
+						style: ButtonStyle.Primary,
 					},
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_next`,
-						emoji: `➡️`,
-						style: `PRIMARY`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_next`,
+						emoji: {
+							id: `arrow_right`
+						},
+						style: ButtonStyle.Primary,
 					},
 					{
-						type: `BUTTON`,
-						customId: `gfycatUserFeed_delete`,
+						type: ComponentType.Button,
+						custom_id: `gfycatUserFeed_delete`,
 						label: `Close embed`,
-						style: `DANGER`,
+						style: ButtonStyle.Danger,
 					},
 				]
 			};

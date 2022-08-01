@@ -1,6 +1,5 @@
 import {
 	Client,
-	Constants,
 	Guild,
 	GuildMember,
 	Interaction,
@@ -14,16 +13,15 @@ import {
 	ButtonInteraction,
 	CommandInteraction,
 	PartialMessage,
-	GuildBan,
 	Role,
 	SelectMenuInteraction,
+	Events,
+	RESTEvents
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 
 import {
-	GuildBanAddHandler,
-	GuildBanRemoveHandler,
 	GuildMemberUpdateHandler,
 	GuildRoleDeleteHandler,
 	GuildRoleUpdateHandler,
@@ -61,8 +59,6 @@ export class Bot {
 		private guildMemberRemoveHandler: GuildMemberRemoveHandler,
 		private messageDeleteHandler: MessageDeleteHandler,
 		private messageUpdateHandler: MessageUpdateHandler,
-		private guildBanAddHandler: GuildBanAddHandler,
-		private guildBanRemoveHandler: GuildBanRemoveHandler,
 		private guildMemberUpdateHandler: GuildMemberUpdateHandler,
 		private guildRoleDeleteHandler: GuildRoleDeleteHandler,
 		private guildRoleUpdateHandler: GuildRoleUpdateHandler,
@@ -76,44 +72,42 @@ export class Bot {
 	}
 
 	private registerListeners(): void {
-		this.client.on(Constants.Events.CLIENT_READY, () => this.onReady());
-		this.client.on(Constants.Events.SHARD_READY, (shardId: number, unavailableGuilds: Set<string> | undefined) =>
+		this.client.on(Events.ClientReady, () => this.onReady());
+		this.client.on(Events.ShardReady, (shardId: number, unavailableGuilds: Set<string> | undefined) =>
 			this.onShardReady(shardId, unavailableGuilds),
 		);
-		this.client.on(Constants.Events.GUILD_CREATE, (guild: Guild) => this.onGuildJoin(guild));
-		this.client.on(Constants.Events.GUILD_DELETE, (guild: Guild) => this.onGuildLeave(guild));
-		this.client.on(Constants.Events.MESSAGE_CREATE, (msg: Message) => this.onMessage(msg));
-		this.client.on(Constants.Events.INTERACTION_CREATE, (intr: Interaction) => this.onInteraction(intr));
+		this.client.on(Events.GuildCreate, (guild: Guild) => this.onGuildJoin(guild));
+		this.client.on(Events.GuildDelete, (guild: Guild) => this.onGuildLeave(guild));
+		this.client.on(Events.MessageCreate, (msg: Message) => this.onMessage(msg));
+		this.client.on(Events.InteractionCreate, (intr: Interaction) => this.onInteraction(intr));
 		this.client.on(
-			Constants.Events.MESSAGE_REACTION_ADD,
+			Events.MessageReactionAdd,
 			(messageReaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) =>
 				this.onReaction(messageReaction, user),
 		);
-		this.client.on(Constants.Events.RATE_LIMIT, (rateLimitData: RateLimitData) => this.onRateLimit(rateLimitData));
-		this.client.on(Constants.Events.GUILD_MEMBER_ADD, (member: GuildMember) => this.onGuildMemberAdd(member));
-		this.client.on(Constants.Events.GUILD_MEMBER_REMOVE, (member: GuildMember | PartialGuildMember) =>
+		this.client.rest.on(RESTEvents.RateLimited, (rateLimitData: RateLimitData) => this.onRateLimit(rateLimitData));
+		this.client.on(Events.GuildMemberAdd, (member: GuildMember) => this.onGuildMemberAdd(member));
+		this.client.on(Events.GuildMemberRemove, (member: GuildMember | PartialGuildMember) =>
 			this.onGuildMemberRemove(member),
 		);
-		this.client.on(Constants.Events.MESSAGE_DELETE, (message: Message | PartialMessage) =>
+		this.client.on(Events.MessageDelete, (message: Message | PartialMessage) =>
 			this.onMessageDelete(message),
 		);
 		this.client.on(
-			Constants.Events.MESSAGE_UPDATE,
+			Events.MessageUpdate,
 			(oldMessage: Message<boolean> | PartialMessage, newMessage: Message<boolean> | PartialMessage) =>
 				this.onMessageUpdate(oldMessage, newMessage),
 		);
-		this.client.on(Constants.Events.GUILD_BAN_ADD, (ban: GuildBan) => this.onGuildBanAdd(ban));
-		this.client.on(Constants.Events.GUILD_BAN_REMOVE, (ban: GuildBan) => this.onGuildBanRemove(ban));
 		this.client.on(
-			Constants.Events.GUILD_MEMBER_UPDATE,
+			Events.GuildMemberUpdate,
 			(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) =>
 				this.onGuildMemberUpdate(oldMember, newMember),
 		);
-		this.client.on(Constants.Events.GUILD_ROLE_DELETE, (role: Role) => this.onGuildRoleDelete(role));
-		this.client.on(Constants.Events.GUILD_ROLE_UPDATE, (oldRole: Role, newRole: Role) =>
+		this.client.on(Events.GuildRoleDelete, (role: Role) => this.onGuildRoleDelete(role));
+		this.client.on(Events.GuildRoleUpdate, (oldRole: Role, newRole: Role) =>
 			this.onGuildRoleUpdate(oldRole, newRole),
 		);
-		this.client.on(Constants.Events.USER_UPDATE, (oldUser: User | PartialUser, newUser: User) =>
+		this.client.on(Events.UserUpdate, (oldUser: User | PartialUser, newUser: User) =>
 			this.onUserUpdate(oldUser, newUser),
 		);
 	}
@@ -237,7 +231,7 @@ export class Bot {
 	}
 
 	private async onRateLimit(rateLimitData: RateLimitData): Promise<void> {
-		if (rateLimitData.timeout >= Config.logging.rateLimit.minTimeout * 1000) {
+		if (rateLimitData.timeToReset >= Config.logging.rateLimit.minTimeout * 1000) {
 			Logger.error(Logs.error.apiRateLimit, rateLimitData);
 		}
 	}
@@ -290,30 +284,6 @@ export class Bot {
 			await this.messageUpdateHandler.process(oldMessage, newMessage);
 		} catch (error) {
 			Logger.error(Logs.error.messageUpdate, error);
-		}
-	}
-
-	private async onGuildBanAdd(ban: GuildBan): Promise<void> {
-		if (!this.ready || Debug.dummyMode.enabled) {
-			return;
-		}
-
-		try {
-			await this.guildBanAddHandler.process(ban);
-		} catch (error) {
-			Logger.error(Logs.error.guildBanAdd, error);
-		}
-	}
-
-	private async onGuildBanRemove(ban: GuildBan): Promise<void> {
-		if (!this.ready || Debug.dummyMode.enabled) {
-			return;
-		}
-
-		try {
-			await this.guildBanRemoveHandler.process(ban);
-		} catch (error) {
-			Logger.error(Logs.error.guildBanRemove, error);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Message, MessageEmbed, PermissionString } from 'discord.js';
+import { Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 
@@ -11,8 +11,8 @@ export class ServerInfoCommand implements Command {
 	public requireGuild = true;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Shows general info for the current server`;
 	public usage = `serverinfo`;
 	public website = `https://www.bentobot.xyz/commands#serverinfo`;
@@ -20,34 +20,59 @@ export class ServerInfoCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle(msg.guild!.name)
-			.setColor(`#${await stylingUtils.urlToColours(msg.guild!.iconURL({ format: `png` }) as string)}`)
-			.setThumbnail(msg.guild!.iconURL({ dynamic: true, format: `png`, size: 1024 }) as string)
-			.addField(`Server ID`, msg.guild!.id)
-			.addField(
-				`Server owner`,
-				`${(await msg.guild!.fetchOwner({ force: true })).user.tag} (${
-					(await msg.guild!.fetchOwner({ force: true })).user.id
-				})`,
-			)
-			.addField(`Total members`, `${msg.guild!.memberCount}`)
-			.addField(`Server boost level`, msg.guild!.premiumTier)
-			.addField(`Server boosters`, `${msg.guild!.premiumSubscriptionCount}`, true)
-			.addField(
-				`Text channels | Voice channels`,
-				`${msg.guild!.channels.cache.filter((channel) => channel.isText()).size} | ${
-					msg.guild!.channels.cache.filter((channel) => channel.isVoice()).size
-				}`,
-			)
-			.addField(`Amount of roles`, `${msg.guild!.roles.cache.size}`)
-			.addField(`Created at`, `<t:${Math.round(msg.guild!.createdTimestamp / 1000)}:F>`)
-			.addField(
-				`Emotes`,
-				`${msg.guild!.emojis.cache.size} in total.\n${msg.guild!.emojis.cache.reduce(
-					(acc, emoji) => (emoji.animated ? acc + 1 : acc + 0),
-					0,
-				)} animated emotes.`,
+			.setColor(`#${await stylingUtils.urlToColours(msg.guild!.iconURL({ extension: `png` }) as string)}`)
+			.setThumbnail(msg.guild!.iconURL({ forceStatic: false, extension: `png`, size: 1024 }) as string)
+			.addFields(
+				{
+					name: `Server ID`,
+					value: msg.guild!.id
+				},
+				{
+					name: `Created at`,
+					value: `<t:${Math.round(msg.guild!.createdTimestamp / 1000)}:F>`
+				},
+				{
+					name: `Server owner`,
+					value: `${(await msg.guild!.fetchOwner({ force: true })).user.tag} (${
+						(await msg.guild!.fetchOwner({ force: true })).user.id
+					})`,
+				},
+				{
+					name: `Total members`,
+					value: `${msg.guild!.memberCount}`
+				},
+				{
+					name: `Server boost level`,
+					value: msg.guild!.premiumTier.toString()
+				},
+				{
+					name: `Server boosters`,
+					value: `${msg.guild!.premiumSubscriptionCount}`,
+					inline: true
+				},
+				{
+					name: `Text channels | Voice channels`,
+					value: `${msg.guild!.channels.cache.filter((channel) => channel.isTextBased()).size} | ${
+						msg.guild!.channels.cache.filter((channel) => channel.isVoiceBased()).size
+					}`,
+				},
+				{
+					name: `Amount of roles`,
+					value: `${msg.guild!.roles.cache.size}`
+				},
+				{
+					name: `Emotes`,
+					value: `${msg.guild!.emojis.cache.size} in total.\n${msg.guild!.emojis.cache.reduce(
+						(acc, emoji) => (emoji.animated ? acc + 1 : acc + 0),
+						0,
+					)} animated emotes.`,
+				},
+				{
+					name: `Features`,
+					value: `\`${msg.guild!.features.join(` `)}\``
+				},
 			);
 		await MessageUtils.send(msg.channel, embed);
 		return;

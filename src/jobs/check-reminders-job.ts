@@ -1,6 +1,6 @@
 import { Job } from './job.js';
 import { config as Config } from '../config/config.js';
-import { MessageEmbed, ShardingManager } from 'discord.js';
+import { EmbedBuilder, ShardingManager } from 'discord.js';
 import { CustomClient } from '../extensions/custom-client.js';
 import { prisma } from '../services/prisma.js';
 import { reminder } from '@prisma/client';
@@ -26,8 +26,8 @@ export class CheckRemindersJob implements Job {
 					const customClient = client as CustomClient;
 					const user = await ClientUtils.getUser(customClient, `${reminder.userID}`);
 					if (user) {
-						const embed = new MessageEmbed()
-							.setColor(`#${await stylingUtils.urlToColours(user.avatarURL({ format: `png` }) as string)}`)
+						const embed = new EmbedBuilder()
+							.setColor(`#${await stylingUtils.urlToColours(user.avatarURL({ extension: `png` }) as string)}`)
 							.setTitle(`Reminder`)
 							.setDescription(reminder.reminder);
 						await MessageUtils.send(user, embed);

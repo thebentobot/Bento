@@ -3,8 +3,8 @@ import {
 	CommandInteraction,
 	GuildChannel,
 	GuildMember,
-	MessageEmbed,
-	Permissions,
+	EmbedBuilder,
+	PermissionFlagsBits,
 	ThreadChannel,
 } from 'discord.js';
 import { Command } from '../commands/index.js';
@@ -20,7 +20,7 @@ export class CommandUtils {
 		if (command.requireDev && !Config.developers.includes(intr.user.id)) {
 			await InteractionUtils.send(
 				intr,
-				new MessageEmbed().setDescription(`This command can only be used by developers.`).setColor(`#ffcc66`),
+				new EmbedBuilder().setDescription(`This command can only be used by developers.`).setColor(`#ffcc66`),
 			);
 			return false;
 		}
@@ -28,7 +28,7 @@ export class CommandUtils {
 		if (command.requireGuild && !intr.guild) {
 			await InteractionUtils.send(
 				intr,
-				new MessageEmbed().setDescription(`This command can only be used in a server.`).setColor(`#ffcc66`),
+				new EmbedBuilder().setDescription(`This command can only be used in a server.`).setColor(`#ffcc66`),
 			);
 			return false;
 		}
@@ -38,7 +38,7 @@ export class CommandUtils {
 			command.requireClientPerms.length &&
 			!intr.channel.permissionsFor(intr.client.user as ClientUser)?.has(command.requireClientPerms)
 		) {
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setDescription(
 					`I don't have all permissions required to run that command here! Please check the server and channel permissions to make sure I have the following permissions.\n\nRequired permissions: ${command.requireClientPerms
 						.map((perm) => `**${Permission.Data[perm].displayName()}**`)
@@ -51,7 +51,7 @@ export class CommandUtils {
 
 		// TODO: Remove "as GuildMember",  why does discord.js have intr.member as a "APIInteractionGuildMember"?
 		if (intr.member && !this.hasPermission(intr.member as GuildMember, command)) {
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setDescription(`You don't have permission to run that command!`)
 				.setColor(`#ffcc66`);
 			await InteractionUtils.send(intr, embed);
@@ -99,7 +99,7 @@ export class CommandUtils {
 		// Developers, server owners, and members with "Manage Server" have permission for all commands
 		if (
 			member.guild.ownerId === member.id ||
-			member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) ||
+			member.permissions.has(PermissionFlagsBits.ManageGuild) ||
 			Config.developers.includes(member.id)
 		) {
 			return true;

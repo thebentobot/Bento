@@ -1,4 +1,4 @@
-import { AnyChannel, Client, NewsChannel, Role, StageChannel, VoiceChannel } from 'discord.js';
+import { Channel, Client, NewsChannel, Role, StageChannel, VoiceChannel } from 'discord.js';
 import { DiscordAPIError, Guild, GuildMember, TextChannel, User } from 'discord.js';
 import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 
@@ -17,7 +17,7 @@ export class ClientUtils {
 			return await client.users.fetch(discordId);
 		} catch (error) {
 			// 10013: "Unknown User"
-			if (error instanceof DiscordAPIError && [10013].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [10013].includes((Number(error.code)))) {
 				return;
 			} else {
 				throw error;
@@ -43,7 +43,7 @@ export class ClientUtils {
 		} catch (error) {
 			// 10007: "Unknown Member"
 			// 10013: "Unknown User"
-			if (error instanceof DiscordAPIError && [10007, 10013].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [10007, 10013].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -51,7 +51,7 @@ export class ClientUtils {
 		}
 	}
 
-	public static async getChannel(client: Client, discordId: string): Promise<AnyChannel | null | void> {
+	public static async getChannel(client: Client, discordId: string): Promise<Channel | null | void> {
 		discordId = RegexUtils.discordId(discordId);
 		if (!discordId) {
 			return;
@@ -61,7 +61,7 @@ export class ClientUtils {
 			return await client.channels.fetch(discordId);
 		} catch (error) {
 			// 10013: "Unknown Channel"
-			if (error instanceof DiscordAPIError && [10003].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [10003].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -97,7 +97,7 @@ export class ClientUtils {
 			const search = input.toLowerCase();
 			return (await guild.roles.fetch()).find((role) => role.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownRole].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownRole].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -123,7 +123,7 @@ export class ClientUtils {
 				.map((channel) => channel as NewsChannel | TextChannel)
 				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;
@@ -149,7 +149,7 @@ export class ClientUtils {
 				.map((channel) => channel as StageChannel | VoiceChannel)
 				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(error.code)) {
+			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(Number(error.code))) {
 				return;
 			} else {
 				throw error;

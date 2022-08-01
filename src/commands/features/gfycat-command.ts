@@ -1,11 +1,11 @@
-import { CommandInteraction, EmbedAuthorData, HexColorString, Message, MessageEmbed, PermissionString, TextChannel } from 'discord.js';
+import { CommandInteraction, EmbedAuthorData, HexColorString, Message, EmbedBuilder, PermissionsString, TextChannel } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { CommandUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import axios from 'axios';
-import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType, ButtonStyle, ComponentType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { gfycatErrorMessage, gfycatSearchInterface, gfycatSingleGfycatInterface, gfycatUserDataInterface, gfycatUserFeedInterface } from '../../interfaces/gfycat.js';
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url);
@@ -38,7 +38,7 @@ setInterval(newToken, 3600000);
 
 interface IUserProfileCmd {
 	error: boolean
-	embed?: MessageEmbed | string
+	embed?: EmbedBuilder | string
 	content?: string
 	pfpFile?: {
 		image: Buffer
@@ -48,7 +48,7 @@ interface IUserProfileCmd {
 
 interface IGfycatSearch {
 	error: boolean
-	embed?: MessageEmbed | string
+	embed?: EmbedBuilder | string
 	content?: string
 	embeds?: string[]
 	multi?: boolean
@@ -56,7 +56,7 @@ interface IGfycatSearch {
 
 interface gfycatUserFeedEmbed {
 	error: boolean
-	message?: string | MessageEmbed
+	message?: string | EmbedBuilder
 	gfycatEmbedId?: string
 	embeds?: string[]
 }
@@ -67,8 +67,8 @@ export class GfycatCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Various Gfycat features. Create GIFs with video URLs or video attachments, get gfycat user profiles or feeds, get info about a gfycat post, or search for gfycat posts just like the gif command.`;
 	public slashDescription = `${config.botName}'s Gfycat integration`;
 	public commandType = CommandType.Both;
@@ -191,59 +191,49 @@ export class GfycatCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		let cmd: MessageEmbed | string | IUserProfileCmd | gfycatUserFeedEmbed | IGfycatSearch = ``;
+		let cmd: EmbedBuilder | string | IUserProfileCmd | gfycatUserFeedEmbed | IGfycatSearch = ``;
 		let userProfile = false;
 		let userFeed = false;
 		let getGfycat = false;
 		let searchGfycat = false;
-		switch (intr.options.getSubcommand()) {
-		case `create`: {
+		if (intr.options.get(`create`)) {
 			cmd = await this.createGfycat(
 				true,
 				intr,
 				[``],
-				intr.options.getString(`url`), 
-				intr.options.getAttachment(`attachment`)?.url, 
-				intr.options.getBoolean(`full`), 
-				intr.options.getNumber(`start`), 
-				intr.options.getNumber(`duration`), 
-				intr.options.getString(`title`)
+				intr.options.get(`url`)?.value as string, 
+				intr.options.get(`attachment`)?.attachment?.url, 
+				intr.options.get(`full`)?.value as boolean, 
+				intr.options.get(`start`)?.value as number, 
+				intr.options.get(`duration`)?.value as number, 
+				intr.options.get(`title`)?.value as string
 			);
-		}
-			break;
-		case `profile`: {
-			cmd = await this.userProfile(intr, intr.options.getString(`name`, true));
+		} else if (intr.options.get(`profile`)) {
+			cmd = await this.userProfile(intr, intr.options.get(`name`, true).value as string);
 			userProfile = true;
-		}
-			break;
-		case `feed`: {
-			cmd = await this.userFeed(true, intr, intr.options.getString(`username`, true), `${intr.options.getNumber(`posts`, true)}`);
+		} else if (intr.options.get(`feed`)) {
+			cmd = await this.userFeed(true, intr, intr.options.get(`username`, true).value as string, `${intr.options.get(`posts`, true).value as number}`);
 			userFeed = true;
-		}
-			break;
-		case `info`: {
-			cmd = await this.getGfycat(true, intr, intr.options.getString(`post`, true));
+		} else if (intr.options.get(`info`)) {
+			cmd = await this.getGfycat(true, intr, intr.options.get(`post`, true).value as string);
 			getGfycat = true;
-		}
-			break;
-		case `search`: {
-			cmd = await this.searchGfycat(true, intr, [], intr.options.getString(`input`, true), `${intr.options.getNumber(`amount`)}`);
+		} else if (intr.options.get(`search`)) {
+			cmd = await this.searchGfycat(true, intr, [], intr.options.get(`input`, true).value as string, `${intr.options.get(`amount`)?.value as number}`);
 			searchGfycat = true;
 		}
-			break;
-		}
+
 		if (userProfile) {
 			if ((cmd as IUserProfileCmd).error === true) {
-				await InteractionUtils.send(intr, cmd as string | MessageEmbed);
+				await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await InteractionUtils.send(intr, { embeds: [(cmd as IUserProfileCmd).embed as MessageEmbed], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await InteractionUtils.send(intr, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
 				return;
 			};
 		} else if (userFeed) {
 			if ((cmd as gfycatUserFeedEmbed).error === true) {
-				await InteractionUtils.send(intr, cmd as string | MessageEmbed);
+				await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				const message = await InteractionUtils.send(intr, `Finishing...`);
@@ -265,19 +255,19 @@ export class GfycatCommand implements Command {
 				});
 				await InteractionUtils.editReply(intr, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
 					{
-						type: `ACTION_ROW`,
+						type: ComponentType.ActionRow,
 						components: [
 							{
-								type: `BUTTON`,
-								customId: `gfycatSearch_next`,
+								type: ComponentType.Button,
+								customId: `gfycatUserFeed_next`,
 								emoji: `➡️`,
-								style: `PRIMARY`,
+								style: ButtonStyle.Primary,
 							},
 							{
-								type: `BUTTON`,
-								customId: `gfycatSearch_delete`,
+								type: ComponentType.Button,
+								customId: `gfycatUserFeed_delete`,
 								label: `Close embed`,
-								style: `DANGER`,
+								style: ButtonStyle.Danger,
 							},
 						]
 					}
@@ -286,11 +276,11 @@ export class GfycatCommand implements Command {
 			};
 		} else if (getGfycat) {
 			await InteractionUtils.send(intr, {content: (cmd as IUserProfileCmd).content});
-			await InteractionUtils.send(intr, {embeds: [(cmd as IUserProfileCmd).embed as MessageEmbed]});
+			await InteractionUtils.send(intr, {embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder]});
 			return;
 		} else if (searchGfycat) {
 			if ((cmd as IGfycatSearch).error === true) {
-				await InteractionUtils.send(intr, cmd as string | MessageEmbed);
+				await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
 				return;
 			} else if ((cmd as IGfycatSearch).multi === true) {
 				const message = await InteractionUtils.send(intr, `Finishing...`);
@@ -312,19 +302,19 @@ export class GfycatCommand implements Command {
 				});
 				await InteractionUtils.editReply(intr, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
 					{
-						type: `ACTION_ROW`,
+						type: ComponentType.ActionRow,
 						components: [
 							{
-								type: `BUTTON`,
+								type: ComponentType.Button,
 								customId: `gfycatSearch_next`,
 								emoji: `➡️`,
-								style: `PRIMARY`,
+								style: ButtonStyle.Primary,
 							},
 							{
-								type: `BUTTON`,
+								type: ComponentType.Button,
 								customId: `gfycatSearch_delete`,
 								label: `Close embed`,
-								style: `DANGER`,
+								style: ButtonStyle.Danger,
 							},
 						]
 					}
@@ -336,14 +326,14 @@ export class GfycatCommand implements Command {
 				return;
 			};
 		} else {
-			await InteractionUtils.send(intr, cmd as string | MessageEmbed);
+			await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
 			return;
 		}
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
-		let cmd: MessageEmbed | string | IUserProfileCmd = ``;
+		let cmd: EmbedBuilder | string | IUserProfileCmd = ``;
 		let userProfile = false;
 		let userFeed = false;
 		let getGfycat = false;
@@ -389,16 +379,16 @@ export class GfycatCommand implements Command {
 		}
 		if (userProfile) {
 			if ((cmd as IUserProfileCmd).error === true) {
-				await MessageUtils.send(msg.channel, cmd as string | MessageEmbed);
+				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as MessageEmbed], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
 				return;
 			};
 		} else if (userFeed) {
 			if ((cmd as gfycatUserFeedEmbed).error === true) {
-				await MessageUtils.send(msg.channel, cmd as string | MessageEmbed);
+				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				const message = await MessageUtils.send(msg.channel, `Finishing...`);
@@ -420,19 +410,19 @@ export class GfycatCommand implements Command {
 				});
 				await MessageUtils.edit(msg, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
 					{
-						type: `ACTION_ROW`,
+						type: ComponentType.ActionRow,
 						components: [
 							{
-								type: `BUTTON`,
-								customId: `gfycatSearch_next`,
+								type: ComponentType.Button,
+								customId: `gfycatUserFeed_next`,
 								emoji: `➡️`,
-								style: `PRIMARY`,
+								style: ButtonStyle.Primary,
 							},
 							{
-								type: `BUTTON`,
-								customId: `gfycatSearch_delete`,
+								type: ComponentType.Button,
+								customId: `gfycatUserFeed_delete`,
 								label: `Close embed`,
-								style: `DANGER`,
+								style: ButtonStyle.Danger,
 							},
 						]
 					}
@@ -441,16 +431,16 @@ export class GfycatCommand implements Command {
 			};
 		} else if (getGfycat) {
 			if ((cmd as IUserProfileCmd).error === true) {
-				await MessageUtils.send(msg.channel, cmd as string | MessageEmbed);
+				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as MessageEmbed], content: (cmd as IUserProfileCmd).content, files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], content: (cmd as IUserProfileCmd).content, files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
 				return;
 			};
 		} else if (searchGfycat) {
 			if ((cmd as IGfycatSearch).error === true) {
-				await MessageUtils.send(msg.channel, cmd as string | MessageEmbed);
+				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 				return;
 			} else if ((cmd as IGfycatSearch).multi === true) {
 				const message = await MessageUtils.send(msg.channel, `Finishing...`);
@@ -472,19 +462,19 @@ export class GfycatCommand implements Command {
 				});
 				await MessageUtils.edit(msg, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
 					{
-						type: `ACTION_ROW`,
+						type: ComponentType.ActionRow,
 						components: [
 							{
-								type: `BUTTON`,
+								type: ComponentType.Button,
 								customId: `gfycatSearch_next`,
 								emoji: `➡️`,
-								style: `PRIMARY`,
+								style: ButtonStyle.Primary,
 							},
 							{
-								type: `BUTTON`,
+								type: ComponentType.Button,
 								customId: `gfycatSearch_delete`,
 								label: `Close embed`,
-								style: `DANGER`,
+								style: ButtonStyle.Danger,
 							},
 						]
 					}
@@ -496,7 +486,7 @@ export class GfycatCommand implements Command {
 				return;
 			};
 		} else {
-			await MessageUtils.send(msg.channel, cmd as string | MessageEmbed);
+			await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 			return;	
 		}
 	}
@@ -520,7 +510,7 @@ export class GfycatCommand implements Command {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					getNumber = getNumber.match(/\d+/)!.pop() as string;
 					count = parseInt(getNumber);
-					if (count > 50) return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`50 posts is the maximum`)};
+					if (count > 50) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`50 posts is the maximum`)};
 				}
 				messageParse = args.filter((msg) => msg !== `--multi` && msg !== `--count` && msg !== getNumber);
 				returnMultipleGifs = true;
@@ -532,10 +522,10 @@ export class GfycatCommand implements Command {
 			const badWordCheck = messageParse.map((message) => message.toLowerCase());
 
 			if (badWordCheck.some((msg) => naughtyWords.includes(msg)))
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
 
 			if (badWordCheck.some((msg) => wordListData.some((badWord) => badWord.word === msg)))
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
 			const query: string = messageParse.join(` `);
 			const response = await gfycatAPI.get<gfycatSearchInterface>(`gfycats/search`, {
 				params: {
@@ -545,7 +535,7 @@ export class GfycatCommand implements Command {
 				headers: { Authorization: `Bearer ${gfycatToken}` },
 			});
 			if (!response.data.gfycats.length) {
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
 			} else {
 				let gfycatData = response.data.gfycats;
 
@@ -591,13 +581,13 @@ export class GfycatCommand implements Command {
 					);
 					const embeds = await this.generateGfyCatEmbed(gfycatData);
 					(waitingMessage as Message).delete();
-					if (!embeds.length) return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+					if (!embeds.length) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
 					return {error: false, embeds: embeds, multi: true};
 				}
 			}
 		} else {
 			if (!input) {
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to provide a search input!`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to provide a search input!`)};
 			}
 			const channelObject = (message as CommandInteraction).channel as TextChannel;
 			const amountNumber = amount ? Number(amount) : 0;
@@ -610,10 +600,10 @@ export class GfycatCommand implements Command {
 			const badWordCheck = messageParse.map((message) => message.toLowerCase());
 
 			if (badWordCheck.some((msg) => naughtyWords.includes(msg)))
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
 
 			if (badWordCheck.some((msg) => wordListData.some((badWord) => badWord.word === msg)))
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
 			const query: string = messageParse.join(` `);
 			const response = await gfycatAPI.get<gfycatSearchInterface>(`gfycats/search`, {
 				params: {
@@ -623,7 +613,7 @@ export class GfycatCommand implements Command {
 				headers: { Authorization: `Bearer ${gfycatToken}` },
 			});
 			if (!response.data.gfycats.length) {
-				return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
 			} else {
 				let gfycatData = response.data.gfycats;
 				if (channelObject.nsfw !== true) {
@@ -634,7 +624,7 @@ export class GfycatCommand implements Command {
 				}
 				if (amountNumber === 0) {
 					const embeds = await this.generateGfyCatEmbed(gfycatData);
-					if (!embeds.length) return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+					if (!embeds.length) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
 					return {error: false, embeds: embeds, multi: true};
 				} else {
 					let index = Math.floor(Math.random() * gfycatData.length);
@@ -674,7 +664,7 @@ export class GfycatCommand implements Command {
 		start?: number | null,
 		durationInSeconds?: number | null,
 		title?: string | null
-	): Promise<MessageEmbed | string> {
+	): Promise<EmbedBuilder | string> {
 		let msgData: Message | CommandInteraction;
 		let argsData: string[];
 		let gfycatUrl = ``;
@@ -687,7 +677,7 @@ export class GfycatCommand implements Command {
 			const getUrl = [...msgData.attachments.values()];
 
 			if (!argsData[1] && !getUrl[0]) {
-				return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
 			}
 
 			gfycatUrl = getUrl[0] ? getUrl[0].url : argsData[1];
@@ -705,7 +695,7 @@ export class GfycatCommand implements Command {
 		} else {
 			msgData = msg as CommandInteraction;
 			if (!url && !attachment) {
-				return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
 			}
 			gfycatUrl = attachment ? attachment : url as string;
 			if (full) {
@@ -714,9 +704,9 @@ export class GfycatCommand implements Command {
 			} else {
 				// eslint-disable-next-line no-lonely-if
 				if (!start) {
-					return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify which second to start the gif`);
+					return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify which second to start the gif`);
 				} else if (!durationInSeconds) {
-					return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify the duration for the gif`);
+					return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify the duration for the gif`);
 				} else {
 					startSeconds = `${start}`;
 				    duration = `${durationInSeconds}`;
@@ -743,10 +733,10 @@ export class GfycatCommand implements Command {
 				},
 			},
 		);
-		if (response.status !== 200) return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error.`);
+		if (response.status !== 200) return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error.`);
 
 		if (response.data.isOk === false) {
-			return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Unable to create Gfycat Post 😭`);
+			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Unable to create Gfycat Post 😭`);
 		} else {
 			const waitingMessage = interaction === true ? `` : await MessageUtils.send((msgData as Message).channel, `Encoding your Gfycat Post... ⌛🐱`);
 			let checkStatus = await gfycatAPI.get<{task: string, time?: number, gfyname?: string, errorMessage?: gfycatErrorMessage}>(`gfycats/fetch/status/${response.data.gfyname}`, {
@@ -764,10 +754,10 @@ export class GfycatCommand implements Command {
 
 			if (checkStatus.data.task === `NotFoundo`) {
 				interaction === true ? `` : await (waitingMessage as Message).delete();
-				return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Error. Apparently the Gfycat Post wasn't found by Gfycat 🤔`);
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error. Apparently the Gfycat Post wasn't found by Gfycat 🤔`);
 			} else if (checkStatus.data.task === `error`) {
 				interaction === true ? `` : await (waitingMessage as Message).delete();
-				return new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(
 					`Error from Gfycat 😔 - ${checkStatus.data.errorMessage?.description}, Error code ${checkStatus.data.errorMessage?.code}`,
 				);
 			} else  {
@@ -779,13 +769,13 @@ export class GfycatCommand implements Command {
 
 	private async userProfile(message: Message | CommandInteraction, user: string): Promise<IUserProfileCmd> {
 		if (!user) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
 		}
 
 		const blacklistData = await prisma.gfycatBlacklist.findMany();
 
 		if (blacklistData.some((user) => user.username === `${user}`)) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
 		}
 
 		const response = await gfycatAPI
@@ -796,7 +786,7 @@ export class GfycatCommand implements Command {
 				},
 			});
 		if (response.status !== 200) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error - couldn't find user`)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error - couldn't find user`)};
 		}
 		const profilePicture = await axios({
 			method: `post`,
@@ -805,7 +795,7 @@ export class GfycatCommand implements Command {
 				url: response?.data.profileImageUrl,
 				width: 200,
 				height: 200,
-				imageFormat: `png`,
+				imageextension: `png`,
 				quality: 75,
 			},
 			responseType: `arraybuffer`,
@@ -816,7 +806,7 @@ export class GfycatCommand implements Command {
 			iconURL: response?.data.profileImageUrl,
 			url: response?.data.url
 		};
-		const embed = new MessageEmbed({thumbnail: { url: `attachment://${response?.data.username}_gfypfp.png`}})
+		const embed = new EmbedBuilder({thumbnail: { url: `attachment://${response?.data.username}_gfypfp.png`}})
 			.setAuthor(userAuthorData)
 			.setColor(`#${await stylingUtils.urlToColours(response?.data.profileImageUrl)}`)
 			.setTitle(response?.data.name)
@@ -840,13 +830,13 @@ export class GfycatCommand implements Command {
 	
 	private async userFeed(interaction: boolean, message: Message | CommandInteraction, user: string, count: string): Promise<gfycatUserFeedEmbed> {
 		if (!user) {
-			return {error: true, message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
 		}
 
 		const blacklistData = await prisma.gfycatBlacklist.findMany();
 
 		if (blacklistData.some((user) => user.username === `${user}`)) {
-			return {error: true, message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
 		}
 
 		let insertCount = 30;
@@ -855,7 +845,7 @@ export class GfycatCommand implements Command {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const getNumber = count.match(/\d+/)!.pop();
 			insertCount = parseInt(getNumber as string);
-			if (insertCount > 50) return {error: true, message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Sorry, 50 posts is the max.`)};
+			if (insertCount > 50) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Sorry, 50 posts is the max.`)};
 		}
 		const gfycatData = await gfycatAPI
 			.get<gfycatUserFeedInterface | gfycatErrorMessage>(`users/${user}/gfycats`, {
@@ -867,15 +857,15 @@ export class GfycatCommand implements Command {
 			});
 		switch (gfycatData.status) {
 		case 400: 
-			return {error: true, message: new MessageEmbed().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 401: 
-			return {error: true, message: new MessageEmbed().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 403:
-			return {error: true, message: new MessageEmbed().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 404:
-			return {error: true, message: new MessageEmbed().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 422:
-			return {error: true, message: new MessageEmbed().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, message: new EmbedBuilder().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		}
 		const waitingMessage = interaction === true ? ``
 			: 
@@ -891,10 +881,10 @@ export class GfycatCommand implements Command {
 			gfycatDataFiltered = (gfycatData.data as gfycatUserFeedInterface).gfycats.filter((gfy) => gfy.nsfw === 0);
 		}
 		
-		if (!gfycatDataFiltered.length) return {error: true, message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
+		if (!gfycatDataFiltered.length) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
 		
 		const embeds = await this.generateGfyCatEmbed(gfycatDataFiltered);
-		if (!embeds.length) return {error: true, message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
+		if (!embeds.length) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
 		interaction === true ? `` : (waitingMessage as Message).delete();
 		return {error: false, embeds: embeds};
 	}
@@ -906,7 +896,7 @@ export class GfycatCommand implements Command {
 			}
 		});
 		if (blacklistGfyIdData > 0) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
 		}
 		interface IGfy {
 			gfyItem: {
@@ -938,15 +928,15 @@ export class GfycatCommand implements Command {
 			});
 		switch (gfycatData.status) {
 		case 400: 
-			return {error: true, embed: new MessageEmbed().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 401: 
-			return {error: true, embed: new MessageEmbed().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 403:
-			return {error: true, embed: new MessageEmbed().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 404:
-			return {error: true, embed: new MessageEmbed().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		case 422:
-			return {error: true, embed: new MessageEmbed().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
 		}
 		const blacklistUserData = await prisma.gfycatBlacklist.count({
 			where: {
@@ -954,14 +944,14 @@ export class GfycatCommand implements Command {
 			}
 		});
 		if (blacklistUserData > 0) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find the user \`${(gfycatData?.data as IGfy).gfyItem.username}\``)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find the user \`${(gfycatData?.data as IGfy).gfyItem.username}\``)};
 		}
 
 		if (gfycatData === undefined) {
-			return {error: true, embed: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
+			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
 		} else {
 			const gfycatEmbed = `https://gfycat.com/${(gfycatData?.data as IGfy).gfyItem.gfyName}`;
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setColor(`${(gfycatData?.data as IGfy).gfyItem.avgColor}`)
 				.setTitle((gfycatData?.data as IGfy).gfyItem.gfyName)
 				.setDescription(

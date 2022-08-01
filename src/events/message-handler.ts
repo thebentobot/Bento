@@ -1,5 +1,5 @@
 import { guildMember, user } from '@prisma/client';
-import { Message, Permissions } from 'discord.js';
+import { ChannelType, Message, MessageType, PermissionFlagsBits } from 'discord.js';
 
 import { CommandHandler, EventHandler, TriggerHandler } from './index.js';
 import { GuildRepo } from '../services/database/repos/guild-repo.js';
@@ -20,7 +20,7 @@ export class MessageHandler implements EventHandler {
 		}
 
 		// Don't respond to DM's
-		if (msg.channel.type === `DM`) {
+		if (msg.channel.type === ChannelType.DM) {
 			return;
 		}
 
@@ -34,8 +34,8 @@ export class MessageHandler implements EventHandler {
 					username: msg.author.username,
 					discriminator: msg.author.discriminator,
 					avatarURL: msg.author.avatarURL({
-						format: `png`,
-						dynamic: true,
+						extension: `png`,
+						forceStatic: false,
 						size: 1024,
 					}),
 					xp: 0,
@@ -58,8 +58,8 @@ export class MessageHandler implements EventHandler {
 					userID: BigInt(msg.author.id),
 					guildID: BigInt(msg.guild?.id as string),
 					avatarURL: msg.member?.displayAvatarURL({
-						format: `png`,
-						dynamic: true,
+						extension: `png`,
+						forceStatic: false,
 						size: 1024,
 					}),
 					xp: 0,
@@ -103,7 +103,7 @@ export class MessageHandler implements EventHandler {
 
 		const channelDisableData = await prisma.channelDisable.findUnique({ where: { channelID: BigInt(msg.channel.id) } });
 
-		if (channelDisableData && !msg.member?.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+		if (channelDisableData && !msg.member?.permissions.has(PermissionFlagsBits.ManageMessages)) {
 			return;
 		}
 
@@ -124,10 +124,11 @@ export class MessageHandler implements EventHandler {
 		const argsCheck = msg.content.trim().split(` `);
 		let mentionMsgCommand = false;
 
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		if (
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			argsCheck[0].includes(`<@${msg.client.user!.id}>`) ||
-			(argsCheck[0].includes(`<@!${msg.client.user!.id}>`) && msg.type !== `REPLY`)
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			(argsCheck[0].includes(`<@!${msg.client.user!.id}>`) && msg.type !== MessageType.Reply)
 		) {
 			mentionMsgCommand = true;
 		}

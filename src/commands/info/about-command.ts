@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, EmbedFooterData, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { Client, CommandInteraction, EmbedFooterData, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -12,8 +12,8 @@ export class AboutCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Show info about ${config.botName}`;
 	public slashDescription = `Show info about ${config.botName}`;
 	public commandType = CommandType.Both;
@@ -43,27 +43,44 @@ export class AboutCommand implements Command {
 		const embedFooter: EmbedFooterData = {
 			text: `Bento 🍱 is created by Banner#1017`,
 			iconURL: (await client.users.fetch(`232584569289703424`))?.avatarURL({
-				dynamic: true,
+				forceStatic: false,
 			}) as string,
 		};
 
-		const embed = new MessageEmbed()
-			.setColor(`#${await stylingUtils.urlToColours(client.user?.avatarURL({ format: `png` }) as string)}`)
+		const embed = new EmbedBuilder()
+			.setColor(`#${await stylingUtils.urlToColours(client.user?.avatarURL({ extension: `png` }) as string)}`)
 			.setTitle(`Help`)
-			.setThumbnail(client.user?.avatarURL({ format: `png`, dynamic: true, size: 1024 }) as string)
+			.setThumbnail(client.user?.avatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
 			.setDescription(`For a full list of commands, please use the \`help\` command`)
-			.addField(
-				`About Bento Bot 🍱`,
-				`A Discord bot for chat moderation and fun features you did not know you needed on Discord.`,
-			)
-			.addField(`Get a full list and more details for each command`, `https://www.bentobot.xyz/commands`)
-			.addField(`Want additional benefits when using Bento 🍱?`, `https://www.patreon.com/bentobot`)
-			.addField(`Get a Bento 🍱 for each tip`, `https://ko-fi.com/bentobot`)
-			.addField(`Vote on top.gg and receive 5 Bento 🍱`, `https://top.gg/bot/787041583580184609/vote`)
-			.addField(`Want to check out the code for Bento 🍱?`, `https://github.com/thebentobot/bentoTS`)
-			.addField(
-				`Need help? Or do you have some ideas or feedback to Bento 🍱? Feel free to join the support server`,
-				`https://discord.gg/dd68WwP`,
+			.addFields(
+				{
+					name: `About Bento Bot 🍱`,
+					value: `A Discord bot for chat moderation and fun features you did not know you needed on Discord.`,
+				},
+				{
+					name: `Get a full list and more details for each command`,
+					value: `https://www.bentobot.xyz/commands`,
+				},
+				{
+					name: `Want additional benefits when using Bento 🍱?`,
+					value: `https://www.patreon.com/bentobot`,
+				},
+				{
+					name: `Get a Bento 🍱 for each tip`,
+					value: `https://ko-fi.com/bentobot`,
+				},
+				{
+					name: `Vote on top.gg and receive 5 Bento 🍱`,
+					value: `https://top.gg/bot/787041583580184609/vote`,
+				},
+				{
+					name: `Want to check out the code for Bento 🍱?`,
+					value: `https://github.com/thebentobot/bento`,
+				},
+				{
+					name: `Need help? Or do you have some ideas or feedback to Bento 🍱? Feel free to join the support server`,
+					value: `https://discord.gg/dd68WwP`,
+				},
 			)
 			.setFooter(embedFooter);
 		return embed;

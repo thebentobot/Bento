@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, MessageEmbed, PermissionString } from 'discord.js';
+import { CommandInteraction, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -14,8 +14,8 @@ export class ColourCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Make ${config.botName} send a picture of the hexcode/RGB colour you sent 🌈`;
 	public slashDescription = `Make ${config.botName} send a picture of the colour you sent`;
 	public commandType = CommandType.Both;
@@ -38,7 +38,8 @@ export class ColourCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		const command = await this.colourCommand(intr.options.getString(`input`, true).trim());
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const command = await this.colourCommand((intr.options.get(`input`, true).value! as string).trim());
 		if (typeof command.image === `undefined`) {
 			await InteractionUtils.send(intr, command.message);
 		    return;
@@ -60,14 +61,14 @@ export class ColourCommand implements Command {
 		}
 	}
 
-	private async colourCommand(colour: string): Promise<{message: MessageEmbed, image?: Buffer, fileName?: string}> {
+	private async colourCommand(colour: string): Promise<{message: EmbedBuilder, image?: Buffer, fileName?: string}> {
 		let hexColour: string | undefined;
 		let rgbColour: number[] | undefined;
 		const hex = colour.match(/^(?:#|0x)([0-9a-f]{6})$/i);
 		const rgb = colour.match(/(^\d{1,3})\s*,?\s*(\d{1,3})\s*,?\s*(\d{1,3}$)/i);
 		
 		if (!rgb && !hex) {
-			return {message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid colour hexcode or RGB values.`)};
+			return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid colour hexcode or RGB values.`)};
 		}
 
 		if (hex) {
@@ -83,12 +84,12 @@ export class ColourCommand implements Command {
 
 		const hexValue = parseInt(hexColour as string, 16);
 		if (hexValue < 0 || hexValue > 16777215) {
-			return {message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid hexcode colour`)};
+			return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid hexcode colour`)};
 		}
 
 		for (const component of rgbColour as number[]) {
 			if (component < 0 || component > 255) {
-				return {message: new MessageEmbed().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid RGB value.`)};
+				return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid RGB value.`)};
 			}
 		}
 
@@ -97,7 +98,7 @@ export class ColourCommand implements Command {
 		const htmlString = `<html> <style>* {margin:0; padding:0;}</style> <div style="background-color:${hexColour}; width:200px; height:200px"></div></html>`;
 		const image = await sushiiUtils.getHTMLImage(htmlString, `200`, `200`);
 
-		const embed = new MessageEmbed({
+		const embed = new EmbedBuilder({
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			title: `Colour \`#${hexColour!.toLowerCase()}\``,
 			color: hexValue,

@@ -1,11 +1,11 @@
 import {
 	SelectMenuInteraction,
 	Message,
-	MessageActionRow,
-	MessageSelectMenu,
+	ActionRowBuilder,
+	SelectMenuBuilder,
 	EmbedAuthorData,
-	MessageEmbed,
-	MessageSelectOptionData,
+	EmbedBuilder,
+	SelectMenuComponentOptionData,
 	EmbedFooterData,
 } from 'discord.js';
 import { CommandType } from '../commands/command.js';
@@ -31,11 +31,6 @@ categoryMap.set(`selectMenu_helpCMD_category_info`, {
 	categoryEmbed: `Info`,
 	description: `General information about users and servers.\nAvatar and Banner commands, emotes etc.`,
 });
-categoryMap.set(`selectMenu_helpCMD_category_moderation`, {
-	commandCategorySearch: `moderation`,
-	categoryEmbed: `Moderation`,
-	description: `Commands only for moderation of the server.\nKick, ban, mute, case commands etc.`,
-});
 categoryMap.set(`selectMenu_helpCMD_category_user`, {
 	commandCategorySearch: `user`,
 	categoryEmbed: `User`,
@@ -46,11 +41,10 @@ const categoryIds = [
 	`selectMenu_helpCMD_category_admin`,
 	`selectMenu_helpCMD_category_features`,
 	`selectMenu_helpCMD_category_info`,
-	`selectMenu_helpCMD_category_moderation`,
 	`selectMenu_helpCMD_category_user`,
 ];
 
-const initialCategoryMenu: MessageSelectOptionData[] = [
+const initialCategoryMenu: SelectMenuComponentOptionData[] = [
 	{
 		label: `Admin`,
 		description: `Commands for the server admins`,
@@ -67,11 +61,6 @@ const initialCategoryMenu: MessageSelectOptionData[] = [
 		value: `selectMenu_helpCMD_category_info`,
 	},
 	{
-		label: `Moderation`,
-		description: `Commands for the server moderators`,
-		value: `selectMenu_helpCMD_category_moderation`,
-	},
-	{
 		label: `User`,
 		description: `Bento, rank, reminders etc.`,
 		value: `selectMenu_helpCMD_category_user`,
@@ -84,7 +73,6 @@ export class HelpSelectMenu implements SelectMenu {
 		`selectMenu_helpCMD_category_admin`,
 		`selectMenu_helpCMD_category_features`,
 		`selectMenu_helpCMD_category_info`,
-		`selectMenu_helpCMD_category_moderation`,
 		`selectMenu_helpCMD_category_user`,
 	];
 	public deferType = SelectMenuDeferType.UPDATE;
@@ -98,24 +86,24 @@ export class HelpSelectMenu implements SelectMenu {
 			const getCategoryMap = categoryMap.get(categorySelectMenuValue)!;
 			const authorData: EmbedAuthorData = {
 				name: intr.client.user?.username as string,
-				iconURL: intr.client.user?.avatarURL({ format: `png` }) as string,
+				iconURL: intr.client.user?.avatarURL({ extension: `png`, forceStatic: false }) as string,
 			};
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
 				.setTitle(getCategoryMap.categoryEmbed)
 				.setDescription(getCategoryMap.description);
-			const categorySelectMenu = new MessageSelectMenu();
+			const categorySelectMenu = new SelectMenuBuilder();
 			initialCategoryMenu.map((category) =>
 				categorySelectMenu.addOptions({
 					...category,
 					default: categorySelectMenuValue === category.value ? true : false,
 				}),
 			);
-			const categoryRow = new MessageActionRow().addComponents(
+			const categoryRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
 				categorySelectMenu.setCustomId(`selectMenu_helpCMD_category_initial`),
 			);
 			const getCommands = commands.filter((command) => command.category === getCategoryMap.commandCategorySearch);
-			const commandsSelectMenu = new MessageSelectMenu();
+			const commandsSelectMenu = new SelectMenuBuilder();
 			getCommands.map((command) =>
 				commandsSelectMenu.addOptions({
 					label: command.name as string,
@@ -123,7 +111,7 @@ export class HelpSelectMenu implements SelectMenu {
 					value: command.name as string,
 				}),
 			);
-			const commandRow = new MessageActionRow().addComponents(
+			const commandRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
 				commandsSelectMenu.setCustomId(categorySelectMenuValue).setPlaceholder(`Pick a command`),
 			);
 			await InteractionUtils.editReply(intr, { embeds: [embed], components: [categoryRow, commandRow] });
@@ -153,7 +141,7 @@ export class HelpSelectMenu implements SelectMenu {
 					: getCommand.commandType === CommandType.MessageCommand
 						? `${guildData?.prefix}` + getCommand.usage
 						: getCommand.usage;
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
 				.setTitle(stylingUtils.capitalizeFirstCharacter(getCommand.name))
 				.setDescription(
@@ -170,19 +158,19 @@ export class HelpSelectMenu implements SelectMenu {
 					})`,
 				)
 				.setFooter(footerData);
-			const categorySelectMenu = new MessageSelectMenu();
+			const categorySelectMenu = new SelectMenuBuilder();
 			initialCategoryMenu.map((category) =>
 				categorySelectMenu.addOptions({
 					...category,
 					default: intr.customId === category.value ? true : false,
 				}),
 			);
-			const categoryRow = new MessageActionRow().addComponents(
+			const categoryRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
 				categorySelectMenu.setCustomId(`selectMenu_helpCMD_category_initial`),
 			);
 			const getCategory = categoryMap.get(intr.customId);
 			const getCommands = commands.filter((command) => command.category === getCategory?.commandCategorySearch);
-			const commandsSelectMenu = new MessageSelectMenu();
+			const commandsSelectMenu = new SelectMenuBuilder();
 			getCommands.map((command) =>
 				commandsSelectMenu.addOptions({
 					label: command.name as string,
@@ -191,7 +179,7 @@ export class HelpSelectMenu implements SelectMenu {
 					default: command.name === getCommandFromSelectMenu ? true : false,
 				}),
 			);
-			const commandRow = new MessageActionRow().addComponents(commandsSelectMenu.setCustomId(intr.customId));
+			const commandRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(commandsSelectMenu.setCustomId(intr.customId));
 			await InteractionUtils.editReply(intr, { embeds: [embed], components: [categoryRow, commandRow] });
 			return;
 		}

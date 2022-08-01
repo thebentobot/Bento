@@ -31,8 +31,5 @@ export { EmotesCommand } from './info/emotes-command.js';
 export { PingCommand } from './info/ping-command.js';
 export { BannerCommand } from './info/banner-command.js';
 
-// moderation
-export { ModTestCommand } from './moderation/modtest-command.js';
-
 // user
 export { UserTestCommand } from './user/usertest-command.js';
