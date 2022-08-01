@@ -1,12 +1,12 @@
 import {
 	CommandInteraction,
-	MessageEmbed,
+	EmbedBuilder,
 	NewsChannel,
 	TextChannel,
 	ThreadChannel,
 	Message,
 	GuildMember,
-	Permissions,
+	PermissionFlagsBits,
 } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
@@ -65,9 +65,9 @@ export class CommandHandler implements EventHandler {
 		}
 		args.shift();
 		const getCmd = args.shift()?.toLowerCase();
-		
+
 		if (!getCmd) return;
-		
+
 		// Try to find the command the user wants
 		const command = this.find(getCmd);
 
@@ -108,11 +108,11 @@ export class CommandHandler implements EventHandler {
 			await MessageUtils.send(msg.channel, `You don't have permission to run that command!`);
 			return;
 		}
-		
-		if (command.commandType !== CommandType.Both || CommandType.SlashCommand) {
+
+		if (command.commandType === CommandType.SlashCommand) {
 			return;
 		}
-		
+
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			await command!.executeMsgCmd!(msg, args, data);
@@ -120,11 +120,19 @@ export class CommandHandler implements EventHandler {
 			try {
 				await MessageUtils.send(
 					msg.channel,
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setDescription(`Something went wrong!`)
 						.setColor(`#ff4a4a`)
-						.addField(`Error code`, `${error}`)
-						.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`),
+						.addFields(
+							{
+								name: `Error code`,
+								value: `${error}`
+							},
+							{
+								name: `Contact support`,
+								value: `[Support Server](https://discord.gg/dd68WwP)`
+							},
+						)
 				);
 				// eslint-disable-next-line no-empty
 			} catch {
@@ -164,7 +172,7 @@ export class CommandHandler implements EventHandler {
 
 	private hasPermission(member: GuildMember, command: Command): boolean {
 		// Developers and members with "Manage Server" have permission for all commands
-		if (member.permissions.has(Permissions.FLAGS.MANAGE_GUILD) || Config.developers.includes(member.id)) {
+		if (member.permissions.has(PermissionFlagsBits.ManageGuild) || Config.developers.includes(member.id)) {
 			return true;
 		}
 		// Check if member has required permissions for command
@@ -231,7 +239,7 @@ export class CommandHandler implements EventHandler {
 					intr.channel instanceof ThreadChannel
 					? Logs.error.commandGuild
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
 						.replaceAll(`{USER_TAG}`, intr.user.tag)
 						.replaceAll(`{USER_ID}`, intr.user.id)
@@ -241,7 +249,7 @@ export class CommandHandler implements EventHandler {
 						.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
 					: Logs.error.commandOther
 						.replaceAll(`{INTERACTION_ID}`, intr.id)
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						.replaceAll(`{COMMAND_NAME}`, command.metadata!.name)
 						.replaceAll(`{USER_TAG}`, intr.user.tag)
 						.replaceAll(`{USER_ID}`, intr.user.id),
@@ -253,14 +261,30 @@ export class CommandHandler implements EventHandler {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	private async sendIntrError(intr: CommandInteraction, _data: EventData): Promise<void> {
 		try {
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setDescription(`Something went wrong!`)
-				.addField(`Error code`, intr.id)
-				.addField(`Contact support`, `[Support Server](https://discord.gg/dd68WwP)`)
+				.addFields(
+					{
+						name: `Error code`,
+						value: intr.id
+					},
+					{
+						name: `Contact support`,
+						value: `[Support Server](https://discord.gg/dd68WwP)`
+					},
+				)
 				.setColor(`#ff4a4a`);
 			if (intr.guild) {
-				embed.addField(`Guild ID`, intr.guild.id);
-				embed.addField(`Shard ID`, intr.guild.shardId.toString());
+				embed.addFields(
+					{
+						name: `Guild ID`,
+						value: intr.guild.id
+					},
+					{
+						name: `Shard ID`,
+						value: intr.guild.shardId.toString()
+					},
+				);
 			}
 			await InteractionUtils.send(intr, embed);
 		} catch {

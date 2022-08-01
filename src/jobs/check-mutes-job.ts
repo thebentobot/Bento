@@ -1,6 +1,6 @@
 import { Job } from './job.js';
 import { config as Config } from '../config/config.js';
-import { EmbedAuthorData, EmbedFooterData, MessageEmbed, ShardingManager, TextChannel } from 'discord.js';
+import { EmbedAuthorData, EmbedFooterData, EmbedBuilder, ShardingManager, TextChannel } from 'discord.js';
 import { CustomClient } from '../extensions/custom-client.js';
 import { prisma } from '../services/prisma.js';
 import { mute } from '@prisma/client';
@@ -19,8 +19,8 @@ export class CheckMutesJob implements Job {
 	public async run(): Promise<void> {
 		const muteData: mute[] = await prisma.$queryRaw`
         SELECT *
-        FROM mute
-        WHERE mute."muteEnd" < now()::timestamp at time zone  'utc' AND mute."MuteStatus" = true AND "muteEnd" is not null;`;
+        FROM "mute"
+        WHERE "mute"."muteEnd" < now()::timestamp at time zone  'utc' AND "mute"."MuteStatus" = true AND "muteEnd" is not null;`;
 		if (muteData) {
 			for (const unmute of muteData) {
 				await this.shardManager.broadcastEval(async (client) => {
@@ -47,13 +47,13 @@ export class CheckMutesJob implements Job {
 								}
 								const embedAuthorData: EmbedAuthorData = {
 									name: `${member.user.username + `#` + member.user.discriminator} (userID: ${member.id})`,
-									iconURL: member.displayAvatarURL({ dynamic: true }),
+									iconURL: member.displayAvatarURL({ forceStatic: false }),
 								};
 
 								const embedFooterData: EmbedFooterData = {
 									text: `Mute Case Number: ${unmute.muteCase}`,
 								};
-								const embed = new MessageEmbed()
+								const embed = new EmbedBuilder()
 									.setColor(`#00ff4a`)
 									.setAuthor(embedAuthorData)
 									.setThumbnail(member?.user.avatarURL() as string)
@@ -65,34 +65,48 @@ export class CheckMutesJob implements Job {
 										} was unmuted!`,
 									)
 									.setDescription(`**Reason for unmute**\nMute expired`)
-									.addField(`Username`, member.user.username + `#` + member.user.discriminator)
-									.addField(`User ID`, member.id)
-									.addField(
-										`Muted by`,
-										guild?.members.cache.get(`${unmute.actor}`)?.nickname
-											? `${guild?.members.cache.get(`${unmute.actor}`)?.nickname} (${
-												guild?.members.cache.get(`${unmute.actor}`)?.user.username
+									.addFields(
+										{
+											name: `Username`,
+											value: member.user.username + `#` + member.user.discriminator
+										},
+										{
+											name: `User ID`,
+											value: member.id
+										},
+										{
+											name: `Muted by`,
+											value: guild?.members.cache.get(`${unmute.actor}`)?.nickname
+												? `${guild?.members.cache.get(`${unmute.actor}`)?.nickname} (${
+													guild?.members.cache.get(`${unmute.actor}`)?.user.username
 											  }#${guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator})`
-											: `${guild?.members.cache.get(`${unmute.actor}`)?.user.username}#${
-												guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator
+												: `${guild?.members.cache.get(`${unmute.actor}`)?.user.username}#${
+													guild?.members.cache.get(`${unmute.actor}`)?.user.discriminator
 											  }`,
-									)
-									.addField(
-										`Mute date`,
-										`<t:${Math.round(unmute.date.getTime() / 1000)}:R> (<t:${Math.round(
-											unmute.date.getTime() / 1000,
-										)}:F>`,
-									)
-									.addField(
-										`Original mute end date`,
-										unmute.muteEnd !== null
-											? `<t:${Math.round(unmute.muteEnd.getTime() / 1000)}:R> (<t:${Math.round(
-												unmute.muteEnd.getTime() / 1000,
+										},
+										{
+											name: `Mute date`,
+											value: `<t:${Math.round(unmute.date.getTime() / 1000)}:R> (<t:${Math.round(
+												unmute.date.getTime() / 1000,
+											)}:F>`,
+										},
+										{
+											name: `Original mute end date`,
+											value: unmute.muteEnd !== null
+												? `<t:${Math.round(unmute.muteEnd.getTime() / 1000)}:R> (<t:${Math.round(
+													unmute.muteEnd.getTime() / 1000,
 											  )}:F>`
-											: `The mute was on indefinite time`,
+												: `The mute was on indefinite time`,
+										},
+										{
+											name: `Reason for mute`,
+											value: unmute.reason === null ? `No reason specified for mute` : unmute.reason
+										},
+										{
+											name: `Notes about the mute case`,
+											value: unmute.note ? unmute.note : `No notes made for this mute case`
+										},
 									)
-									.addField(`Reason for mute`, unmute.reason === null ? `No reason specified for mute` : unmute.reason)
-									.addField(`Notes about the mute case`, unmute.note ? unmute.note : `No notes made for this mute case`)
 									.setFooter(embedFooterData)
 									.setTimestamp();
 								if (logChannel !== undefined) {

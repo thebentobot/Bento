@@ -1,10 +1,5 @@
-import { ApplicationCommandOptionType } from 'discord-api-types';
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	PermissionString,
-} from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { CommandInteraction, Message, PermissionsString } from 'discord.js';
 import { config } from '../../config/config.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
@@ -15,7 +10,7 @@ export class LinkCommand implements Command {
 	public name = `link`;
 	public slashDescription = `Get various links related to ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `link`,
 		description: this.slashDescription,
 		options: [
@@ -44,7 +39,7 @@ export class LinkCommand implements Command {
 					{
 						name: `top.gg`,
 						value: `https://top.gg/bot/787041583580184609`,
-					}
+					},
 				],
 			},
 		],
@@ -53,8 +48,8 @@ export class LinkCommand implements Command {
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Get various links related to ${config.botName}.\nThe options are "website", "github", "patreon", "kofi" and "topgg".`;
 	public usage = `link <one of the options> | /link <choose an option>`;
 	public website = `https://www.bentobot.xyz/commands#link`;
@@ -62,16 +57,13 @@ export class LinkCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		const link = intr.options.getString(`link`);
-		await InteractionUtils.send(intr, link as string);
+		const link = intr.options.get(`link`);
+		await InteractionUtils.send(intr, `${link?.value}`);
 	}
 
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		const command = this.linkCommand(args[0]);
-		await MessageUtils.send(
-			msg.channel,
-			command
-		);
+		await MessageUtils.send(msg.channel, command);
 	}
 
 	private linkCommand(link: string | null): string {

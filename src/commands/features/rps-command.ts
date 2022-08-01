@@ -1,11 +1,5 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	PermissionString,
-	User,
-} from 'discord.js';
-import { ApplicationCommandOptionType } from 'discord-api-types/v9';
+import { CommandInteraction, Message, PermissionsString, User } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -17,7 +11,7 @@ export class RpsCommand implements Command {
 	public name = `rps`;
 	public slashDescription = `Play Rock, Paper, Scissors with ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `rps`,
 		description: `Play Rock, Paper, Scissors with ${config.botName}`,
 		options: [
@@ -29,26 +23,26 @@ export class RpsCommand implements Command {
 				choices: [
 					{
 						name: `Rock`,
-						value: `rock`
+						value: `rock`,
 					},
 					{
 						name: `Paper`,
-						value: `paper`
+						value: `paper`,
 					},
 					{
 						name: `Scissors`,
-						value: `scissors`
+						value: `scissors`,
 					},
-				]
-			}
-		]
+				],
+			},
+		],
 	};
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Play Rock 🪨, Paper 🧻, Scissors ✂️ with ${config.botName}.\nPick one of the options and see if you win.\n**Warning** ${config.botName} can get a bit sassy if they're winning hehe.`;
 	public usage = `rps <rock, paper, scissors> | /rps <rock, paper, scissors>`;
 	public website = `https://www.bentobot.xyz/commands#rps`;
@@ -71,8 +65,8 @@ export class RpsCommand implements Command {
 			const guildData = await prisma.guild.findUnique({
 				where: {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					guildID: BigInt(msg.guild!.id)
-				}
+					guildID: BigInt(msg.guild!.id),
+				},
 			});
 			await MessageUtils.send(msg.channel, `How to play: \`${guildData?.prefix}rps <rock|paper|scissors>\``);
 			return;
@@ -110,7 +104,7 @@ export class RpsCommand implements Command {
 							paperWins: 0,
 							scissorWins: 0,
 							scissorsLosses: 0,
-							scissorsTies: 0
+							scissorsTies: 0,
 						},
 						update: {
 							userID: BigInt(user.id),
@@ -137,7 +131,7 @@ export class RpsCommand implements Command {
 							paperWins: 0,
 							scissorWins: 0,
 							scissorsLosses: 0,
-							scissorsTies: 0
+							scissorsTies: 0,
 						},
 						update: {
 							userID: BigInt(user.id),
@@ -164,7 +158,7 @@ export class RpsCommand implements Command {
 							paperWins: 0,
 							scissorWins: 0,
 							scissorsLosses: 0,
-							scissorsTies: 1
+							scissorsTies: 1,
 						},
 						update: {
 							userID: BigInt(user.id),
@@ -183,113 +177,115 @@ export class RpsCommand implements Command {
 		}
 
 		switch (choice) {
-		case `rock`: {
-			if (result === `paper`) {
-				await prisma.rpsGame.upsert({
-					create: {
-						userID: BigInt(user.id),
-						rockLosses: 1,
-						rockWins: 0,
-						rockTies: 0,
-						paperLosses: 0,
-						paperTies: 0,
-						paperWins: 0,
-						scissorWins: 0,
-						scissorsLosses: 0,
-						scissorsTies: 0
-					},
-					update: {
-						userID: BigInt(user.id),
-						rockLosses: {
-							increment: 1,
+		case `rock`:
+			{
+				if (result === `paper`) {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 1,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
 						},
-					},
-					where: {
-						userID: BigInt(user.id),
-					},
-				});
-				message = `I got ${bentoResult} I won! 🤣`;
-			} else {
-				await prisma.rpsGame.upsert({
-					create: {
-						userID: BigInt(user.id),
-						rockLosses: 0,
-						rockWins: 1,
-						rockTies: 0,
-						paperLosses: 0,
-						paperTies: 0,
-						paperWins: 0,
-						scissorWins: 0,
-						scissorsLosses: 0,
-						scissorsTies: 0
-					},
-					update: {
-						userID: BigInt(user.id),
-						rockWins: {
-							increment: 1,
+						update: {
+							userID: BigInt(user.id),
+							rockLosses: {
+								increment: 1,
+							},
 						},
-					},
-					where: {
-						userID: BigInt(user.id),
-					},
-				});
-				message = `I got ${bentoResult} You won! 😔`;
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} I won! 🤣`;
+				} else {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 1,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							rockWins: {
+								increment: 1,
+							},
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} You won! 😔`;
+				}
 			}
-		}
 			break;
-		case `paper`: {
-			if (result === `scissors`) {
-				await prisma.rpsGame.upsert({
-					create: {
-						userID: BigInt(user.id),
-						rockLosses: 0,
-						rockWins: 0,
-						rockTies: 0,
-						paperLosses: 1,
-						paperTies: 0,
-						paperWins: 0,
-						scissorWins: 0,
-						scissorsLosses: 0,
-						scissorsTies: 0
-					},
-					update: {
-						userID: BigInt(user.id),
-						paperLosses: {
-							increment: 1,
+		case `paper`:
+			{
+				if (result === `scissors`) {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 1,
+							paperTies: 0,
+							paperWins: 0,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
 						},
-					},
-					where: {
-						userID: BigInt(user.id),
-					},
-				});
-				message = `I got ${bentoResult} I won! 🤣`;
-			} else {
-				await prisma.rpsGame.upsert({
-					create: {
-						userID: BigInt(user.id),
-						rockLosses: 0,
-						rockWins: 0,
-						rockTies: 0,
-						paperLosses: 0,
-						paperTies: 0,
-						paperWins: 1,
-						scissorWins: 0,
-						scissorsLosses: 0,
-						scissorsTies: 0
-					},
-					update: {
-						userID: BigInt(user.id),
-						paperWins: {
-							increment: 1,
+						update: {
+							userID: BigInt(user.id),
+							paperLosses: {
+								increment: 1,
+							},
 						},
-					},
-					where: {
-						userID: BigInt(user.id),
-					},
-				});
-				message = `I got ${bentoResult} You won! 😔`;
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} I won! 🤣`;
+				} else {
+					await prisma.rpsGame.upsert({
+						create: {
+							userID: BigInt(user.id),
+							rockLosses: 0,
+							rockWins: 0,
+							rockTies: 0,
+							paperLosses: 0,
+							paperTies: 0,
+							paperWins: 1,
+							scissorWins: 0,
+							scissorsLosses: 0,
+							scissorsTies: 0,
+						},
+						update: {
+							userID: BigInt(user.id),
+							paperWins: {
+								increment: 1,
+							},
+						},
+						where: {
+							userID: BigInt(user.id),
+						},
+					});
+					message = `I got ${bentoResult} You won! 😔`;
+				}
 			}
-		}
 			break;
 		case `scissors`: {
 			if (result === `rock`) {
@@ -304,7 +300,7 @@ export class RpsCommand implements Command {
 						paperWins: 0,
 						scissorWins: 0,
 						scissorsLosses: 1,
-						scissorsTies: 0
+						scissorsTies: 0,
 					},
 					update: {
 						userID: BigInt(user.id),
@@ -329,7 +325,7 @@ export class RpsCommand implements Command {
 						paperWins: 0,
 						scissorWins: 1,
 						scissorsLosses: 0,
-						scissorsTies: 0
+						scissorsTies: 0,
 					},
 					update: {
 						userID: BigInt(user.id),

@@ -1,4 +1,4 @@
-import { Role, TextChannel } from 'discord.js';
+import { PermissionFlagsBits, Role, TextChannel } from 'discord.js';
 
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/message-utils.js';
@@ -32,9 +32,9 @@ export class GuildRoleUpdateHandler implements EventHandler {
 
 		if (modLogData) {
 			const modLogChannel: TextChannel = oldRole.client.channels.cache.get(`${modLogData.channel}`) as TextChannel;
-			if (muteRoleData && newRole.permissions.has(`SEND_MESSAGES`)) {
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+			if (muteRoleData && newRole.permissions.has(PermissionFlagsBits.SendMessages)) {
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				await MessageUtils.send(
 					modLogChannel,
 					`The mute role **${oldRole.name}** has been updated${
@@ -48,16 +48,16 @@ export class GuildRoleUpdateHandler implements EventHandler {
 				await roleDataUpdate(newRole, true, modLogChannel);
 			}
 			if (oldRole.name !== newRole.name) {
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				await MessageUtils.send(
 					modLogChannel,
 					`A role called **${oldRole.name}** was updated to **${newRole.name}**.\nGet more info in the audit log.`,
 				);
 			}
 			if (oldRole.permissions !== newRole.permissions) {
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+				if (!modLogChannel.permissionsFor(oldRole.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				await MessageUtils.send(
 					modLogChannel,
 					`A role called **${
@@ -92,9 +92,9 @@ export class GuildRoleUpdateHandler implements EventHandler {
 			});
 			if (modLog) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(role.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
+				if (!channel!.permissionsFor(role.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(role.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+				if (!channel!.permissionsFor(role.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 				await MessageUtils.send(
 					channel as TextChannel,
 					`You have updated the role name for the role **${oldRole.name}** to **${newRole.name}**, which is a role users can assign in the role management channel, and it has been updated accordingly in the database.\nRemember to update the role channel message by using \`${guildData?.prefix}role update\` and perhaps change the role commands to obtain the role, if the name differs a lot.`,

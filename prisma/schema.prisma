@@ -380,6 +380,13 @@ model welcome {
   guild   guild   @relation(fields: [guildID], references: [guildID], onDelete: Cascade, onUpdate: NoAction, map: "welcome_guild_guildid_fk")
 }
 
+model gfycatPosts {
+  id        Int      @id(map: "gfycatposts_pk") @unique(map: "gfycatposts_id_uindex") @default(autoincrement())
+  messageId BigInt
+  content   String
+  date      DateTime @default(now()) @db.Timestamptz(6)
+}
+
 enum horos {
   Aries
   Taurus

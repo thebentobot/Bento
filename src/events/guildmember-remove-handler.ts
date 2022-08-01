@@ -1,7 +1,8 @@
-import { GuildMember, MessageEmbed, TextChannel, EmbedFooterData, PartialGuildMember } from 'discord.js';
+import { GuildMember, EmbedBuilder, TextChannel, EmbedFooterData, PartialGuildMember, PermissionFlagsBits } from 'discord.js';
 
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
+import { botColours } from '../utils/styling-utils.js';
 import { EventHandler } from './event-handler.js';
 
 export class GuildMemberRemoveHandler implements EventHandler {
@@ -42,16 +43,16 @@ export class GuildMemberRemoveHandler implements EventHandler {
 				text: `UserID: ${member.user.id}`,
 			};
 
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setTitle(`${member} left the server!`)
 				.setThumbnail(
 					`${member.user.avatarURL({
-						format: `png`,
-						dynamic: true,
+						extension: `png`,
+						forceStatic: false,
 						size: 1024,
 					})}`,
 				)
-				.setColor(`#FF0000`)
+				.setColor(botColours.error)
 				.setFooter(EmbedFooterData)
 				.setTimestamp()
 				.setDescription(
@@ -103,8 +104,8 @@ export class GuildMemberRemoveHandler implements EventHandler {
 
 		if (byeData && byeData.message && byeData.channel) {
 			const channel = member.guild.channels.cache.get(`${byeData.channel}`) as TextChannel;
-			if (!channel.permissionsFor(member.client.user?.id as string)?.has(`VIEW_CHANNEL`)) return;
-			if (!channel.permissionsFor(member.client.user?.id as string)?.has(`SEND_MESSAGES`)) return;
+			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
+			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
 			const msg = byeData.message;
 			const msgClean = msg
 				.replace(`{user}`, `${member.user}`)

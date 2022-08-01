@@ -1,31 +1,26 @@
-import {
-	ChatInputApplicationCommandData,
-	CommandInteraction,
-	Message,
-	MessageEmbed,
-	PermissionString,
-} from 'discord.js';
+import { CommandInteraction, Message, EmbedBuilder, PermissionsString } from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { MessageUtils, stylingUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import { prisma } from '../../services/prisma.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 export class PingCommand implements Command {
 	public name = `ping`;
 	public slashDescription = `Shows the latencies for ${config.botName}`;
 	public commandType = CommandType.Both;
-	public metadata: ChatInputApplicationCommandData = {
+	public metadata: RESTPostAPIChatInputApplicationCommandsJSONBody = {
 		name: `ping`,
-		description: this.slashDescription
+		description: this.slashDescription,
 	};
 	public requireDev = false;
 	public requireGuild = false;
 	public requirePremium = false;
 	public deferType = CommandDeferAccessType.PUBLIC;
-	public requireClientPerms: PermissionString[] = [];
-	public requireUserPerms: PermissionString[] = [];
+	public requireClientPerms: PermissionsString[] = [];
+	public requireUserPerms: PermissionsString[] = [];
 	public description = `Shows the latency for ${config.botName}, the Discord API and ${config.botName}'s database in PostgreSQL`;
 	public usage = `ping | /ping`;
 	public website = `https://www.bentobot.xyz/commands#ping`;
@@ -43,8 +38,8 @@ export class PingCommand implements Command {
 			const dbTimeEnd = new Date().getTime();
 			const dbTime = dbTimeEnd - dbTimeStart;
 
-			const embed = new MessageEmbed()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ format: `png` }) as string)}`)
+			const embed = new EmbedBuilder()
+				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -55,8 +50,8 @@ export class PingCommand implements Command {
 			await InteractionUtils.send(intr, embed);
 			return;
 		} catch (error) {
-			const embed = new MessageEmbed()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ format: `png` }) as string)}`)
+			const embed = new EmbedBuilder()
+				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -81,8 +76,8 @@ export class PingCommand implements Command {
 			const dbTimeEnd = new Date().getTime();
 			const dbTime = dbTimeEnd - dbTimeStart;
 
-			const embed = new MessageEmbed()
-				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ format: `png` }) as string)}`)
+			const embed = new EmbedBuilder()
+				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` }) as string)}`)
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -93,8 +88,8 @@ export class PingCommand implements Command {
 			await MessageUtils.send(msg.channel, embed);
 			return;
 		} catch (error) {
-			const embed = new MessageEmbed()
-				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ format: `png` }) as string)}`)
+			const embed = new EmbedBuilder()
+				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` }) as string)}`)
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(

@@ -1,17 +1,16 @@
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/rest/v9';
 import { Options } from 'discord.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { Bot } from './bot.js';
-import { Button } from './buttons/index.js';
-import { 
+import { Button, GfycatSearchButton, GfycatUserFeedButton } from './buttons/index.js';
+import {
 	EightBallCommand,
 	DogCommand,
-	CatCommand, 
-	Command, 
-	DevCommand, 
-	HelpCommand, 
+	CatCommand,
+	Command,
+	DevCommand,
+	HelpCommand,
 	LinkCommand,
 	ChooseCommand,
 	RollCommand,
@@ -29,8 +28,11 @@ import {
 	UrbanCommand,
 	AboutCommand,
 	AdminTestCommand,
-	ModTestCommand,
-	UserTestCommand
+	UserTestCommand,
+	StreamableCommand,
+	WeatherCommand,
+	ColourCommand,
+	GfycatCommand
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -45,8 +47,6 @@ import {
 	ButtonHandler,
 	MessageDeleteHandler,
 	MessageUpdateHandler,
-	GuildBanAddHandler,
-	GuildBanRemoveHandler,
 	GuildMemberUpdateHandler,
 	GuildRoleDeleteHandler,
 	GuildRoleUpdateHandler,
@@ -59,7 +59,7 @@ import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
 import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
 import { SelectMenu } from './selectMenu/selectMenu.js';
-import { JobService, Logger } from './services/index.js';
+import { JobService, Logger, CommandRegistrationService } from './services/index.js';
 import { Trigger } from './triggers/index.js';
 
 export const commands: Command[] = [
@@ -85,8 +85,11 @@ export const commands: Command[] = [
 	new UrbanCommand(),
 	new AboutCommand(),
 	new AdminTestCommand(),
-	new ModTestCommand(),
-	new UserTestCommand()
+	new UserTestCommand(),
+	new StreamableCommand(),
+	new WeatherCommand(),
+	new ColourCommand(),
+	new GfycatCommand()
 	// TODO: Add new commands here
 ];
 
@@ -97,7 +100,7 @@ async function start(): Promise<void> {
 		partials: Config.client.partials,
 		makeCache: Options.cacheWithLimits({
 			// Keep default caching behavior
-			...Options.defaultMakeCacheSettings,
+			...Options.DefaultMakeCacheSettings,
 			// Override specific options from config
 			...Config.client.caches,
 		}),
@@ -127,8 +130,11 @@ async function start(): Promise<void> {
 		new UrbanCommand(),
 		new AboutCommand(),
 		new AdminTestCommand(),
-		new ModTestCommand(),
-		new UserTestCommand()
+		new UserTestCommand(),
+		new StreamableCommand(),
+		new WeatherCommand(),
+		new ColourCommand(),
+		new GfycatCommand()
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));
@@ -138,12 +144,14 @@ async function start(): Promise<void> {
 
 	// Buttons
 	const buttons: Button[] = [
+		new GfycatUserFeedButton(),
+		new GfycatSearchButton()
 		// TODO: Add new buttons here
 	];
 
 	// Select Menus replies
 	const selectMenus: SelectMenu[] = [
-		new HelpSelectMenu()
+		new HelpSelectMenu(),
 		// TODO: Add new Select Menus here
 	];
 
@@ -169,8 +177,6 @@ async function start(): Promise<void> {
 	const buttonHandler = new ButtonHandler(buttons);
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
-	const guildBanAddHandler = new GuildBanAddHandler();
-	const guildBanRemoveHandler = new GuildBanRemoveHandler();
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
 	const guildRoleDeleteHandler = new GuildRoleDeleteHandler();
 	const guildRoleUpdateHandler = new GuildRoleUpdateHandler();
@@ -198,68 +204,28 @@ async function start(): Promise<void> {
 		guildMemberRemoveHandler,
 		messageDeleteHandler,
 		messageUpdateHandler,
-		guildBanAddHandler,
-		guildBanRemoveHandler,
 		guildMemberUpdateHandler,
 		guildRoleDeleteHandler,
 		guildRoleUpdateHandler,
 		userUpdateHandler,
-		selectMenuHandler
+		selectMenuHandler,
 	);
 
 	// Register
-	if (process.argv[2] === `--register`) {
-		await registerCommands(commands);
-		process.exit();
-	} else if (process.argv[2] === `--clear`) {
-		await clearCommands();
+	if (process.argv[2] === `commands`) {
+		try {
+			const rest = new REST({ version: `10` }).setToken(Config.client.token);
+			const commandRegistrationService = new CommandRegistrationService(rest);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const localCmds = commands.filter((cmd) => cmd.metadata).map((cmd) => cmd.metadata!);
+			await commandRegistrationService.process(localCmds, process.argv);
+		} catch (error) {
+			Logger.error(Logs.error.commandAction, error);
+		}
 		process.exit();
 	}
 
 	await bot.start();
-}
-
-const botDevServer = `790353119795871744`;
-
-async function registerCommands(commands: Command[]): Promise<void> {
-	const cmdFilter = commands.filter((cmd) => cmd.metadata);
-	const cmdDatas = cmdFilter.map((cmd) => cmd.metadata);
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const cmdNames = cmdDatas.map((cmdData) => cmdData!.name);
-
-	Logger.info(
-		Logs.info.commandsRegistering.replaceAll(`{COMMAND_NAMES}`, cmdNames.map((cmdName) => `'${cmdName}'`).join(`, `)),
-	);
-
-	try {
-		const rest = new REST({ version: `9` }).setToken(Config.client.token);
-		if (process.env.NODE_ENV === `development`) {
-			await rest.put(Routes.applicationGuildCommands(Config.client.id, botDevServer), { body: [] });
-			await rest.put(Routes.applicationGuildCommands(Config.client.id, botDevServer), { body: cmdDatas });
-		} else {
-			await rest.put(Routes.applicationCommands(Config.client.id), { body: [] });
-			await rest.put(Routes.applicationCommands(Config.client.id), { body: cmdDatas });
-		}
-	} catch (error) {
-		Logger.error(Logs.error.commandsRegistering, error);
-		return;
-	}
-
-	Logger.info(Logs.info.commandsRegistered);
-}
-
-async function clearCommands(): Promise<void> {
-	Logger.info(Logs.info.commandsClearing);
-
-	try {
-		const rest = new REST({ version: `9` }).setToken(Config.client.token);
-		await rest.put(Routes.applicationCommands(Config.client.id), { body: [] });
-	} catch (error) {
-		Logger.error(Logs.error.commandsClearing, error);
-		return;
-	}
-
-	Logger.info(Logs.info.commandsCleared);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

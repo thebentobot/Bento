@@ -11,6 +11,10 @@ export { ChooseCommand } from './features/choose-command.js';
 export { RollCommand } from './features/roll-command.js';
 export { UrbanCommand } from './features/urban-command.js';
 export { RpsCommand } from './features/rps-command.js';
+export { StreamableCommand } from './features/streamable-command.js';
+export { WeatherCommand } from './features/weather-command.js';
+export { ColourCommand } from './features/colour-command.js';
+export { GfycatCommand } from './features/gfycat-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';
@@ -26,9 +30,6 @@ export { RolesCommand } from './info/roles-command.js';
 export { EmotesCommand } from './info/emotes-command.js';
 export { PingCommand } from './info/ping-command.js';
 export { BannerCommand } from './info/banner-command.js';
-
-// moderation
-export { ModTestCommand } from './moderation/modtest-command.js';
 
 // user
 export { UserTestCommand } from './user/usertest-command.js';

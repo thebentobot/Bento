@@ -1,11 +1,12 @@
-import { CommandInteraction, Message, PermissionString, ChatInputApplicationCommandData } from 'discord.js';
+import { CommandInteraction, Message, PermissionsString } from 'discord.js';
+import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
 
 export enum CommandType {
 	Both = `Both`,
 	MessageCommand = `MessageCommand`,
-	SlashCommand = `SlashCommand`
+	SlashCommand = `SlashCommand`,
 }
 
 export interface Command {
@@ -13,21 +14,21 @@ export interface Command {
 	requireSetup?: boolean;
 	cooldown?: RateLimiter;
 	slashDescription: string;
-	description: string
-	usage: string
-	website: string
-	category: string
+	description: string;
+	usage: string;
+	website: string;
+	category: string;
 	name: string;
 	commandType: CommandType;
 	deferType?: CommandDeferAccessType;
 	aliases?: string[];
-	metadata?: ChatInputApplicationCommandData;
+	metadata?: RESTPostAPIChatInputApplicationCommandsJSONBody;
 	ownerOnly?: boolean;
 	guildOnly?: boolean;
 	requireDev: boolean;
 	requireGuild: boolean;
-	requireClientPerms: PermissionString[];
-	requireUserPerms: PermissionString[];
+	requireClientPerms: PermissionsString[];
+	requireUserPerms: PermissionsString[];
 	requirePremium: boolean;
 	executeIntr?(intr: CommandInteraction, data?: EventData): Promise<void>;
 	executeMsgCmd?(msg: Message, args?: string[], data?: EventData): Promise<void>;

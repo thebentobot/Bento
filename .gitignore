@@ -4,3 +4,4 @@ node_modules
 /dist
 /**/config/**/*.json
 !/**/config/**/*.example.json
+secure-connect-bento.zip

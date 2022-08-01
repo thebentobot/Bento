@@ -10,8 +10,6 @@ export { GuildMemberRemoveHandler } from './guildmember-remove-handler.js';
 export { ButtonHandler } from './button-handler.js';
 export { MessageDeleteHandler } from './message-delete-handler.js';
 export { MessageUpdateHandler } from './message-update-handler.js';
-export { GuildBanAddHandler } from './guild-ban-add-handler.js';
-export { GuildBanRemoveHandler } from './guild-ban-remove-handler.js';
 export { GuildMemberUpdateHandler } from './guildmember-update-handler.js';
 export { GuildRoleDeleteHandler } from './guild-role-delete-handler.js';
 export { GuildRoleUpdateHandler } from './guild-role-update-handler.js';

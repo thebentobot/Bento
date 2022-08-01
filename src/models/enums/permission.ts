@@ -1,4 +1,4 @@
-import { PermissionString } from 'discord.js';
+import { PermissionsString } from 'discord.js';
 
 interface PermissionData {
 	displayName(): string;
@@ -6,219 +6,209 @@ interface PermissionData {
 
 export class Permission {
 	public static Data: {
-		[key in PermissionString]: PermissionData;
+		[key in PermissionsString]: PermissionData;
 	} = {
-			ADD_REACTIONS: {
+			'AddReactions': {
 				displayName(): string {
 					return `Add Reactions`;
 				},
 			},
-			ADMINISTRATOR: {
+			'Administrator': {
 				displayName(): string {
 					return `Administrator`;
 				},
 			},
-			ATTACH_FILES: {
+			'AttachFiles': {
 				displayName(): string {
 					return `Attach files`;
 				},
 			},
-			BAN_MEMBERS: {
+			'BanMembers': {
 				displayName(): string {
 					return `Ban Members`;
 				},
 			},
-			CHANGE_NICKNAME: {
+			'ChangeNickname': {
 				displayName(): string {
 					return `Change Nickname`;
 				},
 			},
-			CONNECT: {
+			'Connect': {
 				displayName(): string {
 					return `Connect`;
 				},
 			},
-			CREATE_INSTANT_INVITE: {
+			'CreateInstantInvite': {
 				displayName(): string {
 					return `Create Invite`;
 				},
 			},
-			CREATE_PRIVATE_THREADS: {
+			'CreatePrivateThreads': {
 				displayName(): string {
 					return `Create Private Threads`;
 				},
 			},
-			CREATE_PUBLIC_THREADS: {
+			'CreatePublicThreads': {
 				displayName(): string {
 					return `Create Public Threads`;
 				},
 			},
-			DEAFEN_MEMBERS: {
+			'DeafenMembers': {
 				displayName(): string {
 					return `Deafen Members`;
 				},
 			},
-			EMBED_LINKS: {
+			'EmbedLinks': {
 				displayName(): string {
 					return `Embed Links`;
 				},
 			},
-			KICK_MEMBERS: {
+			'KickMembers': {
 				displayName(): string {
 					return `Kick Members`;
 				},
 			},
-			MANAGE_CHANNELS: {
+			'ManageChannels': {
 				displayName(): string {
 					return `Manage Channel(s)`;
 				},
 			},
-			MANAGE_EMOJIS_AND_STICKERS: {
+			'ManageEmojisAndStickers': {
 				displayName(): string {
 					return `Manage Emojis and Stickers`;
 				},
 			},
-			MANAGE_EVENTS: {
+			'ManageEvents': {
 				displayName(): string {
 					return `Manage Events`;
 				},
 			},
-			MANAGE_GUILD: {
+			'ManageGuild': {
 				displayName(): string {
 					return `Manage Server`;
 				},
 			},
-			MANAGE_MESSAGES: {
+			'ManageMessages': {
 				displayName(): string {
 					return `Manage Messages`;
 				},
 			},
-			MANAGE_NICKNAMES: {
+			'ManageNicknames': {
 				displayName(): string {
 					return `Manage Nicknames`;
 				},
 			},
-			MANAGE_ROLES: {
+			'ManageRoles': {
 				displayName(): string {
 					return `Manage roles / Permissions`;
 				},
 			},
-			MANAGE_THREADS: {
+			'ManageThreads': {
 				displayName(): string {
 					return `Manage Threads`;
 				},
 			},
-			MANAGE_WEBHOOKS: {
+			'ManageWebhooks': {
 				displayName(): string {
 					return `Manage Webhooks`;
 				},
 			},
-			MENTION_EVERYONE: {
+			'MentionEveryone': {
 				displayName(): string {
 					return `Mention Everyone, Here and All Roles`;
 				},
 			},
-			MODERATE_MEMBERS: {
+			'ModerateMembers': {
 				displayName(): string {
 					return `Timeout Members`;
 				},
 			},
-			MOVE_MEMBERS: {
+			'MoveMembers': {
 				displayName(): string {
 					return `Move Members`;
 				},
 			},
-			MUTE_MEMBERS: {
+			'MuteMembers': {
 				displayName(): string {
 					return `Mute Members`;
 				},
 			},
-			PRIORITY_SPEAKER: {
+			'PrioritySpeaker': {
 				displayName(): string {
 					return `Priority Speaker`;
 				},
 			},
-			READ_MESSAGE_HISTORY: {
+			'ReadMessageHistory': {
 				displayName(): string {
 					return `Read Message History`;
 				},
 			},
-			REQUEST_TO_SPEAK: {
+			'RequestToSpeak': {
 				displayName(): string {
 					return `Request to Speak`;
 				},
 			},
-			SEND_MESSAGES: {
+			'SendMessages': {
 				displayName(): string {
 					return `Send Messages`;
 				},
 			},
-			SEND_MESSAGES_IN_THREADS: {
+			'SendMessagesInThreads': {
 				displayName(): string {
 					return `Send Messages in Threads`;
 				},
 			},
-			SEND_TTS_MESSAGES: {
+			'SendTTSMessages': {
 				displayName(): string {
 					return `send Text-to-Speech Messages`;
 				},
 			},
-			SPEAK: {
+			'Speak': {
 				displayName(): string {
 					return `Speak`;
 				},
 			},
-			START_EMBEDDED_ACTIVITIES: {
+			'UseEmbeddedActivities': {
 				displayName(): string {
 					return `Start Activities`;
 				},
 			},
-			STREAM: {
+			'Stream': {
 				displayName(): string {
 					return `Video`;
 				},
 			},
-			USE_APPLICATION_COMMANDS: {
+			'UseApplicationCommands': {
 				displayName(): string {
 					return `Use Application Commands`;
 				},
 			},
-			USE_EXTERNAL_EMOJIS: {
+			'UseExternalEmojis': {
 				displayName(): string {
 					return `Use External Emoji`;
 				},
 			},
-			USE_EXTERNAL_STICKERS: {
+			'UseExternalStickers': {
 				displayName(): string {
 					return `Use External Stickers`;
 				},
 			},
-			USE_PRIVATE_THREADS: {
-				displayName(): string {
-					return `Use Private Threads`;
-				},
-			},
-			USE_PUBLIC_THREADS: {
-				displayName(): string {
-					return `Use Public Threads`;
-				},
-			},
-			USE_VAD: {
+			'UseVAD': {
 				displayName(): string {
 					return `Use Voice Activity`;
 				},
 			},
-			VIEW_AUDIT_LOG: {
+			'ViewAuditLog': {
 				displayName(): string {
 					return `View Audit Log`;
 				},
 			},
-			VIEW_CHANNEL: {
+			'ViewChannel': {
 				displayName(): string {
 					return `View Channel(s)`;
 				},
 			},
-			VIEW_GUILD_INSIGHTS: {
+			'ViewGuildInsights': {
 				displayName(): string {
 					return `View Server Insights`;
 				},
