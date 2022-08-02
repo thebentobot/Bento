@@ -196,7 +196,7 @@ export class GfycatCommand implements Command {
 		let userFeed = false;
 		let getGfycat = false;
 		let searchGfycat = false;
-		if (intr.options.get(`create`)) {
+		if (intr.options.data[0].name === `create`) {
 			cmd = await this.createGfycat(
 				true,
 				intr,
@@ -208,16 +208,16 @@ export class GfycatCommand implements Command {
 				intr.options.get(`duration`)?.value as number, 
 				intr.options.get(`title`)?.value as string
 			);
-		} else if (intr.options.get(`profile`)) {
+		} else if (intr.options.data[0].name === `profile`) {
 			cmd = await this.userProfile(intr, intr.options.get(`name`, true).value as string);
 			userProfile = true;
-		} else if (intr.options.get(`feed`)) {
+		} else if (intr.options.data[0].name === `feed`) {
 			cmd = await this.userFeed(true, intr, intr.options.get(`username`, true).value as string, `${intr.options.get(`posts`, true).value as number}`);
 			userFeed = true;
-		} else if (intr.options.get(`info`)) {
+		} else if (intr.options.data[0].name === `info`) {
 			cmd = await this.getGfycat(true, intr, intr.options.get(`post`, true).value as string);
 			getGfycat = true;
-		} else if (intr.options.get(`search`)) {
+		} else if (intr.options.data[0].name === `search`) {
 			cmd = await this.searchGfycat(true, intr, [], intr.options.get(`input`, true).value as string, `${intr.options.get(`amount`)?.value as number}`);
 			searchGfycat = true;
 		}

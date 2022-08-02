@@ -60,7 +60,7 @@ export class BannerCommand implements Command {
 			name: `inital ts annoying`,
 		};
 
-		if (intr.options.get(`user`)) {
+		if (intr.options.data[0].name === `user`) {
 			if (intr.options.getUser(`user`)) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const interactionUser = (await intr.options.getUser(`user`)!.fetch(true)) as User;

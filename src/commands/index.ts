@@ -5,8 +5,6 @@ export { AdminTestCommand } from './admin/admintest-command.js';
 
 // feature commands
 export { EightBallCommand } from './features/eightball-command.js';
-export { CatCommand } from './features/cat-command.js';
-export { DogCommand } from './features/dog-command.js';
 export { ChooseCommand } from './features/choose-command.js';
 export { RollCommand } from './features/roll-command.js';
 export { UrbanCommand } from './features/urban-command.js';
@@ -15,6 +13,7 @@ export { StreamableCommand } from './features/streamable-command.js';
 export { WeatherCommand } from './features/weather-command.js';
 export { ColourCommand } from './features/colour-command.js';
 export { GfycatCommand } from './features/gfycat-command.js';
+export { HoroscopeCommand } from './features/horoscope-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';

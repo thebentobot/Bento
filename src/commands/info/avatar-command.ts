@@ -66,7 +66,7 @@ export class AvatarCommand implements Command {
 			name: `inital ts annoying`,
 		};
 
-		if (intr.options.get(`user`)) {
+		if (intr.options.data[0].name === `user`) {
 			if (intr.options.getUser(`user`)) {
 				const user = intr.options.getUser(`user`) as User;
 				imageURL =
@@ -96,7 +96,7 @@ export class AvatarCommand implements Command {
 			}
 		}
 
-		if (intr.options.get(`server`)) {
+		if (intr.options.data[0].name === `server`) {
 			if (intr.options.getMember(`user`)) {
 				const guildMember = intr.options.getMember(`user`) as GuildMember;
 				imageURL = guildMember.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 });
