@@ -14,6 +14,7 @@ export { WeatherCommand } from './features/weather-command.js';
 export { ColourCommand } from './features/colour-command.js';
 export { GfycatCommand } from './features/gfycat-command.js';
 export { HoroscopeCommand } from './features/horoscope-command.js';
+export { TagCommand } from './features/tag-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';
