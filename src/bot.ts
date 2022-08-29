@@ -13,18 +13,15 @@ import {
 	ButtonInteraction,
 	CommandInteraction,
 	PartialMessage,
-	Role,
 	SelectMenuInteraction,
 	Events,
-	RESTEvents
+	RESTEvents,
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 
 import {
 	GuildMemberUpdateHandler,
-	GuildRoleDeleteHandler,
-	GuildRoleUpdateHandler,
 	UserUpdateHandler,
 	ButtonHandler,
 	MessageDeleteHandler,
@@ -60,8 +57,6 @@ export class Bot {
 		private messageDeleteHandler: MessageDeleteHandler,
 		private messageUpdateHandler: MessageUpdateHandler,
 		private guildMemberUpdateHandler: GuildMemberUpdateHandler,
-		private guildRoleDeleteHandler: GuildRoleDeleteHandler,
-		private guildRoleUpdateHandler: GuildRoleUpdateHandler,
 		private userUpdateHandler: UserUpdateHandler,
 		private SelectMenuHandler: SelectMenuHandler,
 	) {}
@@ -90,22 +85,14 @@ export class Bot {
 		this.client.on(Events.GuildMemberRemove, (member: GuildMember | PartialGuildMember) =>
 			this.onGuildMemberRemove(member),
 		);
-		this.client.on(Events.MessageDelete, (message: Message | PartialMessage) =>
-			this.onMessageDelete(message),
-		);
+		this.client.on(Events.MessageDelete, (message: Message | PartialMessage) => this.onMessageDelete(message));
 		this.client.on(
 			Events.MessageUpdate,
 			(oldMessage: Message<boolean> | PartialMessage, newMessage: Message<boolean> | PartialMessage) =>
 				this.onMessageUpdate(oldMessage, newMessage),
 		);
-		this.client.on(
-			Events.GuildMemberUpdate,
-			(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) =>
-				this.onGuildMemberUpdate(oldMember, newMember),
-		);
-		this.client.on(Events.GuildRoleDelete, (role: Role) => this.onGuildRoleDelete(role));
-		this.client.on(Events.GuildRoleUpdate, (oldRole: Role, newRole: Role) =>
-			this.onGuildRoleUpdate(oldRole, newRole),
+		this.client.on(Events.GuildMemberUpdate, (oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) =>
+			this.onGuildMemberUpdate(oldMember, newMember),
 		);
 		this.client.on(Events.UserUpdate, (oldUser: User | PartialUser, newUser: User) =>
 			this.onUserUpdate(oldUser, newUser),
@@ -299,30 +286,6 @@ export class Bot {
 			await this.guildMemberUpdateHandler.process(oldMember, newMember);
 		} catch (error) {
 			Logger.error(Logs.error.guildMemberUpdate, error);
-		}
-	}
-
-	private async onGuildRoleDelete(role: Role): Promise<void> {
-		if (!this.ready || Debug.dummyMode.enabled) {
-			return;
-		}
-
-		try {
-			await this.guildRoleDeleteHandler.process(role);
-		} catch (error) {
-			Logger.error(Logs.error.guildRoleDelete, error);
-		}
-	}
-
-	private async onGuildRoleUpdate(oldRole: Role, newRole: Role): Promise<void> {
-		if (!this.ready || Debug.dummyMode.enabled) {
-			return;
-		}
-
-		try {
-			await this.guildRoleUpdateHandler.process(oldRole, newRole);
-		} catch (error) {
-			Logger.error(Logs.error.guildRoleUpdate, error);
 		}
 	}
 

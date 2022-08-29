@@ -6,6 +6,7 @@ import { EventHandler } from './event-handler.js';
 
 export class GuildMemberAddHandler implements EventHandler {
 	public async process(member: GuildMember): Promise<void> {
+		if (member.user.bot) return;
 		const currentMute = await prisma.mute.findFirst({
 			where: {
 				userID: BigInt(member.user.id),
