@@ -25,14 +25,15 @@ import {
 	RpsCommand,
 	UrbanCommand,
 	AboutCommand,
-	AdminTestCommand,
-	UserTestCommand,
 	StreamableCommand,
 	WeatherCommand,
 	ColourCommand,
 	GfycatCommand,
 	HoroscopeCommand,
 	TagCommand,
+	BentoCommand,
+	ProfileCommand,
+	LastfmCommand,
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -80,14 +81,15 @@ export const commands: Command[] = [
 	new RpsCommand(),
 	new UrbanCommand(),
 	new AboutCommand(),
-	new AdminTestCommand(),
-	new UserTestCommand(),
 	new StreamableCommand(),
 	new WeatherCommand(),
 	new ColourCommand(),
 	new GfycatCommand(),
 	new HoroscopeCommand(),
 	new TagCommand(),
+	new BentoCommand(),
+	new ProfileCommand(),
+	new LastfmCommand(),
 	// TODO: Add new commands here
 ];
 
@@ -125,14 +127,15 @@ async function start(): Promise<void> {
 		new RpsCommand(),
 		new UrbanCommand(),
 		new AboutCommand(),
-		new AdminTestCommand(),
-		new UserTestCommand(),
 		new StreamableCommand(),
 		new WeatherCommand(),
 		new ColourCommand(),
 		new GfycatCommand(),
 		new HoroscopeCommand(),
 		new TagCommand(),
+		new BentoCommand(),
+		new ProfileCommand(),
+		new LastfmCommand(),
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));

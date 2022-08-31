@@ -16,11 +16,13 @@ import { InteractionUtils, stylingUtils } from '../utils/index.js';
 import { SelectMenu, SelectMenuDeferType } from './selectMenu.js';
 
 const categoryMap = new Map<string, { commandCategorySearch: string; categoryEmbed: string; description: string }>();
+/*
 categoryMap.set(`selectMenu_helpCMD_category_admin`, {
 	commandCategorySearch: `admin`,
 	categoryEmbed: `Admin`,
 	description: `Commands only for the administration of the server.\nVarious feature toggles and settings such as welcome messages, log channels etc..`,
 });
+*/
 categoryMap.set(`selectMenu_helpCMD_category_features`, {
 	commandCategorySearch: `features`,
 	categoryEmbed: `Features`,
@@ -38,18 +40,20 @@ categoryMap.set(`selectMenu_helpCMD_category_user`, {
 });
 
 const categoryIds = [
-	`selectMenu_helpCMD_category_admin`,
+	//`selectMenu_helpCMD_category_admin`,
 	`selectMenu_helpCMD_category_features`,
 	`selectMenu_helpCMD_category_info`,
 	`selectMenu_helpCMD_category_user`,
 ];
 
 const initialCategoryMenu: SelectMenuComponentOptionData[] = [
+	/*
 	{
 		label: `Admin`,
 		description: `Commands for the server admins`,
 		value: `selectMenu_helpCMD_category_admin`,
 	},
+	*/
 	{
 		label: `Features`,
 		description: `Fun, entertaining and practical commands`,
@@ -70,7 +74,7 @@ const initialCategoryMenu: SelectMenuComponentOptionData[] = [
 export class HelpSelectMenu implements SelectMenu {
 	public ids = [
 		`selectMenu_helpCMD_category_initial`,
-		`selectMenu_helpCMD_category_admin`,
+		//`selectMenu_helpCMD_category_admin`,
 		`selectMenu_helpCMD_category_features`,
 		`selectMenu_helpCMD_category_info`,
 		`selectMenu_helpCMD_category_user`,
