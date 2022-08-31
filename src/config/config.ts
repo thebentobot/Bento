@@ -101,7 +101,7 @@ export const config: IConfig = {
 		}
 	},
 	api: {
-		port: 6969,
+		port: 4422,
 		secret: `00000000-0000-0000-0000-000000000000`
 	},
 	sharding: {
