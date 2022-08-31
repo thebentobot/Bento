@@ -70,11 +70,13 @@ export class HelpCommand implements Command {
 				.setCustomId(`selectMenu_helpCMD_category_initial`)
 				.setPlaceholder(`Pick a command category`)
 				.addOptions([
+					/*
 					{
 						label: `Admin`,
 						description: `Commands for the server admins`,
 						value: `selectMenu_helpCMD_category_admin`,
 					},
+					*/
 					{
 						label: `Features`,
 						description: `Fun, entertaining and practical commands`,
@@ -84,11 +86,6 @@ export class HelpCommand implements Command {
 						label: `Info`,
 						description: `Info about users, server and bot`,
 						value: `selectMenu_helpCMD_category_info`,
-					},
-					{
-						label: `Moderation`,
-						description: `Commands for the server moderators`,
-						value: `selectMenu_helpCMD_category_moderation`,
 					},
 					{
 						label: `User`,

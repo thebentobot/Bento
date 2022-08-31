@@ -1,7 +1,6 @@
 export { Command } from './command.js';
 export { DevCommand } from './dev-command.js';
 // admin
-export { AdminTestCommand } from './admin/admintest-command.js';
 
 // feature commands
 export { EightBallCommand } from './features/eightball-command.js';
@@ -15,6 +14,7 @@ export { ColourCommand } from './features/colour-command.js';
 export { GfycatCommand } from './features/gfycat-command.js';
 export { HoroscopeCommand } from './features/horoscope-command.js';
 export { TagCommand } from './features/tag-command.js';
+export { LastfmCommand } from './features/lastfm-command.js';
 
 // info
 export { AboutCommand } from './info/about-command.js';
@@ -32,4 +32,5 @@ export { PingCommand } from './info/ping-command.js';
 export { BannerCommand } from './info/banner-command.js';
 
 // user
-export { UserTestCommand } from './user/usertest-command.js';
+export { BentoCommand } from './user/bento-command.js';
+export { ProfileCommand } from './user/profile-command.js';
