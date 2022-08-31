@@ -88,7 +88,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				data: {
 					avatarURL: newMember.displayAvatarURL({
 						forceStatic: false,
-						extension: `png`,
+						extension: `webp`,
 						size: 1024,
 					}),
 				},
@@ -114,11 +114,11 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					.setDescription(
 						`Avatar updated for this user.\n**Previous avatar:**\n${oldMember.user.displayAvatarURL({
 							forceStatic: false,
-							extension: `png`,
+							extension: `webp`,
 							size: 1024,
 						})}\n**New avatar:**\n${newMember.user.displayAvatarURL({
 							forceStatic: false,
-							extension: `png`,
+							extension: `webp`,
 							size: 1024,
 						})}`,
 					)

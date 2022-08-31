@@ -34,7 +34,7 @@ export class MessageHandler implements EventHandler {
 					username: msg.author.username,
 					discriminator: msg.author.discriminator,
 					avatarURL: msg.author.avatarURL({
-						extension: `png`,
+						extension: `webp`,
 						forceStatic: false,
 						size: 1024,
 					}),
