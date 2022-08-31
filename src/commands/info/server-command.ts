@@ -61,7 +61,7 @@ export class ServerCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		if (intr.options.get(`info`)) {
+		if (intr.options.data[0].name === `info`) {
 			const embed = new EmbedBuilder()
 				.setTitle(intr.guild!.name)
 				.setColor(`#${await stylingUtils.urlToColours(intr.guild!.iconURL({ extension: `png` }) as string)}`)
@@ -120,7 +120,7 @@ export class ServerCommand implements Command {
 			return;
 		}
 
-		if (intr.options.get(`emotes`)) {
+		if (intr.options.data[0].name === `emotes`) {
 			if (intr.options.get(`all`)) {
 				const authorData: EmbedAuthorData = {
 					name: intr.guild!.name,
@@ -219,7 +219,7 @@ export class ServerCommand implements Command {
 			}
 		}
 
-		if (intr.options.get(`roles`)) {
+		if (intr.options.data[0].name === `roles`) {
 			const authorData: EmbedAuthorData = {
 				name: intr.guild!.name,
 				iconURL: intr.guild!.iconURL({ extension: `png` }) as string,

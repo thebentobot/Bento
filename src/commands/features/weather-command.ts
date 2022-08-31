@@ -73,11 +73,11 @@ export class WeatherCommand implements Command {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		let cmd: EmbedBuilder;
-		if (intr.options.get(`city`)) {
+		if (intr.options.data[0].name ===  `city`) {
 			cmd = await this.cityOption(intr.options.get(`input`)?.value as string, intr.user);
-		} else if (intr.options.get(`save`)) {
+		} else if (intr.options.data[0].name ===  `save`) {
 			cmd = await this.saveOption(intr.options.get(`input`, true).value as string, intr.user);
-		} else if (intr.options.get(`remove`)) {
+		} else if (intr.options.data[0].name === `remove`) {
 			cmd = await this.removeOption(intr.user);
 		} else {
 			cmd = await this.defaultOption(intr.user);

@@ -1,4 +1,11 @@
-import { GuildMember, EmbedBuilder, TextChannel, EmbedFooterData, PartialGuildMember, PermissionFlagsBits } from 'discord.js';
+import {
+	GuildMember,
+	EmbedBuilder,
+	TextChannel,
+	EmbedFooterData,
+	PartialGuildMember,
+	PermissionFlagsBits,
+} from 'discord.js';
 
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
@@ -7,6 +14,7 @@ import { EventHandler } from './event-handler.js';
 
 export class GuildMemberRemoveHandler implements EventHandler {
 	public async process(member: GuildMember | PartialGuildMember): Promise<void> {
+		if (member.user.bot) return;
 		const memberLogData = await prisma.memberLog.findUnique({
 			where: {
 				guildID: BigInt(member.guild.id),

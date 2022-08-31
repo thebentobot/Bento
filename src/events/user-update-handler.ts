@@ -5,6 +5,7 @@ import { EventHandler } from './event-handler.js';
 
 export class UserUpdateHandler implements EventHandler {
 	public async process(oldUser: User | PartialUser, newUser: User): Promise<void> {
+		if (oldUser.bot) return;
 		if (oldUser.avatarURL() !== newUser.avatarURL()) {
 			await prisma.user.update({
 				where: {
@@ -12,7 +13,7 @@ export class UserUpdateHandler implements EventHandler {
 				},
 				data: {
 					avatarURL: newUser.avatarURL({
-						extension: `png`,
+						extension: `webp`,
 						forceStatic: false,
 						size: 1024,
 					}),

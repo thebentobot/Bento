@@ -13,6 +13,7 @@ import { EventHandler } from './event-handler.js';
 
 export class GuildMemberUpdateHandler implements EventHandler {
 	public async process(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember): Promise<void> {
+		if (oldMember.user.bot) return;
 		const memberLogChannelData = await prisma.memberLog.findUnique({
 			where: {
 				guildID: BigInt(oldMember.guild.id),
@@ -28,8 +29,12 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				`${memberLogChannelData.channel}`,
 			) as TextChannel;
 			if (oldMember.nickname !== newMember.nickname) {
-				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
-				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
+				if (!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel))
+					return;
+				if (
+					!memberLogChannel.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)
+				)
+					return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
 					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
@@ -83,7 +88,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				data: {
 					avatarURL: newMember.displayAvatarURL({
 						forceStatic: false,
-						extension: `png`,
+						extension: `webp`,
 						size: 1024,
 					}),
 				},
@@ -92,7 +97,8 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages))
+					return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
 					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
@@ -108,11 +114,11 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					.setDescription(
 						`Avatar updated for this user.\n**Previous avatar:**\n${oldMember.user.displayAvatarURL({
 							forceStatic: false,
-							extension: `png`,
+							extension: `webp`,
 							size: 1024,
 						})}\n**New avatar:**\n${newMember.user.displayAvatarURL({
 							forceStatic: false,
-							extension: `png`,
+							extension: `webp`,
 							size: 1024,
 						})}`,
 					)
@@ -145,7 +151,8 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages))
+					return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
 					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
@@ -161,7 +168,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					.addFields(
 						{
 							name: `User ID`,
-							value: oldMember.id
+							value: oldMember.id,
 						},
 						{
 							name: `Amount of times muted on this server`,
@@ -233,7 +240,8 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
+				if (!channel!.permissionsFor(oldMember.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages))
+					return;
 				const embedAuthorData: EmbedAuthorData = {
 					name: `${oldMember.user.username + `#` + oldMember.user.discriminator} (userID: ${oldMember.id})`,
 					iconURL: oldMember.displayAvatarURL({ forceStatic: false }),
@@ -249,7 +257,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					.addFields(
 						{
 							name: `User ID`,
-							value: oldMember.id
+							value: oldMember.id,
 						},
 						{
 							name: `Amount of times muted on this server`,
@@ -266,7 +274,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 							muteData.NonBentoMute === true
 								? ``
 								: `Date for mute: <t:${Math.round(muteData.date.getTime() / 1000)}:R> (<t:${Math.round(
-									muteData.date.getTime() / 1000,
+										muteData.date.getTime() / 1000,
 								  )}:F>`
 						}`,
 					)

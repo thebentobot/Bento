@@ -1,13 +1,32 @@
-import { CommandInteraction, EmbedAuthorData, HexColorString, Message, EmbedBuilder, PermissionsString, TextChannel } from 'discord.js';
+import {
+	CommandInteraction,
+	EmbedAuthorData,
+	HexColorString,
+	Message,
+	EmbedBuilder,
+	PermissionsString,
+	TextChannel,
+} from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { CommandUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { config } from '../../config/config.js';
 import axios from 'axios';
-import { ApplicationCommandOptionType, ButtonStyle, ComponentType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { gfycatErrorMessage, gfycatSearchInterface, gfycatSingleGfycatInterface, gfycatUserDataInterface, gfycatUserFeedInterface } from '../../interfaces/gfycat.js';
-import { createRequire } from "module"; // Bring in the ability to create the 'require' method
+import {
+	ApplicationCommandOptionType,
+	ButtonStyle,
+	ComponentType,
+	RESTPostAPIChatInputApplicationCommandsJSONBody,
+} from 'discord-api-types/v10';
+import {
+	gfycatErrorMessage,
+	gfycatSearchInterface,
+	gfycatSingleGfycatInterface,
+	gfycatUserDataInterface,
+	gfycatUserFeedInterface,
+} from '../../interfaces/gfycat.js';
+import { createRequire } from 'module'; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url);
 const naughtyWords = require(`naughty-words/en.json`);
 import utf8 from 'utf8';
@@ -37,28 +56,28 @@ newToken();
 setInterval(newToken, 3600000);
 
 interface IUserProfileCmd {
-	error: boolean
-	embed?: EmbedBuilder | string
-	content?: string
+	error: boolean;
+	embed?: EmbedBuilder | string;
+	content?: string;
 	pfpFile?: {
-		image: Buffer
-		fileName: string
-	}
+		image: Buffer;
+		fileName: string;
+	};
 }
 
 interface IGfycatSearch {
-	error: boolean
-	embed?: EmbedBuilder | string
-	content?: string
-	embeds?: string[]
-	multi?: boolean
+	error: boolean;
+	embed?: EmbedBuilder | string;
+	content?: string;
+	embeds?: string[];
+	multi?: boolean;
 }
 
 interface gfycatUserFeedEmbed {
-	error: boolean
-	message?: string | EmbedBuilder
-	gfycatEmbedId?: string
-	embeds?: string[]
+	error: boolean;
+	message?: string | EmbedBuilder;
+	gfycatEmbedId?: string;
+	embeds?: string[];
 }
 
 export class GfycatCommand implements Command {
@@ -130,7 +149,7 @@ export class GfycatCommand implements Command {
 								name: `name`,
 								description: `Username of the gfycat user`,
 								type: ApplicationCommandOptionType.String.valueOf(),
-								required: true
+								required: true,
 							},
 						],
 					},
@@ -143,17 +162,17 @@ export class GfycatCommand implements Command {
 								name: `username`,
 								description: `Username of the gfycat user`,
 								type: ApplicationCommandOptionType.String.valueOf(),
-								required: true
+								required: true,
 							},
 							{
 								name: `posts`,
 								description: `Amount of gfy posts to show. Max 30`,
 								type: ApplicationCommandOptionType.Number.valueOf(),
-								required: true
+								required: true,
 							},
 						],
 					},
-				]
+				],
 			},
 			{
 				name: `info`,
@@ -164,9 +183,9 @@ export class GfycatCommand implements Command {
 						name: `post`,
 						description: `Name of the gfycat post`,
 						type: ApplicationCommandOptionType.String.valueOf(),
-						required: true
+						required: true,
 					},
-				]
+				],
 			},
 			{
 				name: `search`,
@@ -177,14 +196,14 @@ export class GfycatCommand implements Command {
 						name: `input`,
 						description: `Search input to find gfycat posts`,
 						type: ApplicationCommandOptionType.String.valueOf(),
-						required: true
+						required: true,
 					},
 					{
 						name: `amount`,
 						description: `Amount of gfycat posts to show. Max 50`,
 						type: ApplicationCommandOptionType.Number.valueOf(),
 					},
-				]
+				],
 			},
 		],
 	};
@@ -196,29 +215,40 @@ export class GfycatCommand implements Command {
 		let userFeed = false;
 		let getGfycat = false;
 		let searchGfycat = false;
-		if (intr.options.get(`create`)) {
+		if (intr.options.data[0].name === `create`) {
 			cmd = await this.createGfycat(
 				true,
 				intr,
 				[``],
-				intr.options.get(`url`)?.value as string, 
-				intr.options.get(`attachment`)?.attachment?.url, 
-				intr.options.get(`full`)?.value as boolean, 
-				intr.options.get(`start`)?.value as number, 
-				intr.options.get(`duration`)?.value as number, 
-				intr.options.get(`title`)?.value as string
+				intr.options.get(`url`)?.value as string,
+				intr.options.get(`attachment`)?.attachment?.url,
+				intr.options.get(`full`)?.value as boolean,
+				intr.options.get(`start`)?.value as number,
+				intr.options.get(`duration`)?.value as number,
+				intr.options.get(`title`)?.value as string,
 			);
-		} else if (intr.options.get(`profile`)) {
+		} else if (intr.options.data[0].name === `profile`) {
 			cmd = await this.userProfile(intr, intr.options.get(`name`, true).value as string);
 			userProfile = true;
-		} else if (intr.options.get(`feed`)) {
-			cmd = await this.userFeed(true, intr, intr.options.get(`username`, true).value as string, `${intr.options.get(`posts`, true).value as number}`);
+		} else if (intr.options.data[0].name === `feed`) {
+			cmd = await this.userFeed(
+				true,
+				intr,
+				intr.options.get(`username`, true).value as string,
+				`${intr.options.get(`posts`, true).value as number}`,
+			);
 			userFeed = true;
-		} else if (intr.options.get(`info`)) {
+		} else if (intr.options.data[0].name === `info`) {
 			cmd = await this.getGfycat(true, intr, intr.options.get(`post`, true).value as string);
 			getGfycat = true;
-		} else if (intr.options.get(`search`)) {
-			cmd = await this.searchGfycat(true, intr, [], intr.options.get(`input`, true).value as string, `${intr.options.get(`amount`)?.value as number}`);
+		} else if (intr.options.data[0].name === `search`) {
+			cmd = await this.searchGfycat(
+				true,
+				intr,
+				[],
+				intr.options.get(`input`, true).value as string,
+				`${intr.options.get(`amount`)?.value as number}`,
+			);
 			searchGfycat = true;
 		}
 
@@ -228,9 +258,14 @@ export class GfycatCommand implements Command {
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await InteractionUtils.send(intr, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await InteractionUtils.send(intr, {
+					embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder],
+					files: [
+						{ name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image },
+					],
+				});
 				return;
-			};
+			}
 		} else if (userFeed) {
 			if ((cmd as gfycatUserFeedEmbed).error === true) {
 				await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
@@ -243,40 +278,43 @@ export class GfycatCommand implements Command {
 						data: {
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							messageId: BigInt(message!.id),
-							content: embed
-						}
+							content: embed,
+						},
 					});
 				}
 				const gfycatData = await prisma.gfycatPosts.findMany({
 					where: {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						messageId: BigInt(message!.id)
-					}
+						messageId: BigInt(message!.id),
+					},
 				});
-				await InteractionUtils.editReply(intr, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
-					{
-						type: ComponentType.ActionRow,
-						components: [
-							{
-								type: ComponentType.Button,
-								customId: `gfycatUserFeed_next`,
-								emoji: `➡️`,
-								style: ButtonStyle.Primary,
-							},
-							{
-								type: ComponentType.Button,
-								customId: `gfycatUserFeed_delete`,
-								label: `Close embed`,
-								style: ButtonStyle.Danger,
-							},
-						]
-					}
-				]});
+				await InteractionUtils.editReply(intr, {
+					content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`,
+					components: [
+						{
+							type: ComponentType.ActionRow,
+							components: [
+								{
+									type: ComponentType.Button,
+									customId: `gfycatUserFeed_next`,
+									emoji: `➡️`,
+									style: ButtonStyle.Primary,
+								},
+								{
+									type: ComponentType.Button,
+									customId: `gfycatUserFeed_delete`,
+									label: `Close embed`,
+									style: ButtonStyle.Danger,
+								},
+							],
+						},
+					],
+				});
 				return;
-			};
+			}
 		} else if (getGfycat) {
-			await InteractionUtils.send(intr, {content: (cmd as IUserProfileCmd).content});
-			await InteractionUtils.send(intr, {embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder]});
+			await InteractionUtils.send(intr, { content: (cmd as IUserProfileCmd).content });
+			await InteractionUtils.send(intr, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder] });
 			return;
 		} else if (searchGfycat) {
 			if ((cmd as IGfycatSearch).error === true) {
@@ -290,41 +328,44 @@ export class GfycatCommand implements Command {
 						data: {
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							messageId: BigInt(message!.id),
-							content: embed
-						}
+							content: embed,
+						},
 					});
 				}
 				const gfycatData = await prisma.gfycatPosts.findMany({
 					where: {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						messageId: BigInt(message!.id)
-					}
+						messageId: BigInt(message!.id),
+					},
 				});
-				await InteractionUtils.editReply(intr, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
-					{
-						type: ComponentType.ActionRow,
-						components: [
-							{
-								type: ComponentType.Button,
-								customId: `gfycatSearch_next`,
-								emoji: `➡️`,
-								style: ButtonStyle.Primary,
-							},
-							{
-								type: ComponentType.Button,
-								customId: `gfycatSearch_delete`,
-								label: `Close embed`,
-								style: ButtonStyle.Danger,
-							},
-						]
-					}
-				]});
+				await InteractionUtils.editReply(intr, {
+					content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`,
+					components: [
+						{
+							type: ComponentType.ActionRow,
+							components: [
+								{
+									type: ComponentType.Button,
+									customId: `gfycatSearch_next`,
+									emoji: `➡️`,
+									style: ButtonStyle.Primary,
+								},
+								{
+									type: ComponentType.Button,
+									customId: `gfycatSearch_delete`,
+									label: `Close embed`,
+									style: ButtonStyle.Danger,
+								},
+							],
+						},
+					],
+				});
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await InteractionUtils.send(intr, { content: (cmd as IGfycatSearch).content});
+				await InteractionUtils.send(intr, { content: (cmd as IGfycatSearch).content });
 				return;
-			};
+			}
 		} else {
 			await InteractionUtils.send(intr, cmd as string | EmbedBuilder);
 			return;
@@ -343,38 +384,43 @@ export class GfycatCommand implements Command {
 			return;
 		} else {
 			switch (args[0]) {
-			case `upload`:
-			case `create`: {
-				cmd = await this.createGfycat(false, msg, args);
-			}
-				break;
-			case `user`:
-				switch (args[1]) {
-				case `profile`: {
-					cmd = await this.userProfile(msg, args[2]);
-					userProfile = true;
-				}
+				case `upload`:
+				case `create`:
+					{
+						cmd = await this.createGfycat(false, msg, args);
+					}
 					break;
-				case `feed`:
-				case `gfycats`:
-				case `gfys`: {
-					cmd = await this.userFeed(false, msg, args[2], args[3]);
-					userFeed = true;
-				}
+				case `user`:
+					switch (args[1]) {
+						case `profile`:
+							{
+								cmd = await this.userProfile(msg, args[2]);
+								userProfile = true;
+							}
+							break;
+						case `feed`:
+						case `gfycats`:
+						case `gfys`:
+							{
+								cmd = await this.userFeed(false, msg, args[2], args[3]);
+								userFeed = true;
+							}
+							break;
+					}
 					break;
-				}
-				break;
-			case `get`:
-			case `info`: {
-				cmd = await this.getGfycat(false, msg, args[1]);
-				getGfycat = true;
-			}
-				break;
-			case `search`: {
-				cmd = await this.searchGfycat(false, msg, args);
-				searchGfycat = true;
-			}
-				break;
+				case `get`:
+				case `info`:
+					{
+						cmd = await this.getGfycat(false, msg, args[1]);
+						getGfycat = true;
+					}
+					break;
+				case `search`:
+					{
+						cmd = await this.searchGfycat(false, msg, args);
+						searchGfycat = true;
+					}
+					break;
 			}
 		}
 		if (userProfile) {
@@ -383,9 +429,14 @@ export class GfycatCommand implements Command {
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await MessageUtils.send(msg.channel, {
+					embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder],
+					files: [
+						{ name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image },
+					],
+				});
 				return;
-			};
+			}
 		} else if (userFeed) {
 			if ((cmd as gfycatUserFeedEmbed).error === true) {
 				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
@@ -398,46 +449,55 @@ export class GfycatCommand implements Command {
 						data: {
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							messageId: BigInt(message!.id),
-							content: embed
-						}
+							content: embed,
+						},
 					});
 				}
 				const gfycatData = await prisma.gfycatPosts.findMany({
 					where: {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						messageId: BigInt(message!.id)
-					}
+						messageId: BigInt(message!.id),
+					},
 				});
-				await MessageUtils.edit(msg, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
-					{
-						type: ComponentType.ActionRow,
-						components: [
-							{
-								type: ComponentType.Button,
-								customId: `gfycatUserFeed_next`,
-								emoji: `➡️`,
-								style: ButtonStyle.Primary,
-							},
-							{
-								type: ComponentType.Button,
-								customId: `gfycatUserFeed_delete`,
-								label: `Close embed`,
-								style: ButtonStyle.Danger,
-							},
-						]
-					}
-				]});
+				await MessageUtils.edit(msg, {
+					content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`,
+					components: [
+						{
+							type: ComponentType.ActionRow,
+							components: [
+								{
+									type: ComponentType.Button,
+									customId: `gfycatUserFeed_next`,
+									emoji: `➡️`,
+									style: ButtonStyle.Primary,
+								},
+								{
+									type: ComponentType.Button,
+									customId: `gfycatUserFeed_delete`,
+									label: `Close embed`,
+									style: ButtonStyle.Danger,
+								},
+							],
+						},
+					],
+				});
 				return;
-			};
+			}
 		} else if (getGfycat) {
 			if ((cmd as IUserProfileCmd).error === true) {
 				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await MessageUtils.send(msg.channel, { embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder], content: (cmd as IUserProfileCmd).content, files: [{name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image}]});
+				await MessageUtils.send(msg.channel, {
+					embeds: [(cmd as IUserProfileCmd).embed as EmbedBuilder],
+					content: (cmd as IUserProfileCmd).content,
+					files: [
+						{ name: (cmd as IUserProfileCmd).pfpFile!.fileName, attachment: (cmd as IUserProfileCmd).pfpFile!.image },
+					],
+				});
 				return;
-			};
+			}
 		} else if (searchGfycat) {
 			if ((cmd as IGfycatSearch).error === true) {
 				await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
@@ -450,48 +510,57 @@ export class GfycatCommand implements Command {
 						data: {
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							messageId: BigInt(message!.id),
-							content: embed
-						}
+							content: embed,
+						},
 					});
 				}
 				const gfycatData = await prisma.gfycatPosts.findMany({
 					where: {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						messageId: BigInt(message!.id)
-					}
+						messageId: BigInt(message!.id),
+					},
 				});
-				await MessageUtils.edit(msg, {content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`, components: [
-					{
-						type: ComponentType.ActionRow,
-						components: [
-							{
-								type: ComponentType.Button,
-								customId: `gfycatSearch_next`,
-								emoji: `➡️`,
-								style: ButtonStyle.Primary,
-							},
-							{
-								type: ComponentType.Button,
-								customId: `gfycatSearch_delete`,
-								label: `Close embed`,
-								style: ButtonStyle.Danger,
-							},
-						]
-					}
-				]});
+				await MessageUtils.edit(msg, {
+					content: `Page 1/${gfycatData.length}\n${gfycatData[0].content}`,
+					components: [
+						{
+							type: ComponentType.ActionRow,
+							components: [
+								{
+									type: ComponentType.Button,
+									customId: `gfycatSearch_next`,
+									emoji: `➡️`,
+									style: ButtonStyle.Primary,
+								},
+								{
+									type: ComponentType.Button,
+									customId: `gfycatSearch_delete`,
+									label: `Close embed`,
+									style: ButtonStyle.Danger,
+								},
+							],
+						},
+					],
+				});
 				return;
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				await MessageUtils.send(msg.channel, { content: (cmd as IGfycatSearch).content});
+				await MessageUtils.send(msg.channel, { content: (cmd as IGfycatSearch).content });
 				return;
-			};
+			}
 		} else {
 			await MessageUtils.send(msg.channel, cmd as string | EmbedBuilder);
-			return;	
+			return;
 		}
 	}
 
-	private async searchGfycat(interaction: boolean, message: Message | CommandInteraction, args: string[], input?: string, amount?: string): Promise<IGfycatSearch> {
+	private async searchGfycat(
+		interaction: boolean,
+		message: Message | CommandInteraction,
+		args: string[],
+		input?: string,
+		amount?: string,
+	): Promise<IGfycatSearch> {
 		if (interaction === false) {
 			const msg = message as Message;
 			const channelObject = msg.channel as TextChannel;
@@ -507,10 +576,17 @@ export class GfycatCommand implements Command {
 			if (args.includes(`--multi`)) {
 				let getNumber = args.join(` `);
 				if (args.includes(`--count`)) {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					getNumber = getNumber.match(/\d+/)!.pop() as string;
 					count = parseInt(getNumber);
-					if (count > 50) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`50 posts is the maximum`)};
+					if (count > 50)
+						return {
+							error: true,
+							embed: new EmbedBuilder()
+								.setTitle(`Error`)
+								.setColor(botColours.error)
+								.setDescription(`50 posts is the maximum`),
+						};
 				}
 				messageParse = args.filter((msg) => msg !== `--multi` && msg !== `--count` && msg !== getNumber);
 				returnMultipleGifs = true;
@@ -522,10 +598,22 @@ export class GfycatCommand implements Command {
 			const badWordCheck = messageParse.map((message) => message.toLowerCase());
 
 			if (badWordCheck.some((msg) => naughtyWords.includes(msg)))
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`),
+				};
 
 			if (badWordCheck.some((msg) => wordListData.some((badWord) => badWord.word === msg)))
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`),
+				};
 			const query: string = messageParse.join(` `);
 			const response = await gfycatAPI.get<gfycatSearchInterface>(`gfycats/search`, {
 				params: {
@@ -535,7 +623,13 @@ export class GfycatCommand implements Command {
 				headers: { Authorization: `Bearer ${gfycatToken}` },
 			});
 			if (!response.data.gfycats.length) {
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${query}\`.`),
+				};
 			} else {
 				let gfycatData = response.data.gfycats;
 
@@ -548,7 +642,7 @@ export class GfycatCommand implements Command {
 
 				if (returnMultipleGifs === false) {
 					const waitingMessage = await InteractionUtils.send(
-						(message as CommandInteraction),
+						message as CommandInteraction,
 						`Loading a random Gfycat Post related to \`${query}\` ... ⌛🐱`,
 					);
 					let index = Math.floor(Math.random() * gfycatData.length);
@@ -559,7 +653,7 @@ export class GfycatCommand implements Command {
 						.then((res) => {
 							gfyTest = res;
 						})
-					// eslint-disable-next-line @typescript-eslint/no-empty-function
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						.catch(() => {});
 					while (gfyTest?.status !== 200) {
 						gfycatData = gfycatData.filter((gfy) => gfy.userData.username !== gfycatData[index].userData.username);
@@ -569,11 +663,11 @@ export class GfycatCommand implements Command {
 							.then((res) => {
 								gfyTest = res;
 							})
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
+							// eslint-disable-next-line @typescript-eslint/no-empty-function
 							.catch(() => {});
 					}
 					(waitingMessage as Message).delete();
-					return {error: true, content: `https://gfycat.com/${gfycatData[index].gfyName}`};
+					return { error: true, content: `https://gfycat.com/${gfycatData[index].gfyName}` };
 				} else {
 					const waitingMessage = await MessageUtils.send(
 						(message as Message).channel,
@@ -581,13 +675,26 @@ export class GfycatCommand implements Command {
 					);
 					const embeds = await this.generateGfyCatEmbed(gfycatData);
 					(waitingMessage as Message).delete();
-					if (!embeds.length) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
-					return {error: false, embeds: embeds, multi: true};
+					if (!embeds.length)
+						return {
+							error: true,
+							embed: new EmbedBuilder()
+								.setTitle(`Error`)
+								.setColor(botColours.error)
+								.setDescription(`No GIFs found based on your search input \`${query}\`.`),
+						};
+					return { error: false, embeds: embeds, multi: true };
 				}
 			}
 		} else {
 			if (!input) {
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to provide a search input!`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`You need to provide a search input!`),
+				};
 			}
 			const channelObject = (message as CommandInteraction).channel as TextChannel;
 			const amountNumber = amount ? Number(amount) : 0;
@@ -600,10 +707,22 @@ export class GfycatCommand implements Command {
 			const badWordCheck = messageParse.map((message) => message.toLowerCase());
 
 			if (badWordCheck.some((msg) => naughtyWords.includes(msg)))
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`),
+				};
 
 			if (badWordCheck.some((msg) => wordListData.some((badWord) => badWord.word === msg)))
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${messageParse.join(` `)}\`.`),
+				};
 			const query: string = messageParse.join(` `);
 			const response = await gfycatAPI.get<gfycatSearchInterface>(`gfycats/search`, {
 				params: {
@@ -613,7 +732,13 @@ export class GfycatCommand implements Command {
 				headers: { Authorization: `Bearer ${gfycatToken}` },
 			});
 			if (!response.data.gfycats.length) {
-				return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`No GIFs found based on your search input \`${query}\`.`),
+				};
 			} else {
 				let gfycatData = response.data.gfycats;
 				if (channelObject.nsfw !== true) {
@@ -623,10 +748,14 @@ export class GfycatCommand implements Command {
 					});
 				}
 				if (amountNumber === 0) {
-					const embeds = await this.generateGfyCatEmbed(gfycatData);
-					if (!embeds.length) return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No GIFs found based on your search input \`${query}\`.`)};
-					return {error: false, embeds: embeds, multi: true};
-				} else {
+					if (!gfycatData.length)
+						return {
+							error: true,
+							embed: new EmbedBuilder()
+								.setTitle(`Error`)
+								.setColor(botColours.error)
+								.setDescription(`No GIFs found based on your search input \`${query}\`.`),
+						};
 					let index = Math.floor(Math.random() * gfycatData.length);
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					let gfyTest: any;
@@ -635,7 +764,7 @@ export class GfycatCommand implements Command {
 						.then((res) => {
 							gfyTest = res;
 						})
-					// eslint-disable-next-line @typescript-eslint/no-empty-function
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						.catch(() => {});
 					while (gfyTest?.status !== 200) {
 						gfycatData = gfycatData.filter((gfy) => gfy.userData.username !== gfycatData[index].userData.username);
@@ -645,10 +774,21 @@ export class GfycatCommand implements Command {
 							.then((res) => {
 								gfyTest = res;
 							})
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
+							// eslint-disable-next-line @typescript-eslint/no-empty-function
 							.catch(() => {});
 					}
-					return {error: true, content: `https://gfycat.com/${gfycatData[index].gfyName}`};
+					return { error: true, content: `https://gfycat.com/${gfycatData[index].gfyName}` };
+				} else {
+					const embeds = await this.generateGfyCatEmbed(gfycatData);
+					if (!embeds.length)
+						return {
+							error: true,
+							embed: new EmbedBuilder()
+								.setTitle(`Error`)
+								.setColor(botColours.error)
+								.setDescription(`No GIFs found based on your search input \`${query}\`.`),
+						};
+					return { error: false, embeds: embeds, multi: true };
 				}
 			}
 		}
@@ -663,7 +803,7 @@ export class GfycatCommand implements Command {
 		full?: boolean | null,
 		start?: number | null,
 		durationInSeconds?: number | null,
-		title?: string | null
+		title?: string | null,
 	): Promise<EmbedBuilder | string> {
 		let msgData: Message | CommandInteraction;
 		let argsData: string[];
@@ -677,7 +817,10 @@ export class GfycatCommand implements Command {
 			const getUrl = [...msgData.attachments.values()];
 
 			if (!argsData[1] && !getUrl[0]) {
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You didn't attach any content to create a gfycat`);
 			}
 
 			gfycatUrl = getUrl[0] ? getUrl[0].url : argsData[1];
@@ -695,21 +838,30 @@ export class GfycatCommand implements Command {
 		} else {
 			msgData = msg as CommandInteraction;
 			if (!url && !attachment) {
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't attach any content to create a gfycat`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You didn't attach any content to create a gfycat`);
 			}
-			gfycatUrl = attachment ? attachment : url as string;
+			gfycatUrl = attachment ? attachment : (url as string);
 			if (full) {
 				startSeconds = ``;
 				duration = ``;
 			} else {
 				// eslint-disable-next-line no-lonely-if
 				if (!start) {
-					return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify which second to start the gif`);
+					return new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`You didn't specify which second to start the gif`);
 				} else if (!durationInSeconds) {
-					return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You didn't specify the duration for the gif`);
+					return new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`You didn't specify the duration for the gif`);
 				} else {
 					startSeconds = `${start}`;
-				    duration = `${durationInSeconds}`;
+					duration = `${durationInSeconds}`;
 				}
 			}
 			caption = title ? title : ``;
@@ -733,13 +885,25 @@ export class GfycatCommand implements Command {
 				},
 			},
 		);
-		if (response.status !== 200) return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error.`);
+		if (response.status !== 200)
+			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error.`);
 
 		if (response.data.isOk === false) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Unable to create Gfycat Post 😭`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`Unable to create Gfycat Post 😭`);
 		} else {
-			const waitingMessage = interaction === true ? `` : await MessageUtils.send((msgData as Message).channel, `Encoding your Gfycat Post... ⌛🐱`);
-			let checkStatus = await gfycatAPI.get<{task: string, time?: number, gfyname?: string, errorMessage?: gfycatErrorMessage}>(`gfycats/fetch/status/${response.data.gfyname}`, {
+			const waitingMessage =
+				interaction === true
+					? ``
+					: await MessageUtils.send((msgData as Message).channel, `Encoding your Gfycat Post... ⌛🐱`);
+			let checkStatus = await gfycatAPI.get<{
+				task: string;
+				time?: number;
+				gfyname?: string;
+				errorMessage?: gfycatErrorMessage;
+			}>(`gfycats/fetch/status/${response.data.gfyname}`, {
 				headers: {
 					Authorization: `Bearer ${gfycatToken}`,
 					'Content-Type': `application/json`,
@@ -754,39 +918,64 @@ export class GfycatCommand implements Command {
 
 			if (checkStatus.data.task === `NotFoundo`) {
 				interaction === true ? `` : await (waitingMessage as Message).delete();
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error. Apparently the Gfycat Post wasn't found by Gfycat 🤔`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Error. Apparently the Gfycat Post wasn't found by Gfycat 🤔`);
 			} else if (checkStatus.data.task === `error`) {
 				interaction === true ? `` : await (waitingMessage as Message).delete();
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(
-					`Error from Gfycat 😔 - ${checkStatus.data.errorMessage?.description}, Error code ${checkStatus.data.errorMessage?.code}`,
-				);
-			} else  {
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(
+						`Error from Gfycat 😔 - ${checkStatus.data.errorMessage?.description}, Error code ${checkStatus.data.errorMessage?.code}`,
+					);
+			} else {
 				interaction === true ? `` : await (waitingMessage as Message).delete();
-				return `${interaction === true ? ((msgData as CommandInteraction).user) : ((msgData as Message).author)} your Gfycat Post is ready! 👏\nhttps://gfycat.com/${checkStatus.data.gfyname}`;
+				return `${
+					interaction === true ? (msgData as CommandInteraction).user : (msgData as Message).author
+				} your Gfycat Post is ready! 👏\nhttps://gfycat.com/${checkStatus.data.gfyname}`;
 			}
 		}
 	}
 
 	private async userProfile(message: Message | CommandInteraction, user: string): Promise<IUserProfileCmd> {
 		if (!user) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You need to specify a user`),
+			};
 		}
 
 		const blacklistData = await prisma.gfycatBlacklist.findMany();
 
 		if (blacklistData.some((user) => user.username === `${user}`)) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Couldn't find \`${user}\``),
+			};
 		}
 
-		const response = await gfycatAPI
-			.get<gfycatUserDataInterface>(`users/${user}`, {
-				headers: {
-					Authorization: `Bearer ${gfycatToken}`,
-					'Content-Type': `application/json`,
-				},
-			});
+		const response = await gfycatAPI.get<gfycatUserDataInterface>(`users/${user}`, {
+			headers: {
+				Authorization: `Bearer ${gfycatToken}`,
+				'Content-Type': `application/json`,
+			},
+		});
 		if (response.status !== 200) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Gfycat error - couldn't find user`)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Gfycat error - couldn't find user`),
+			};
 		}
 		const profilePicture = await axios({
 			method: `post`,
@@ -804,39 +993,60 @@ export class GfycatCommand implements Command {
 		const userAuthorData: EmbedAuthorData = {
 			name: response?.data.verified ? `${response?.data.username} ✔️` : response?.data.username,
 			iconURL: response?.data.profileImageUrl,
-			url: response?.data.url
+			url: response?.data.url,
 		};
-		const embed = new EmbedBuilder({thumbnail: { url: `attachment://${response?.data.username}_gfypfp.png`}})
+		const embed = new EmbedBuilder({ thumbnail: { url: `attachment://${response?.data.username}_gfypfp.png` } })
 			.setAuthor(userAuthorData)
 			.setColor(`#${await stylingUtils.urlToColours(response?.data.profileImageUrl)}`)
 			.setTitle(response?.data.name)
 			.setDescription(
-				`${
-					response.data.description ? `${response?.data.description}\n\n` : ``
-				}Total Views: ${stylingUtils.nFormatter(response?.data.views, 1)}\nPublished Gfycats: ${stylingUtils.nFormatter(
-					 response.data.publishedGfycats,
+				`${response.data.description ? `${response?.data.description}\n\n` : ``}Total Views: ${stylingUtils.nFormatter(
+					response?.data.views,
+					1,
+				)}\nPublished Gfycats: ${stylingUtils.nFormatter(
+					response.data.publishedGfycats,
 					1,
 				)}\nPublished Gfycat Albums: ${stylingUtils.nFormatter(
-					 response.data.publishedAlbums,
+					response.data.publishedAlbums,
 					1,
 				)}\nFollowers: ${stylingUtils.nFormatter(response?.data.followers, 1)}\nFollowing: ${stylingUtils.nFormatter(
 					response.data.following,
 					1,
-				)}\nAccount made on <t:${response?.data.createDate}:F>\nProfile URL: ${response?.data
-					.profileUrl}`,
+				)}\nAccount made on <t:${response?.data.createDate}:F>\nProfile URL: ${response?.data.profileUrl}`,
 			);
-		return {error: false, embed: embed, pfpFile: {image: profilePicture, fileName: `${response?.data.username}_gfypfp.png`}};
+		return {
+			error: false,
+			embed: embed,
+			pfpFile: { image: profilePicture, fileName: `${response?.data.username}_gfypfp.png` },
+		};
 	}
-	
-	private async userFeed(interaction: boolean, message: Message | CommandInteraction, user: string, count: string): Promise<gfycatUserFeedEmbed> {
+
+	private async userFeed(
+		interaction: boolean,
+		message: Message | CommandInteraction,
+		user: string,
+		count: string,
+	): Promise<gfycatUserFeedEmbed> {
 		if (!user) {
-			return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You need to specify a user`)};
+			return {
+				error: true,
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You need to specify a user`),
+			};
 		}
 
 		const blacklistData = await prisma.gfycatBlacklist.findMany();
 
 		if (blacklistData.some((user) => user.username === `${user}`)) {
-			return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Couldn't find \`${user}\``)};
+			return {
+				error: true,
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Couldn't find \`${user}\``),
+			};
 		}
 
 		let insertCount = 30;
@@ -845,110 +1055,256 @@ export class GfycatCommand implements Command {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const getNumber = count.match(/\d+/)!.pop();
 			insertCount = parseInt(getNumber as string);
-			if (insertCount > 50) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Sorry, 50 posts is the max.`)};
+			if (insertCount > 50)
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`Sorry, 50 posts is the max.`),
+				};
 		}
-		const gfycatData = await gfycatAPI
-			.get<gfycatUserFeedInterface | gfycatErrorMessage>(`users/${user}/gfycats`, {
-				params: { count: insertCount },
-				headers: {
-					Authorization: `Bearer ${gfycatToken}`,
-					'Content-Type': `application/json`,
-				},
-			});
+		const gfycatData = await gfycatAPI.get<gfycatUserFeedInterface | gfycatErrorMessage>(`users/${user}/gfycats`, {
+			params: { count: insertCount },
+			headers: {
+				Authorization: `Bearer ${gfycatToken}`,
+				'Content-Type': `application/json`,
+			},
+		});
 		switch (gfycatData.status) {
-		case 400: 
-			return {error: true, message: new EmbedBuilder().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 401: 
-			return {error: true, message: new EmbedBuilder().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 403:
-			return {error: true, message: new EmbedBuilder().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 404:
-			return {error: true, message: new EmbedBuilder().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 422:
-			return {error: true, message: new EmbedBuilder().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			case 400:
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(`Error 400 - Required fields were invalid, or missing`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 401:
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(`Error 401 - The access token is invalid or has been revoked`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 403:
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(
+							`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`,
+						)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 404:
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(`Error 404 - The resource was not found`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 422:
+				return {
+					error: true,
+					message: new EmbedBuilder()
+						.setTitle(`Error 422 - A required parameter was invalid`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
 		}
-		const waitingMessage = interaction === true ? ``
-			: 
-			await MessageUtils.send((message as Message).channel,
-				`Loading the multiple Gfycat Posts from \`${user}\` ... ⌛🐱`,
-			)
-		;
+		const waitingMessage =
+			interaction === true
+				? ``
+				: await MessageUtils.send(
+						(message as Message).channel,
+						`Loading the multiple Gfycat Posts from \`${user}\` ... ⌛🐱`,
+				  );
 		const channelObject = message.channel as TextChannel;
-		
+
 		let gfycatDataFiltered: gfycatSingleGfycatInterface[] = [];
-		
+
 		if (channelObject.nsfw !== true) {
 			gfycatDataFiltered = (gfycatData.data as gfycatUserFeedInterface).gfycats.filter((gfy) => gfy.nsfw === 0);
 		}
-		
-		if (!gfycatDataFiltered.length) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
-		
+
+		if (!gfycatDataFiltered.length)
+			return {
+				error: true,
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`No results based on your specifications`),
+			};
+
 		const embeds = await this.generateGfyCatEmbed(gfycatDataFiltered);
-		if (!embeds.length) return {error: true, message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`No results based on your specifications`)};
+		if (!embeds.length)
+			return {
+				error: true,
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`No results based on your specifications`),
+			};
 		interaction === true ? `` : (waitingMessage as Message).delete();
-		return {error: false, embeds: embeds};
+		return { error: false, embeds: embeds };
 	}
 
-	private async getGfycat(interaction: boolean, message: Message | CommandInteraction, gfyID: string): Promise<IUserProfileCmd> {
+	private async getGfycat(
+		interaction: boolean,
+		message: Message | CommandInteraction,
+		gfyID: string,
+	): Promise<IUserProfileCmd> {
 		const blacklistGfyIdData = await prisma.gfycatBlacklist.count({
 			where: {
-				username: gfyID
-			}
+				username: gfyID,
+			},
 		});
 		if (blacklistGfyIdData > 0) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Error - couldn't find \`${gfyID}\``),
+			};
 		}
 		interface IGfy {
 			gfyItem: {
-				username?: string,
+				username?: string;
 				userData?: {
-					profileImageUrl: string,
-					verified: boolean,
-					username: string,
-					url: string
-				}
-				gfyName: string,
-				avgColor: HexColorString,
-				description: string,
-				views: number,
-				likes: string,
-				createDate: string,
-				frameRate: number,
-				width: string,
-				height: string,
-				tags: string[]
-			}
+					profileImageUrl: string;
+					verified: boolean;
+					username: string;
+					url: string;
+				};
+				gfyName: string;
+				avgColor: HexColorString;
+				description: string;
+				views: number;
+				likes: string;
+				createDate: string;
+				frameRate: number;
+				width: string;
+				height: string;
+				tags: string[];
+			};
 		}
-		const gfycatData = await gfycatAPI
-			.get<IGfy | gfycatErrorMessage>(`gfycats/${gfyID}`, {
-				headers: {
-					Authorization: `Bearer ${gfycatToken}`,
-					'Content-Type': `application/json`,
-				},
-			});
+		const gfycatData = await gfycatAPI.get<IGfy | gfycatErrorMessage>(`gfycats/${gfyID}`, {
+			headers: {
+				Authorization: `Bearer ${gfycatToken}`,
+				'Content-Type': `application/json`,
+			},
+		});
 		switch (gfycatData.status) {
-		case 400: 
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error 400 - Required fields were invalid, or missing`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 401: 
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error 401 - The access token is invalid or has been revoked`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 403:
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 404:
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error 404 - The resource was not found`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
-		case 422:
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error 422 - A required parameter was invalid`).setDescription(`**${(gfycatData.data as gfycatErrorMessage).code}**\n${(gfycatData.data as gfycatErrorMessage).description}`).setColor(botColours.error)};
+			case 400:
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error 400 - Required fields were invalid, or missing`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 401:
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error 401 - The access token is invalid or has been revoked`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 403:
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(
+							`Error 403 - The clientId does not have permission, or the userId in the request path points to wrong/non-existent user`,
+						)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 404:
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error 404 - The resource was not found`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
+			case 422:
+				return {
+					error: true,
+					embed: new EmbedBuilder()
+						.setTitle(`Error 422 - A required parameter was invalid`)
+						.setDescription(
+							`**${(gfycatData.data as gfycatErrorMessage).code}**\n${
+								(gfycatData.data as gfycatErrorMessage).description
+							}`,
+						)
+						.setColor(botColours.error),
+				};
 		}
 		const blacklistUserData = await prisma.gfycatBlacklist.count({
 			where: {
-				username: (gfycatData?.data as IGfy).gfyItem.username
-			}
+				username: (gfycatData?.data as IGfy).gfyItem.username,
+			},
 		});
 		if (blacklistUserData > 0) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find the user \`${(gfycatData?.data as IGfy).gfyItem.username}\``)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Error - couldn't find the user \`${(gfycatData?.data as IGfy).gfyItem.username}\``),
+			};
 		}
 
 		if (gfycatData === undefined) {
-			return {error: true, embed: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Error - couldn't find \`${gfyID}\``)};
+			return {
+				error: true,
+				embed: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Error - couldn't find \`${gfyID}\``),
+			};
 		} else {
 			const gfycatEmbed = `https://gfycat.com/${(gfycatData?.data as IGfy).gfyItem.gfyName}`;
 			const embed = new EmbedBuilder()
@@ -956,36 +1312,42 @@ export class GfycatCommand implements Command {
 				.setTitle((gfycatData?.data as IGfy).gfyItem.gfyName)
 				.setDescription(
 					`${
-						((gfycatData?.data as IGfy).gfyItem.description.length) > 0 ? `${(gfycatData?.data as IGfy).gfyItem.description}\n\n` : ``
+						(gfycatData?.data as IGfy).gfyItem.description.length > 0
+							? `${(gfycatData?.data as IGfy).gfyItem.description}\n\n`
+							: ``
 					}Total Views: ${stylingUtils.nFormatter((gfycatData?.data as IGfy).gfyItem.views, 1)}\n${
 						(gfycatData?.data as IGfy).gfyItem.likes
 					} Likes ❤️ \nGfycat Post made on <t:${(gfycatData?.data as IGfy).gfyItem.createDate}:F>\nFrame rate: ${
 						(gfycatData?.data as IGfy).gfyItem.frameRate
 					}\nWidth & Height: ${(gfycatData?.data as IGfy).gfyItem.width}x${(gfycatData?.data as IGfy).gfyItem.height}${
-						(gfycatData?.data as IGfy).gfyItem.tags.length > 0 ? `\n\nTags: ${(gfycatData?.data as IGfy).gfyItem.tags.join(`, `)}` : ``
+						(gfycatData?.data as IGfy).gfyItem.tags.length > 0
+							? `\n\nTags: ${(gfycatData?.data as IGfy).gfyItem.tags.join(`, `)}`
+							: ``
 					}`,
 				);
 			let userAuthorData: EmbedAuthorData;
 			if ((gfycatData?.data as IGfy).gfyItem.username !== `anonymous`) {
 				userAuthorData = {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					name: (gfycatData?.data as IGfy).gfyItem.userData!.verified ? `${(gfycatData?.data as IGfy).gfyItem.username as string} ✔️` : (gfycatData?.data as IGfy).gfyItem.username as string,
+					name: (gfycatData?.data as IGfy).gfyItem.userData!.verified
+						? `${(gfycatData?.data as IGfy).gfyItem.username as string} ✔️`
+						: ((gfycatData?.data as IGfy).gfyItem.username as string),
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					iconURL: (gfycatData?.data as IGfy).gfyItem.userData!.profileImageUrl,
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					url: (gfycatData?.data as IGfy).gfyItem.userData!.url
+					url: (gfycatData?.data as IGfy).gfyItem.userData!.url,
 				};
 				embed.setAuthor(userAuthorData);
 			}
-			return {error: false, embed: embed, content: gfycatEmbed};
+			return { error: false, embed: embed, content: gfycatEmbed };
 		}
 	}
-	
+
 	private async generateGfyCatEmbed(gfycat: gfycatSingleGfycatInterface[]) {
 		const embeds: string[] = [];
 		for (let i = 0; i < gfycat.length; i += 1) {
 			const current = gfycat[i];
-    
+
 			const embed = `${current.title.length > 0 ? `**${current.title}**\n` : ``}${
 				current.userData?.username.length ? `Made by <${current.userData.url}>\n` : ``
 			}${current.views} Views\n<t:${current.createDate}:F>\nhttps://gfycat.com/${current.gfyName}`;
@@ -994,7 +1356,7 @@ export class GfycatCommand implements Command {
 				.then(() => {
 					embeds.push(embed);
 				})
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
+				// eslint-disable-next-line @typescript-eslint/no-empty-function
 				.catch(() => {});
 		}
 		return embeds;

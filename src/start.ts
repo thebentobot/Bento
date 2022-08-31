@@ -6,8 +6,6 @@ import { Bot } from './bot.js';
 import { Button, GfycatSearchButton, GfycatUserFeedButton } from './buttons/index.js';
 import {
 	EightBallCommand,
-	DogCommand,
-	CatCommand,
 	Command,
 	DevCommand,
 	HelpCommand,
@@ -32,7 +30,9 @@ import {
 	StreamableCommand,
 	WeatherCommand,
 	ColourCommand,
-	GfycatCommand
+	GfycatCommand,
+	HoroscopeCommand,
+	TagCommand,
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -48,8 +48,6 @@ import {
 	MessageDeleteHandler,
 	MessageUpdateHandler,
 	GuildMemberUpdateHandler,
-	GuildRoleDeleteHandler,
-	GuildRoleUpdateHandler,
 	UserUpdateHandler,
 	SelectMenuHandler,
 } from './events/index.js';
@@ -67,8 +65,6 @@ export const commands: Command[] = [
 	new HelpCommand(),
 	new LinkCommand(),
 	new EightBallCommand(),
-	new CatCommand(),
-	new DogCommand(),
 	new ChooseCommand(),
 	new RollCommand(),
 	new MemberCommand(),
@@ -89,7 +85,9 @@ export const commands: Command[] = [
 	new StreamableCommand(),
 	new WeatherCommand(),
 	new ColourCommand(),
-	new GfycatCommand()
+	new GfycatCommand(),
+	new HoroscopeCommand(),
+	new TagCommand(),
 	// TODO: Add new commands here
 ];
 
@@ -112,8 +110,6 @@ async function start(): Promise<void> {
 		new HelpCommand(),
 		new LinkCommand(),
 		new EightBallCommand(),
-		new CatCommand(),
-		new DogCommand(),
 		new ChooseCommand(),
 		new RollCommand(),
 		new MemberCommand(),
@@ -134,7 +130,9 @@ async function start(): Promise<void> {
 		new StreamableCommand(),
 		new WeatherCommand(),
 		new ColourCommand(),
-		new GfycatCommand()
+		new GfycatCommand(),
+		new HoroscopeCommand(),
+		new TagCommand(),
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));
@@ -145,7 +143,7 @@ async function start(): Promise<void> {
 	// Buttons
 	const buttons: Button[] = [
 		new GfycatUserFeedButton(),
-		new GfycatSearchButton()
+		new GfycatSearchButton(),
 		// TODO: Add new buttons here
 	];
 
@@ -178,8 +176,6 @@ async function start(): Promise<void> {
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
-	const guildRoleDeleteHandler = new GuildRoleDeleteHandler();
-	const guildRoleUpdateHandler = new GuildRoleUpdateHandler();
 	const userUpdateHandler = new UserUpdateHandler();
 	const selectMenuHandler = new SelectMenuHandler(selectMenus);
 
@@ -205,8 +201,6 @@ async function start(): Promise<void> {
 		messageDeleteHandler,
 		messageUpdateHandler,
 		guildMemberUpdateHandler,
-		guildRoleDeleteHandler,
-		guildRoleUpdateHandler,
 		userUpdateHandler,
 		selectMenuHandler,
 	);

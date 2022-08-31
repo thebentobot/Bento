@@ -40,7 +40,7 @@ export class MemberCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		if (intr.options.get(`info`)) {
+		if (intr.options.data[0].name === `info`) {
 			let guildMember: GuildMember;
 			if (intr.options.getMember(`user`)) {
 				guildMember = intr.options.getMember(`user`) as GuildMember;

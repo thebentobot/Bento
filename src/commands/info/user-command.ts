@@ -40,7 +40,7 @@ export class UserCommand implements Command {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
-		if (intr.options.get(`info`)) {
+		if (intr.options.data[0].name === `info`) {
 			let user: User;
 			if (intr.options.getUser(`user`)) {
 				const interactionUser = intr.options.getUser(`user`) as User;
