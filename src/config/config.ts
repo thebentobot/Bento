@@ -84,7 +84,7 @@ export const config: IConfig = {
 	developers: [`232584569289703424`],
 	client: {
 		id: process.env.botId as string,
-		token: process.env.botToken as string,
+		token: process.env.botToken2 as string,
 		intents: [`Guilds`, `GuildMessages`, `GuildMessageReactions`, `DirectMessages`, `DirectMessageReactions`],
 		partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 		caches: {
