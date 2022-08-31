@@ -1,6 +1,4 @@
 import { ShardingManager } from 'discord.js';
-import 'reflect-metadata';
-
 import { Api } from './api.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
