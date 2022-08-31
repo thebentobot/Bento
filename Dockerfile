@@ -21,5 +21,8 @@ RUN npm run build
 # Expose ports
 EXPOSE 4422
 
+# Register commands
+RUN npm run commands:register
+
 # Run the application
-CMD [ "node", "dist/start-manager.js" ]
+CMD [ "node", "dist/app.js" ]
