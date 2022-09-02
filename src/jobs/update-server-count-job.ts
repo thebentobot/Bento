@@ -41,7 +41,8 @@ export class UpdateServerCountJob implements Job {
 			try {
 				const body = JSON.parse(botSite.body.replaceAll(`{{SERVER_COUNT}}`, serverCount.toString()));
 				const res = await this.httpService.post(botSite.url, botSite.authorization, body);
-
+				console.log(`headers:\n${res.headers}`);
+				console.log(`bodyUsed:\n${res.bodyUsed}`);
 				if (res.status >= 200 && res.status <= 299 === false) {
 					throw res;
 				}

@@ -14,6 +14,7 @@ export class MessageHandler implements EventHandler {
 	constructor(private commandHandler: CommandHandler, private triggerHandler: TriggerHandler) {}
 
 	public async process(msg: Message): Promise<void> {
+		if (msg.author.bot) return;
 		// Don't respond to system messages or self
 		if (msg.system || msg.author.id === msg.client.user?.id) {
 			return;
@@ -99,7 +100,7 @@ export class MessageHandler implements EventHandler {
 		// add a function for roles - or are we gonna make a new and better one with discord API features?
 
 		// add a function for notifications here
-		await notificationUtils.notificationCheck(msg);
+		//await notificationUtils.notificationCheck(msg);
 
 		const channelDisableData = await prisma.channelDisable.findUnique({ where: { channelID: BigInt(msg.channel.id) } });
 

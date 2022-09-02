@@ -4,7 +4,7 @@ import { ShardingManager } from 'discord.js';
 import { prisma } from '../services/prisma.js';
 import { gfycatPosts } from '@prisma/client';
 
-export class CheckRemindersJob implements Job {
+export class deleteExpiredGfycatPosts implements Job {
 	public name = `Delete expired gfycat posts`;
 	public log = Config.jobs.deleteExpiredGfycatPosts.log;
 	public schedule = Config.jobs.deleteExpiredGfycatPosts.schedule;
@@ -20,8 +20,8 @@ export class CheckRemindersJob implements Job {
 			for (const gfycatPost of gfycatPostsData) {
 				await prisma.gfycatPosts.delete({
 					where: {
-						id: gfycatPost.id
-					}
+						id: gfycatPost.id,
+					},
 				});
 			}
 		} else {

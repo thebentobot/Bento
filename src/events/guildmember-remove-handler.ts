@@ -21,7 +21,7 @@ export class GuildMemberRemoveHandler implements EventHandler {
 			},
 		});
 
-		if (memberLogData) {
+		/* if (memberLogData) {
 			const [banData, kickData, muteData, warningData] = await prisma.$transaction([
 				prisma.ban.findMany({
 					where: {
@@ -75,7 +75,7 @@ export class GuildMemberRemoveHandler implements EventHandler {
 					}\`.`,
 				);
 			await MessageUtils.send(channel, embed);
-		}
+		} */
 
 		const guildMemberData = await prisma.guildMember.findFirst({
 			where: {

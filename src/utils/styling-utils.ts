@@ -45,5 +45,5 @@ export const botColours = {
 	openWeatherAPI: `#EB6E4B` as HexColorString,
 	error: `#FF0000` as HexColorString,
 	success: `#22c55e` as HexColorString,
-	bento: `#fbeaad` as HexColorString,
+	bento: `#fde047` as HexColorString,
 };

@@ -94,9 +94,9 @@ export class BentoCommand implements Command {
 				.setColor(botColours.bento)
 				.setTitle(`Sorry 😔`)
 				.setDescription(
-					`<t:${
-						then.plus({ hours: 12 }).toMillis().valueOf() / 1000
-					}:R> you can serve a Bento Box 🍱 to a friend again`,
+					`<t:${Math.round(
+						then.plus({ hours: 12 }).toSeconds().valueOf(),
+					)}:R> you can serve a Bento Box 🍱 to a friend again`,
 				);
 		} else {
 			const bentoServeUpsert = await prisma.bento.upsert({
@@ -157,9 +157,9 @@ export class BentoCommand implements Command {
 						incrementValue > 1 ? `Boxes` : `Box`
 					}** to ${bentoReceiverType}\n${member} has received **${bentoReceiver.bento} ${
 						bentoReceiver.bento > 1 ? `Bento Boxes` : `Bento Box`
-					}**🍱 over time 😋\n${intr.user} can serve a Bento Box again <t:${
-						DateTime.fromJSDate(bentoServeUpsert.bentoDate).plus({ hours: 12 }).toMillis().valueOf() / 1000
-					}:R>`,
+					}**🍱 over time 😋\n${intr.user} can serve a Bento Box again <t:${Math.round(
+						DateTime.fromJSDate(bentoServeUpsert.bentoDate).plus({ hours: 12 }).toSeconds().valueOf(),
+					)}:R>`,
 				);
 		}
 	}
@@ -185,9 +185,9 @@ export class BentoCommand implements Command {
 					.setColor(botColours.bento)
 					.setTitle(`Sorry 😔`)
 					.setDescription(
-						`<t:${
-							then.plus({ hours: 12 }).toMillis().valueOf() / 1000
-						}:R> you can serve a Bento Box 🍱 to a friend again`,
+						`<t:${Math.round(
+							then.plus({ hours: 12 }).toSeconds().valueOf(),
+						)}:R> you can serve a Bento Box 🍱 to a friend again`,
 					);
 			} else {
 				return new EmbedBuilder()

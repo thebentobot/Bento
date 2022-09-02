@@ -74,15 +74,15 @@ export class ProfileCommand implements Command {
 		intr: CommandInteraction,
 		member: GuildMember,
 	): Promise<{ imageBuffer: Buffer; name: string }> {
+		if (member.user.bot) member = intr.member as GuildMember;
 		const getUserData = await prisma.user.findUnique({
 			where: {
 				userID: BigInt(member.user.id),
 			},
 		});
-		const userData = await prisma.guildMember.count({
-			where: {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				guildID: BigInt(intr.guild!.id),
+		const userData = await prisma.guild.aggregate({
+			_sum: {
+				memberCount: true,
 			},
 		});
 		let checkUserData: user | null = getUserData;
@@ -167,23 +167,23 @@ export class ProfileCommand implements Command {
         SELECT t.*
         FROM (SELECT t.*, row_number() OVER (ORDER BY t.level DESC, t.xp DESC) AS rank
             FROM "guildMember" AS t
-                WHERE "guildID" = ${intr.guildId}
+                WHERE "guildID" = ${BigInt(intr.guildId as string)}
             ) t
-        WHERE "userID" = ${member.user.id};
+        WHERE "userID" = ${BigInt(member.user.id)};
         `;
 		const globalRank: Array<Rankings> = await prisma.$queryRaw`
         SELECT t.*
 			FROM (SELECT t.*, row_number() OVER (ORDER BY t.level DESC, t.xp DESC) AS rank
 				FROM "user" AS t
 				) t
-			WHERE "userID" = ${member.user.id};
+			WHERE "userID" = ${BigInt(member.user.id)};
         `;
 		const bentoRank: Array<Rankings> = await prisma.$queryRaw`
         SELECT t.*
 			FROM (SELECT t.*, row_number() OVER (ORDER BY bento DESC) AS rank
 				FROM bento AS t
 				) t
-			WHERE "userID" = ${member.user.id};
+			WHERE "userID" = ${BigInt(member.user.id)};
         `;
 		const discordUser = member;
 		const boardArray = [];
@@ -614,10 +614,10 @@ export class ProfileCommand implements Command {
 		const xpDoneGlobalColour2 = `${xpDoneGlobalColour2Data}${xpDoneGlobalColour2Opacity}`;
 		const xpDoneGlobalColour3 = `${xpDoneGlobalColour3Data}${xpDoneGlobalColour3Opacity}`;
 		// red for testing #FF0000
-		const avatar = discordUser?.user.avatarURL({ size: 128, extension: `png` })
-			? discordUser.user.avatarURL({ size: 128, extension: `png` })
+		const avatar = discordUser?.displayAvatarURL({ size: 128, extension: `png` })
+			? discordUser.displayAvatarURL({ size: 128, extension: `png` })
 			: `https://cdn.discordapp.com/embed/avatars/${Number(discordUser?.user.discriminator) % 5}.png`;
-		const usernameSlot = discordUser?.nickname ? discordUser?.nickname : discordUser?.user.username;
+		const usernameSlot = discordUser.displayName;
 		const discriminatorSlot = discordUser?.nickname
 			? `${discordUser.user.username}#${discordUser.user.discriminator}`
 			: `#${discordUser?.user.discriminator}`;
@@ -1208,7 +1208,9 @@ export class ProfileCommand implements Command {
 														}</span><br>Of ${intr.guild?.memberCount} Users</li>
                             <li class='sidebar-itemGlobal'><span class="sidebar-valueGlobal">Rank ${
 															replacements.GLOBAL_LEVEL
-														}</span><br>Of ${Math.floor(userData / 100) / 10.0 + `k`} Users</li>
+														}</span><br>Of ${
+			Math.floor((userData._sum.memberCount as number) / 100) / 10.0 + `k`
+		} Users</li>
                             ${
 															bentoRank[0]
 																? `<li class='sidebar-itemBento'><span class="sidebar-valueBento">${bentoRank[0].bento} 🍱</span><br>Rank ${bentoRank[0].rank}/${bentoUsersAmount} 🍱 Users</li>`

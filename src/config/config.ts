@@ -102,7 +102,7 @@ export const config: IConfig = {
 	},
 	api: {
 		port: 4422,
-		secret: `00000000-0000-0000-0000-000000000000`
+		secret: process.env.apiToken as string
 	},
 	sharding: {
 		spawnDelay: 5,
@@ -115,7 +115,7 @@ export const config: IConfig = {
 		callbackUrl: `http://localhost:8080/`,
 		masterApi: {
 			url: `http://localhost:5000/`,
-			token: `00000000-0000-0000-0000-000000000000`
+			token: process.env.clusterToken as string
 		}
 	},
 	jobs: {
@@ -150,8 +150,8 @@ export const config: IConfig = {
 			interval: 30
 		},
 		buttons: {
-			amount: 10,
-			interval: 30
+			amount: 30,
+			interval: 10
 		},
 		triggers: {
 			amount: 10,
