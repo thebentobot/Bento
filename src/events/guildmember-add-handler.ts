@@ -1,5 +1,4 @@
-import { GuildMember, EmbedBuilder, Role, TextChannel, EmbedFooterData, PermissionFlagsBits } from 'discord.js';
-
+import { GuildMember, TextChannel, PermissionFlagsBits } from 'discord.js';
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
 import { EventHandler } from './event-handler.js';
@@ -7,7 +6,7 @@ import { EventHandler } from './event-handler.js';
 export class GuildMemberAddHandler implements EventHandler {
 	public async process(member: GuildMember): Promise<void> {
 		if (member.user.bot) return;
-		const currentMute = await prisma.mute.findFirst({
+		/* const currentMute = await prisma.mute.findFirst({
 			where: {
 				userID: BigInt(member.user.id),
 				guildID: BigInt(member.guild.id),
@@ -127,8 +126,7 @@ export class GuildMemberAddHandler implements EventHandler {
 					}\`.`,
 				);
 			await MessageUtils.send(channel, embed);
-		}
-
+		} */
 		const welcomeData = await prisma.welcome.findUnique({
 			where: {
 				guildID: BigInt(member.guild.id),

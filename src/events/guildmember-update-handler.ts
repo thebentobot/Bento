@@ -14,7 +14,7 @@ import { EventHandler } from './event-handler.js';
 export class GuildMemberUpdateHandler implements EventHandler {
 	public async process(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember): Promise<void> {
 		if (oldMember.user.bot) return;
-		const memberLogChannelData = await prisma.memberLog.findUnique({
+		/* const memberLogChannelData = await prisma.memberLog.findUnique({
 			where: {
 				guildID: BigInt(oldMember.guild.id),
 			},
@@ -57,9 +57,9 @@ export class GuildMemberUpdateHandler implements EventHandler {
 				await updateAvatar(newMember, true, memberLogChannel);
 			}
 			return;
-		}
+		} */
 
-		if (modLogData) {
+		/* if (modLogData) {
 			const memberLogChannel: TextChannel = oldMember.client.channels.cache.get(`${modLogData.channel}`) as TextChannel;
 			if (oldMember.isCommunicationDisabled() === false && newMember.isCommunicationDisabled() === true) {
 				await setTimeOut(newMember, true, memberLogChannel);
@@ -67,17 +67,17 @@ export class GuildMemberUpdateHandler implements EventHandler {
 			if (oldMember.isCommunicationDisabled() === true && newMember.isCommunicationDisabled() === false) {
 				await removeTimeOut(newMember, true, memberLogChannel);
 			}
-		}
+		} */
 
 		if (oldMember.displayAvatarURL() !== newMember.displayAvatarURL()) {
 			await updateAvatar(newMember, false);
 		}
-		if (oldMember.isCommunicationDisabled() === false && newMember.isCommunicationDisabled() === true) {
+		/* if (oldMember.isCommunicationDisabled() === false && newMember.isCommunicationDisabled() === true) {
 			await setTimeOut(newMember, false);
 		}
 		if (oldMember.isCommunicationDisabled() === true && newMember.isCommunicationDisabled() === false) {
 			await removeTimeOut(newMember, false);
-		}
+		} */
 
 		async function updateAvatar(newMember: GuildMember, memberLog: boolean, channel?: TextChannel) {
 			await prisma.guildMember.updateMany({
@@ -131,7 +131,7 @@ export class GuildMemberUpdateHandler implements EventHandler {
 			}
 		}
 
-		async function setTimeOut(newMember: GuildMember, modLog: boolean, channel?: TextChannel) {
+		/* async function setTimeOut(newMember: GuildMember, modLog: boolean, channel?: TextChannel) {
 			const muteData = await prisma.mute.create({
 				data: {
 					userID: BigInt(newMember.user.id),
@@ -201,8 +201,8 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					} on this server.`,
 				);
 			}
-		}
-		async function removeTimeOut(newMember: GuildMember, modLog: boolean, channel?: TextChannel) {
+		} */
+		/* async function removeTimeOut(newMember: GuildMember, modLog: boolean, channel?: TextChannel) {
 			let muteData = await prisma.mute.findFirst({
 				where: {
 					guildID: BigInt(newMember.guild.id),
@@ -296,6 +296,6 @@ export class GuildMemberUpdateHandler implements EventHandler {
 					} on this server.`,
 				);
 			}
-		}
+		} */
 	}
 }

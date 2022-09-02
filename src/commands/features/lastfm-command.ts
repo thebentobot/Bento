@@ -13,8 +13,8 @@ import { Command, CommandDeferAccessType, CommandType } from '../command.js';
 import { InteractionUtils } from '../../utils/interaction-utils.js';
 import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { prisma } from '../../services/prisma.js';
-import { DateTime, Interval } from 'luxon';
-import { botColours } from '../../utils/styling-utils.js';
+import { DateTime } from 'luxon';
+import { botColours, stylingUtils } from '../../utils/styling-utils.js';
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 import {
@@ -31,6 +31,7 @@ dotenv.config();
 import { flag } from 'country-emoji';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { sushiiUtils } from '../../utils/sushii-utils.js';
+import { lastfm } from '@prisma/client';
 
 interface lastfmCollageResult {
 	imageBuffer: Buffer;
@@ -67,9 +68,10 @@ async function newToken() {
 	);
 }
 
-newToken();
-
-setInterval(newToken, 3600000);
+if (process.env.NODE_ENV === `production`) {
+	newToken();
+	setInterval(newToken, 3600000);
+}
 
 export class LastfmCommand implements Command {
 	public name = `lastfm`;
@@ -318,67 +320,90 @@ export class LastfmCommand implements Command {
 		return new EmbedBuilder().setTitle(`Your username was deleted`).setColor(botColours.success);
 	}
 
-	private async lastfmNowPlaying(intr: CommandInteraction, member: GuildMember): Promise<EmbedBuilder> {
-		const lastfmUser = await prisma.lastfm.findUnique({
-			where: {
-				userID: BigInt(member.user.id),
-			},
-		});
-		if (lastfmUser === null) {
-			return new EmbedBuilder().setTitle(`This user does not have lastfm set with Bento 🍱`).setColor(botColours.error);
-		} else {
-			const response = await lastfmAPI.get(`/`, {
-				params: {
-					method: `user.getrecenttracks`,
-					user: lastfmUser.lastfm,
-					limit: 2,
-					page: 1,
+	private async lastfmNowPlaying(intr: CommandInteraction, member: GuildMember | undefined): Promise<EmbedBuilder> {
+		let lastfmUser: lastfm | null = null;
+		if (member === undefined) {
+			lastfmUser = await prisma.lastfm.findUnique({
+				where: {
+					userID: BigInt(intr.user.id),
 				},
 			});
-			if (response.status !== 200) {
-				return new EmbedBuilder().setTitle(`Lastfm error 😔`).setColor(botColours.error);
-			} else {
-				const usernameEmbed: lastfmRecentTracks = response.data;
-				const userAuthorData: EmbedAuthorData = {
-					name: member.displayName,
-					iconURL: member.displayAvatarURL({ forceStatic: false }),
-					url: `https://www.last.fm/user/${lastfmUser.lastfm}`,
-				};
-				const footerData: EmbedFooterData = {
-					text: `Total Tracks: ${usernameEmbed.recenttracks[`@attr`].total} | Powered by last.fm`,
-					iconURL: `https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png`,
-				};
-				const embed = new EmbedBuilder()
-					.setAuthor(userAuthorData)
-					.setColor(`#e4141e`)
-					.setThumbnail(usernameEmbed.recenttracks.track[0].image[3][`#text`])
-					.addFields(
-						{
-							name: `${
-								usernameEmbed.recenttracks.track[0][`@attr`]
-									? `Now Playing`
-									: DateTime.fromSeconds(parseInt(usernameEmbed.recenttracks.track[0].date.uts)).toRelativeCalendar()
-							}`,
-							value: `**${usernameEmbed.recenttracks.track[0].artist[`#text`]}** - [${
-								usernameEmbed.recenttracks.track[0].name
-							}](${usernameEmbed.recenttracks.track[0].url})\nFrom the album **${
-								usernameEmbed.recenttracks.track[0].album[`#text`]
-							}**`,
-						},
-						{
-							name: `${DateTime.fromSeconds(
-								parseInt(usernameEmbed.recenttracks.track[1].date.uts),
-							).toRelativeCalendar()}`,
-							value: `**${usernameEmbed.recenttracks.track[1].artist[`#text`]}** - [${
-								usernameEmbed.recenttracks.track[1].name
-							}](${usernameEmbed.recenttracks.track[1].url})\nFrom the album **${
-								usernameEmbed.recenttracks.track[1].album[`#text`]
-							}**`,
-						},
-					)
-					.setFooter(footerData);
-				return embed;
+			if (lastfmUser === null) {
+				return new EmbedBuilder()
+					.setTitle(`This user does not have lastfm set with Bento 🍱`)
+					.setColor(botColours.error);
 			}
+		} else {
+			lastfmUser = await prisma.lastfm.findUnique({
+				where: {
+					userID: BigInt(member.user.id),
+				},
+			});
+			if (lastfmUser === null) {
+				return new EmbedBuilder()
+					.setTitle(`This user does not have lastfm set with Bento 🍱`)
+					.setColor(botColours.error);
+			}
+		}
+		const response = await lastfmAPI.get(`/`, {
+			params: {
+				method: `user.getrecenttracks`,
+				user: lastfmUser.lastfm,
+				limit: 2,
+				page: 1,
+			},
+		});
+		if (response.status !== 200) {
+			return new EmbedBuilder().setTitle(`Lastfm error 😔`).setColor(botColours.error);
+		} else {
+			const usernameEmbed: lastfmRecentTracks = response.data;
+			const userAuthorData: EmbedAuthorData = {
+				// eslint-disable-next-line no-unsafe-optional-chaining, @typescript-eslint/no-non-null-assertion
+				name: member === undefined ? (await intr.guild?.members.fetch(intr.user))!.displayName : member.displayName,
+				// eslint-disable-next-line no-unsafe-optional-chaining, @typescript-eslint/no-non-null-assertion
+				iconURL:
+					member === undefined
+						? // eslint-disable-next-line no-unsafe-optional-chaining, @typescript-eslint/no-non-null-assertion
+						  (await intr.guild?.members.fetch(intr.user))!.displayAvatarURL({ forceStatic: false })
+						: member.displayAvatarURL({ forceStatic: false }),
+				url: `https://www.last.fm/user/${lastfmUser.lastfm}`,
+			};
+			const footerData: EmbedFooterData = {
+				text: `Total Tracks: ${usernameEmbed.recenttracks[`@attr`].total} | Powered by last.fm`,
+				iconURL: `https://www.last.fm/static/images/lastfm_avatar_twitter.52a5d69a85ac.png`,
+			};
+			const embed = new EmbedBuilder()
+				.setAuthor(userAuthorData)
+				.setColor(`#e4141e`)
+				.setThumbnail(usernameEmbed.recenttracks.track[0].image[3][`#text`])
+				.addFields(
+					{
+						name: `${
+							usernameEmbed.recenttracks.track[0][`@attr`]
+								? `Now Playing`
+								: stylingUtils.capitalizeFirstCharacter(
+										`${DateTime.fromSeconds(parseInt(usernameEmbed.recenttracks.track[0].date.uts)).toRelative()}`,
+								  )
+						}`,
+						value: `**${usernameEmbed.recenttracks.track[0].artist[`#text`]}** - [${
+							usernameEmbed.recenttracks.track[0].name
+						}](${usernameEmbed.recenttracks.track[0].url})\nFrom the album **${
+							usernameEmbed.recenttracks.track[0].album[`#text`]
+						}**`,
+					},
+					{
+						name: `${stylingUtils.capitalizeFirstCharacter(
+							`${DateTime.fromSeconds(parseInt(usernameEmbed.recenttracks.track[0].date.uts)).toRelative()}`,
+						)}`,
+						value: `**${usernameEmbed.recenttracks.track[1].artist[`#text`]}** - [${
+							usernameEmbed.recenttracks.track[1].name
+						}](${usernameEmbed.recenttracks.track[1].url})\nFrom the album **${
+							usernameEmbed.recenttracks.track[1].album[`#text`]
+						}**`,
+					},
+				)
+				.setFooter(footerData);
+			return embed;
 		}
 	}
 

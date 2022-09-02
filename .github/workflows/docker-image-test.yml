@@ -1,10 +1,8 @@
 name: Docker Image Test
 
 on:
-  push:
-    branches: [dev]
   pull_request:
-    branches: [master]
+    branches: [staging]
 
 jobs:
   docker:

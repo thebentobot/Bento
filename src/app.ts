@@ -10,6 +10,7 @@ import {
 	CheckRemindersJob,
 	checkScheduledAnnouncementsJob,
 	checkTimedAnnouncementsJob,
+	deleteExpiredGfycatPosts,
 } from './jobs/index.js';
 import { logs as Logs } from './lang/logs.js';
 import { Manager } from './manager.js';
@@ -70,6 +71,7 @@ async function start(): Promise<void> {
 		Config.clustering.enabled ? undefined : new CheckRemindersJob(shardManager),
 		Config.clustering.enabled ? undefined : new checkScheduledAnnouncementsJob(shardManager),
 		Config.clustering.enabled ? undefined : new checkTimedAnnouncementsJob(shardManager),
+		Config.clustering.enabled ? undefined : new deleteExpiredGfycatPosts(shardManager),
 		// TODO: Add new jobs here
 	].filter(Boolean);
 
