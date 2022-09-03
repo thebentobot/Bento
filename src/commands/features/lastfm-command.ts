@@ -19,6 +19,7 @@ import * as dotenv from 'dotenv';
 import axios from 'axios';
 import {
 	lastfmProfile,
+	lastfmRecentTrackDate,
 	lastfmRecentTracks,
 	lastfmTopAlbum,
 	lastfmTopAlbums,
@@ -379,10 +380,12 @@ export class LastfmCommand implements Command {
 				.addFields(
 					{
 						name: `${
-							usernameEmbed.recenttracks.track[0][`@attr`]
+							usernameEmbed.recenttracks.track[0][`@attr`]?.nowplaying
 								? `Now Playing`
 								: stylingUtils.capitalizeFirstCharacter(
-										`${DateTime.fromSeconds(parseInt(usernameEmbed.recenttracks.track[0].date.uts)).toRelative()}`,
+										`${DateTime.fromSeconds(
+											parseInt((usernameEmbed.recenttracks.track[0].date as lastfmRecentTrackDate).uts),
+										).toRelative()}`,
 								  )
 						}`,
 						value: `**${usernameEmbed.recenttracks.track[0].artist[`#text`]}** - [${
@@ -393,7 +396,9 @@ export class LastfmCommand implements Command {
 					},
 					{
 						name: `${stylingUtils.capitalizeFirstCharacter(
-							`${DateTime.fromSeconds(parseInt(usernameEmbed.recenttracks.track[0].date.uts)).toRelative()}`,
+							`${DateTime.fromSeconds(
+								parseInt((usernameEmbed.recenttracks.track[1].date as lastfmRecentTrackDate).uts),
+							).toRelative()}`,
 						)}`,
 						value: `**${usernameEmbed.recenttracks.track[1].artist[`#text`]}** - [${
 							usernameEmbed.recenttracks.track[1].name

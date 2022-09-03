@@ -29,7 +29,7 @@ interface lastfmRecentTrackElement {
 	[`#text`]: string;
 }
 
-interface lastfmRecentTrackDate {
+export interface lastfmRecentTrackDate {
 	uts: string;
 	[`#text`]: string;
 }
@@ -46,7 +46,7 @@ interface lastfmRecentTrack {
 	album: lastfmRecentTrackElement;
 	name: string;
 	url: string;
-	date: lastfmRecentTrackDate;
+	date?: lastfmRecentTrackDate;
 	[`@attr`]?: lastfmNowPlayingAttributes;
 }
 

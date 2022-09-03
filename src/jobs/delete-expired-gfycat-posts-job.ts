@@ -4,12 +4,10 @@ import { ShardingManager } from 'discord.js';
 import { prisma } from '../services/prisma.js';
 import { gfycatPosts } from '@prisma/client';
 
-export class deleteExpiredGfycatPosts implements Job {
+export class DeleteExpiredGfycatPosts implements Job {
 	public name = `Delete expired gfycat posts`;
 	public log = Config.jobs.deleteExpiredGfycatPosts.log;
 	public schedule = Config.jobs.deleteExpiredGfycatPosts.schedule;
-
-	constructor(private shardManager: ShardingManager) {}
 
 	public async run(): Promise<void> {
 		const gfycatPostsData: gfycatPosts[] = await prisma.$queryRaw`
