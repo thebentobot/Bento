@@ -53,7 +53,13 @@ import {
 	SelectMenuHandler,
 } from './events/index.js';
 import { CustomClient } from './extensions/index.js';
-import { Job } from './jobs/index.js';
+import {
+	CheckRemindersJob,
+	CheckScheduledAnnouncementsJob,
+	CheckTimedAnnouncementsJob,
+	DeleteExpiredGfycatPosts,
+	Job,
+} from './jobs/index.js';
 import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
 import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
@@ -186,6 +192,10 @@ async function start(): Promise<void> {
 	// reminder: this is shard-level jobs. For globals check app.ts
 	const jobs: Job[] = [
 		// TODO: Add new jobs here
+		new CheckRemindersJob(client),
+		new CheckScheduledAnnouncementsJob(client),
+		new CheckTimedAnnouncementsJob(client),
+		new DeleteExpiredGfycatPosts(),
 	];
 
 	// Bot
