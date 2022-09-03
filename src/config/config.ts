@@ -52,6 +52,10 @@ interface IConfig {
 			schedule: string
 			log: boolean
 		}
+		updateServerMemberCount: {
+			schedule: string
+			log: boolean
+		}
 	}
 	rateLimiting: {
 		commands: {
@@ -121,27 +125,31 @@ export const config: IConfig = {
 	jobs: {
 		updateServerCount: {
 			schedule: `0 */10 * * * *`,
-			log: false
+			log: true
 		},
 		checkMutes: {
 			schedule: `* * * * *`,
-			log: false
+			log: true
 		},
 		checkReminders: {
 			schedule: `* * * * *`,
-			log: false
+			log: true
 		},
 		checkScheduledAnnouncements: {
 			schedule: `* * * * *`,
-			log: false
+			log: true
 		},
 		checkTimedAnnouncements: {
 			schedule: `* * * * *`,
-			log: false
+			log: true
 		},
 		deleteExpiredGfycatPosts: {
 			schedule: `0 */12 * * *`,
-			log: false
+			log: true
+		},
+		updateServerMemberCount: {
+			schedule: `0 */3 * * *`,
+			log: true
 		}
 	},
 	rateLimiting: {

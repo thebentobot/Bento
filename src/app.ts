@@ -3,15 +3,7 @@ import { Api } from './api.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 import { GuildsController, RootController, ShardsController } from './controllers/index.js';
-import {
-	Job,
-	UpdateServerCountJob,
-	CheckMutesJob,
-	CheckRemindersJob,
-	checkScheduledAnnouncementsJob,
-	checkTimedAnnouncementsJob,
-	deleteExpiredGfycatPosts,
-} from './jobs/index.js';
+import { Job, UpdateServerCountJob } from './jobs/index.js';
 import { logs as Logs } from './lang/logs.js';
 import { Manager } from './manager.js';
 import { HttpService, JobService, Logger, MasterApiService } from './services/index.js';
@@ -67,11 +59,6 @@ async function start(): Promise<void> {
 	// @ts-ignore: Unreachable code error
 	const jobs: Job[] = [
 		Config.clustering.enabled ? undefined : new UpdateServerCountJob(shardManager, httpService),
-		Config.clustering.enabled ? undefined : new CheckMutesJob(shardManager),
-		Config.clustering.enabled ? undefined : new CheckRemindersJob(shardManager),
-		Config.clustering.enabled ? undefined : new checkScheduledAnnouncementsJob(shardManager),
-		Config.clustering.enabled ? undefined : new checkTimedAnnouncementsJob(shardManager),
-		Config.clustering.enabled ? undefined : new deleteExpiredGfycatPosts(shardManager),
 		// TODO: Add new jobs here
 	].filter(Boolean);
 

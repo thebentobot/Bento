@@ -19,6 +19,22 @@ export class UserUpdateHandler implements EventHandler {
 					}),
 				},
 			});
+			const patreonData = await prisma.patreon.findMany();
+			const patreonUser = patreonData.find((user) => user.userID === BigInt(oldUser.id));
+			if (patreonUser !== undefined) {
+				await prisma.patreon.update({
+					where: {
+						userID: BigInt(oldUser.id),
+					},
+					data: {
+						avatar: newUser.avatarURL({
+							extension: `webp`,
+							forceStatic: false,
+							size: 1024,
+						}),
+					},
+				});
+			}
 		}
 
 		if (oldUser.username !== newUser.username) {
