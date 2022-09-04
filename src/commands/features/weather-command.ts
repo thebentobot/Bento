@@ -82,7 +82,7 @@ export class WeatherCommand implements Command {
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		let cmd: EmbedBuilder;
 		if (intr.options.data[0].name === `city`) {
-			cmd = await this.cityOption(intr.options.get(`input`)?.value as string, intr.user);
+			cmd = await this.cityOption(intr.options.get(`input`)?.value as string | undefined, intr.user);
 		} else if (intr.options.data[0].name === `save`) {
 			cmd = await this.saveOption(intr.options.get(`city`, true).value as string, intr.user);
 		} else if (intr.options.data[0].name === `remove`) {
@@ -178,7 +178,9 @@ export class WeatherCommand implements Command {
 					DateTime.fromSeconds(response.dt),
 					this.location(response.coord.lat, response.coord.lon),
 				)} local time`,
-				iconURL: userWeather ? `https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg` : ``,
+				iconURL: userWeather
+					? `https://pbs.twimg.com/profile_images/1173919481082580992/f95OeyEW_400x400.jpg`
+					: undefined,
 			};
 			const embed = new EmbedBuilder()
 				.setColor(botColours.openWeatherAPI)
@@ -222,7 +224,7 @@ export class WeatherCommand implements Command {
 		}
 	}
 
-	private async cityOption(input: string | null, intrUser: User): Promise<EmbedBuilder> {
+	private async cityOption(input: string | undefined, intrUser: User): Promise<EmbedBuilder> {
 		if (input === undefined) {
 			const getIntrUserWeatherData = await prisma.weather.findUnique({
 				where: {
@@ -239,7 +241,7 @@ export class WeatherCommand implements Command {
 				return weatherEmbed;
 			}
 		} else {
-			const weatherEmbed = await this.weatherCommand(input as string, false, intrUser);
+			const weatherEmbed = await this.weatherCommand(input, false, intrUser);
 			return weatherEmbed;
 		}
 	}
