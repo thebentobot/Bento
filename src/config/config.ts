@@ -129,27 +129,27 @@ export const config: IConfig = {
 		},
 		checkMutes: {
 			schedule: `* * * * *`,
-			log: true
+			log: false
 		},
 		checkReminders: {
 			schedule: `* * * * *`,
-			log: true
+			log: false
 		},
 		checkScheduledAnnouncements: {
 			schedule: `* * * * *`,
-			log: true
+			log: false
 		},
 		checkTimedAnnouncements: {
 			schedule: `* * * * *`,
-			log: true
+			log: false
 		},
 		deleteExpiredGfycatPosts: {
 			schedule: `0 */12 * * *`,
-			log: true
+			log: false
 		},
 		updateServerMemberCount: {
 			schedule: `0 */3 * * *`,
-			log: true
+			log: false
 		}
 	},
 	rateLimiting: {
