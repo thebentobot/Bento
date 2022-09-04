@@ -138,33 +138,33 @@ export class WeatherCommand implements Command {
 				lang: `en`,
 			},
 		});
-		switch (openWeatherFetch.status) {
-			case 401:
-				return new EmbedBuilder()
-					.setDescription(`The API key is invalid 🤔`)
-					.setTitle(`Error`)
-					.setColor(botColours.error);
-			case 404:
-				return new EmbedBuilder()
-					.setDescription(`Your city input is invalid`)
-					.setTitle(`Error`)
-					.setColor(botColours.openWeatherAPI);
-			case 429:
-				return new EmbedBuilder()
-					.setDescription(
-						`${config.botName} has received more than 60 weather API calls the last minute, please wait 🙏🏻`,
-					)
-					.setTitle(`Error`)
-					.setColor(botColours.openWeatherAPI);
-			case 500:
-			case 502:
-			case 503:
-			case 504:
-				return new EmbedBuilder()
-					.setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`)
-					.setTitle(`Error`)
-					.setColor(botColours.openWeatherAPI);
-		}
+		if (openWeatherFetch.status === 401)
+			return new EmbedBuilder()
+				.setDescription(`The API key is invalid 🤔`)
+				.setTitle(`Error`)
+				.setColor(botColours.error);
+		if (openWeatherFetch.status === 404)
+			return new EmbedBuilder()
+				.setDescription(
+					`Your city input is invalid.\nTry to add the country e.g. "copenhagen, denmark" to the query, or search after a "bigger" city.`,
+				)
+				.setTitle(`Error`)
+				.setColor(botColours.openWeatherAPI);
+		if (openWeatherFetch.status === 429)
+			return new EmbedBuilder()
+				.setDescription(`${config.botName} has received more than 60 weather API calls the last minute, please wait 🙏🏻`)
+				.setTitle(`Error`)
+				.setColor(botColours.openWeatherAPI);
+		if (
+			openWeatherFetch.status === 500 ||
+			openWeatherFetch.status === 502 ||
+			openWeatherFetch.status === 503 ||
+			openWeatherFetch.status === 504
+		)
+			return new EmbedBuilder()
+				.setDescription(`There's something wrong with OpenWeatherAPI, sorry 😔`)
+				.setTitle(`Error`)
+				.setColor(botColours.openWeatherAPI);
 		if (openWeatherFetch.status === 200) {
 			const response = openWeatherFetch.data;
 			const userAuthorData: EmbedAuthorData = {

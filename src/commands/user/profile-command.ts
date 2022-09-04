@@ -1062,7 +1062,7 @@ export class ProfileCommand implements Command {
                     overflow: hidden;
                     font-family: 'Urbanist', sans-serif;
                     font-size: ${this.lastfmTextFunction(
-											usernameEmbed ? usernameEmbed.recenttracks.track[0].name : `lmao`,
+											lastfmStatus ? usernameEmbed.recenttracks.track[0].name : `lmao`,
 										)};
                     padding-left: 10px;
                     display: block;
@@ -1084,7 +1084,7 @@ export class ProfileCommand implements Command {
                     overflow: hidden;
                     font-family: 'Urbanist', sans-serif;
                     font-size: ${this.lastfmTextFunction(
-											usernameEmbed ? usernameEmbed.recenttracks.track[0].artist[`#text`] : `lmao`,
+											lastfmStatus ? usernameEmbed.recenttracks.track[0].artist[`#text`] : `lmao`,
 										)};
                     padding-left: 10px;
                     display: flex;
