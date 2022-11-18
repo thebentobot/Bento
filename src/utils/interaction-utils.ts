@@ -7,7 +7,7 @@ import {
 	MessageComponentInteraction,
 	MessageEditOptions,
 	EmbedBuilder,
-	MessageOptions,
+	BaseMessageOptions,
 	InteractionResponse,
 } from 'discord.js';
 
@@ -84,7 +84,7 @@ export class InteractionUtils {
 
 	public static async editReply(
 		intr: CommandInteraction | MessageComponentInteraction,
-		content: string | EmbedBuilder | MessageOptions,
+		content: string | EmbedBuilder | BaseMessageOptions,
 	): Promise<Message | undefined> {
 		try {
 			const msgOptions = MessageUtils.messageOptions(content);

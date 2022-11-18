@@ -5,7 +5,7 @@ import {
 	Message,
 	MessageEditOptions,
 	EmbedBuilder,
-	MessageOptions,
+	BaseMessageOptions,
 	MessageReaction,
 	StartThreadOptions,
 	TextBasedChannel,
@@ -30,7 +30,7 @@ const cooldownGlobal = new Set();
 export class MessageUtils {
 	public static async send(
 		target: User | TextBasedChannel,
-		content: string | EmbedBuilder | MessageOptions,
+		content: string | EmbedBuilder | BaseMessageOptions,
 	): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
@@ -48,7 +48,10 @@ export class MessageUtils {
 		}
 	}
 
-	public static async reply(msg: Message, content: string | EmbedBuilder | MessageOptions): Promise<Message | void> {
+	public static async reply(
+		msg: Message,
+		content: string | EmbedBuilder | BaseMessageOptions,
+	): Promise<Message | void> {
 		try {
 			const msgOptions = this.messageOptions(content);
 			return await msg.reply(msgOptions);
@@ -210,8 +213,8 @@ export class MessageUtils {
 		}
 	}
 
-	public static messageOptions(content: string | EmbedBuilder | MessageOptions): MessageOptions {
-		let options: MessageOptions = {};
+	public static messageOptions(content: string | EmbedBuilder | BaseMessageOptions): BaseMessageOptions {
+		let options: BaseMessageOptions = {};
 		if (typeof content === `string`) {
 			options.content = content;
 		} else if (content instanceof EmbedBuilder) {
