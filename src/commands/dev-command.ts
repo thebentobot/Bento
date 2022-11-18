@@ -1,9 +1,8 @@
 import djs, { CommandInteraction, Message, EmbedBuilder, PermissionsString } from 'discord.js';
-import fileSize from 'filesize';
+import { filesize } from 'filesize';
 import os from 'os';
 import { createRequire } from 'node:module';
 import typescript from 'typescript';
-
 import { EventData } from '../models/internal-models.js';
 import { MessageUtils, ShardUtils, stylingUtils } from '../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from './command.js';
@@ -77,12 +76,12 @@ export class DevCommand implements Command {
 					djs.version
 				}\n\n**Stats**\n**Shards**: ${shardCount.toLocaleString()}\n**Servers**: ${serverCount.toLocaleString()} (${Math.round(
 					serverCount / shardCount,
-				).toLocaleString()}/Shard)\n\n**Memory**\n**RSS**: ${fileSize(memory.rss)} (${
-					serverCount > 0 ? fileSize(memory.rss / serverCount) : `N/A`
-				}/Server)\n**Heap**: ${fileSize(memory.heapTotal)} (${
-					serverCount > 0 ? fileSize(memory.heapTotal / serverCount) : `N/A`
-				}/Server)\n**Used**: ${fileSize(memory.heapUsed)} (${
-					serverCount > 0 ? fileSize(memory.heapUsed / serverCount) : `N/A`
+				).toLocaleString()}/Shard)\n\n**Memory**\n**RSS**: ${filesize(memory.rss)} (${
+					serverCount > 0 ? filesize(memory.rss / serverCount) : `N/A`
+				}/Server)\n**Heap**: ${filesize(memory.heapTotal)} (${
+					serverCount > 0 ? filesize(memory.heapTotal / serverCount) : `N/A`
+				}/Server)\n**Used**: ${filesize(memory.heapUsed)} (${
+					serverCount > 0 ? filesize(memory.heapUsed / serverCount) : `N/A`
 				}/Server)\n\n**IDs**\n**Hostname**: ${os.hostname}\n**Shard ID**: ${(
 					element.guild?.shardId ?? 0
 				).toString()}\n**Server ID**: ${element.guild?.id ?? `N/A`}\n**Bot ID**: ${
