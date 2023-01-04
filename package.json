@@ -63,7 +63,7 @@
 		"aztro-js": "^0.1.5",
 		"chroma-js": "^2.4.2",
 		"class-transformer": "^0.5.1",
-		"class-validator": "^0.13.2",
+		"class-validator": "^0.14.0",
 		"country-emoji": "^1.5.6",
 		"discord-api-types": "^0.37.21",
 		"discord.js": "^14.7.1",
