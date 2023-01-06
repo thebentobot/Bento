@@ -1,3 +1,4 @@
+export { AutocompleteHandler } from './autocomplete-handler.js';
 export { CommandHandler } from './command-handler.js';
 export { EventHandler } from './event-handler.js';
 export { GuildJoinHandler } from './guild-join-handler.js';

@@ -16,11 +16,13 @@ import {
 	SelectMenuInteraction,
 	Events,
 	RESTEvents,
+	AutocompleteInteraction,
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
 
 import {
+	AutocompleteHandler,
 	GuildMemberUpdateHandler,
 	UserUpdateHandler,
 	ButtonHandler,
@@ -52,6 +54,7 @@ export class Bot {
 		private buttonHandler: ButtonHandler,
 		private reactionHandler: ReactionHandler,
 		private jobService: JobService,
+		private autocompleteHandler: AutocompleteHandler,
 		private guildMemberAddHandler: GuildMemberAddHandler,
 		private guildMemberRemoveHandler: GuildMemberRemoveHandler,
 		private messageDeleteHandler: MessageDeleteHandler,
@@ -182,6 +185,12 @@ export class Bot {
 				await this.buttonHandler.process(intr, intr.message as Message);
 			} catch (error) {
 				Logger.error(Logs.error.button, error);
+			}
+		} else if (intr instanceof AutocompleteInteraction) {
+			try {
+				await this.autocompleteHandler.process(intr);
+			} catch (error) {
+				Logger.error(Logs.error.autocomplete, error);
 			}
 		} else if (intr instanceof SelectMenuInteraction) {
 			try {

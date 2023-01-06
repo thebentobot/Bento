@@ -1,6 +1,7 @@
 import { REST } from '@discordjs/rest';
 import { Options } from 'discord.js';
 import * as dotenv from 'dotenv';
+import { Autocomplete } from './autocompletes/autocomplete.js';
 dotenv.config();
 import { Bot } from './bot.js';
 import { Button, GfycatSearchButton, GfycatUserFeedButton } from './buttons/index.js';
@@ -37,6 +38,7 @@ import {
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
+	AutocompleteHandler,
 	CommandHandler,
 	GuildJoinHandler,
 	GuildLeaveHandler,
@@ -64,7 +66,7 @@ import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
 import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
 import { SelectMenu } from './selectMenu/selectMenu.js';
-import { JobService, Logger, CommandRegistrationService } from './services/index.js';
+import { JobService, Logger, CommandRegistrationService, EventDataService } from './services/index.js';
 import { Trigger } from './triggers/index.js';
 
 export const commands: Command[] = [
@@ -100,6 +102,9 @@ export const commands: Command[] = [
 ];
 
 async function start(): Promise<void> {
+	// Services
+	const eventDataService = new EventDataService();
+
 	// Client
 	const client = new CustomClient({
 		intents: Config.client.intents,
@@ -162,6 +167,11 @@ async function start(): Promise<void> {
 		// TODO: Add new Select Menus here
 	];
 
+	// Autocompletes
+	const autocompletes: Autocomplete[] = [
+		// TODO: Add new autocompletes here
+	];
+
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -175,18 +185,19 @@ async function start(): Promise<void> {
 	// Event handlers
 	const guildJoinHandler = new GuildJoinHandler();
 	const guildLeaveHandler = new GuildLeaveHandler();
-	const commandHandler = new CommandHandler(helpCommand, commands);
-	const triggerHandler = new TriggerHandler(triggers);
+	const commandHandler = new CommandHandler(helpCommand, commands, eventDataService);
+	const triggerHandler = new TriggerHandler(triggers, eventDataService);
 	const messageHandler = new MessageHandler(commandHandler, triggerHandler);
-	const reactionHandler = new ReactionHandler(reactions);
+	const reactionHandler = new ReactionHandler(reactions, eventDataService);
 	const guildMemberAddHandler = new GuildMemberAddHandler();
 	const guildMemberRemoveHandler = new GuildMemberRemoveHandler();
-	const buttonHandler = new ButtonHandler(buttons);
+	const buttonHandler = new ButtonHandler(buttons, eventDataService);
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
 	const userUpdateHandler = new UserUpdateHandler();
-	const selectMenuHandler = new SelectMenuHandler(selectMenus);
+	const selectMenuHandler = new SelectMenuHandler(selectMenus, eventDataService);
+	const autocompleteHandler = new AutocompleteHandler(autocompletes, eventDataService);
 
 	// Jobs
 	// reminder: this is shard-level jobs. For globals check app.ts
@@ -209,6 +220,7 @@ async function start(): Promise<void> {
 		buttonHandler,
 		reactionHandler,
 		new JobService(jobs),
+		autocompleteHandler,
 		guildMemberAddHandler,
 		guildMemberRemoveHandler,
 		messageDeleteHandler,
