@@ -1,4 +1,11 @@
-import { CommandInteraction, Message, PermissionsString } from 'discord.js';
+import {
+	ApplicationCommandOptionChoiceData,
+	AutocompleteFocusedOption,
+	AutocompleteInteraction,
+	CommandInteraction,
+	Message,
+	PermissionsString,
+} from 'discord.js';
 import { RESTPostAPIChatInputApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { EventData } from '../models/internal-models.js';
@@ -30,6 +37,10 @@ export interface Command {
 	requireClientPerms: PermissionsString[];
 	requireUserPerms: PermissionsString[];
 	requirePremium: boolean;
+	autocomplete?(
+		intr: AutocompleteInteraction,
+		option: AutocompleteFocusedOption,
+	): Promise<ApplicationCommandOptionChoiceData[]>;
 	executeIntr?(intr: CommandInteraction, data?: EventData): Promise<void>;
 	executeMsgCmd?(msg: Message, args?: string[], data?: EventData): Promise<void>;
 }

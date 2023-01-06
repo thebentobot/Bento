@@ -1,8 +1,7 @@
 import { Message } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 import { config as Config } from '../config/config.js';
-
-import { EventData } from '../models/internal-models.js';
+import { EventDataService } from '../services/index.js';
 import { Trigger } from '../triggers/index.js';
 
 export class TriggerHandler {
@@ -11,7 +10,7 @@ export class TriggerHandler {
 		Config.rateLimiting.triggers.interval * 1000,
 	);
 
-	constructor(private triggers: Trigger[]) {}
+	constructor(private triggers: Trigger[], private eventDataService: EventDataService) {}
 
 	public async process(msg: Message): Promise<void> {
 		// Find triggers caused by this message
@@ -39,7 +38,11 @@ export class TriggerHandler {
 		}
 
 		// TODO: Get data from database
-		const data = new EventData();
+		const data = await this.eventDataService.create({
+			user: msg.author,
+			channel: msg.channel,
+			guild: msg.guild !== null ? msg.guild : undefined,
+		});
 
 		// Execute triggers
 		for (const trigger of triggers) {

@@ -1,5 +1,13 @@
 import { guild } from '@prisma/client';
-import { Channel, ClientUser, DMChannel, GuildChannel, GuildMember, PermissionFlagsBits, ThreadChannel } from 'discord.js';
+import {
+	Channel,
+	ClientUser,
+	DMChannel,
+	GuildChannel,
+	GuildMember,
+	PermissionFlagsBits,
+	ThreadChannel,
+} from 'discord.js';
 import { Command } from '../commands/index.js';
 
 export class PermissionUtils {
@@ -116,10 +124,12 @@ export class PermissionUtils {
 			}
 
 			// VIEW_CHANNEL - Needed to view the channel
+			// SEND_MESSAGES_IN_THREADS - Needed to send messages in threads
 			// CREATE_PUBLIC_THREADS - Needed to create public threads
 			// MANAGE_THREADS - Needed to rename, delete, archive, unarchive, slow mode threads
 			return channelPerms.has([
 				PermissionFlagsBits.ViewChannel,
+				PermissionFlagsBits.SendMessagesInThreads,
 				PermissionFlagsBits.CreatePublicThreads,
 				...(manageThreads ? [PermissionFlagsBits.ManageThreads] : []),
 			]);

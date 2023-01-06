@@ -1,12 +1,12 @@
 import {
-	SelectMenuInteraction,
 	Message,
 	ActionRowBuilder,
-	SelectMenuBuilder,
+	StringSelectMenuBuilder,
 	EmbedAuthorData,
 	EmbedBuilder,
 	SelectMenuComponentOptionData,
 	EmbedFooterData,
+	StringSelectMenuInteraction,
 } from 'discord.js';
 import { CommandType } from '../commands/command.js';
 import { EventData } from '../models/internal-models.js';
@@ -83,7 +83,7 @@ export class HelpSelectMenu implements SelectMenu {
 	public requireGuild = false;
 	public requireEmbedAuthorTag = false;
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async execute(intr: SelectMenuInteraction, _msg: Message, _data: EventData): Promise<void> {
+	public async execute(intr: StringSelectMenuInteraction, _msg: Message, _data: EventData): Promise<void> {
 		if (intr.customId === this.ids[0]) {
 			const categorySelectMenuValue = intr.values.toString();
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -96,18 +96,18 @@ export class HelpSelectMenu implements SelectMenu {
 				.setAuthor(authorData)
 				.setTitle(getCategoryMap.categoryEmbed)
 				.setDescription(getCategoryMap.description);
-			const categorySelectMenu = new SelectMenuBuilder();
+			const categorySelectMenu = new StringSelectMenuBuilder();
 			initialCategoryMenu.map((category) =>
 				categorySelectMenu.addOptions({
 					...category,
 					default: categorySelectMenuValue === category.value ? true : false,
 				}),
 			);
-			const categoryRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+			const categoryRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
 				categorySelectMenu.setCustomId(`selectMenu_helpCMD_category_initial`),
 			);
 			const getCommands = commands.filter((command) => command.category === getCategoryMap.commandCategorySearch);
-			const commandsSelectMenu = new SelectMenuBuilder();
+			const commandsSelectMenu = new StringSelectMenuBuilder();
 			getCommands.map((command) =>
 				commandsSelectMenu.addOptions({
 					label: command.name as string,
@@ -115,7 +115,7 @@ export class HelpSelectMenu implements SelectMenu {
 					value: command.name as string,
 				}),
 			);
-			const commandRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+			const commandRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
 				commandsSelectMenu.setCustomId(categorySelectMenuValue).setPlaceholder(`Pick a command`),
 			);
 			await InteractionUtils.editReply(intr, { embeds: [embed], components: [categoryRow, commandRow] });
@@ -162,19 +162,19 @@ export class HelpSelectMenu implements SelectMenu {
 					})`,
 				)
 				.setFooter(footerData);
-			const categorySelectMenu = new SelectMenuBuilder();
+			const categorySelectMenu = new StringSelectMenuBuilder();
 			initialCategoryMenu.map((category) =>
 				categorySelectMenu.addOptions({
 					...category,
 					default: intr.customId === category.value ? true : false,
 				}),
 			);
-			const categoryRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+			const categoryRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
 				categorySelectMenu.setCustomId(`selectMenu_helpCMD_category_initial`),
 			);
 			const getCategory = categoryMap.get(intr.customId);
 			const getCommands = commands.filter((command) => command.category === getCategory?.commandCategorySearch);
-			const commandsSelectMenu = new SelectMenuBuilder();
+			const commandsSelectMenu = new StringSelectMenuBuilder();
 			getCommands.map((command) =>
 				commandsSelectMenu.addOptions({
 					label: command.name as string,
@@ -183,7 +183,7 @@ export class HelpSelectMenu implements SelectMenu {
 					default: command.name === getCommandFromSelectMenu ? true : false,
 				}),
 			);
-			const commandRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+			const commandRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
 				commandsSelectMenu.setCustomId(intr.customId),
 			);
 			await InteractionUtils.editReply(intr, { embeds: [embed], components: [categoryRow, commandRow] });
