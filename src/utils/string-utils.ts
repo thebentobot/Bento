@@ -1,3 +1,4 @@
+import { escapeMarkdown } from 'discord.js';
 import removeMarkdown from 'remove-markdown';
 
 export class StringUtils {
@@ -16,5 +17,18 @@ export class StringUtils {
 
 	public static stripMarkdown(input: string): string {
 		return removeMarkdown(input);
+	}
+
+	public static escapeMarkdown(input: string): string {
+		return (
+			escapeMarkdown(input)
+				// Unescapes custom emojis
+				// TODO: Update once discord.js update their escapeMarkdown()
+				// See https://github.com/discordjs/discord.js/issues/8943
+				.replaceAll(/<(a?):(\S+):(\d{17,20})>/g, (_match, animatedPrefix, emojiName, emojiId) => {
+					const emojiNameUnescaped = emojiName.replaceAll(/\\/g, ``);
+					return `<${animatedPrefix}:${emojiNameUnescaped}:${emojiId}>`;
+				})
+		);
 	}
 }
