@@ -5,19 +5,28 @@ import { RESTJSONErrorCodes as DiscordApiErrors } from 'discord-api-types/v9';
 import { PermissionUtils, RegexUtils } from './index.js';
 
 const FETCH_MEMBER_LIMIT = 20;
+const IGNORED_ERRORS = [
+	DiscordApiErrors.UnknownMessage,
+	DiscordApiErrors.UnknownChannel,
+	DiscordApiErrors.UnknownGuild,
+	DiscordApiErrors.UnknownMember,
+	DiscordApiErrors.UnknownUser,
+	DiscordApiErrors.UnknownInteraction,
+	DiscordApiErrors.MissingAccess,
+];
 
 export class ClientUtils {
 	public static async getUser(client: Client, discordId: string): Promise<User | void> {
-		discordId = RegexUtils.discordId(discordId);
-		if (!discordId) {
+		const getDiscordId = RegexUtils.discordId(discordId);
+		if (!getDiscordId) {
 			return;
 		}
 
 		try {
-			return await client.users.fetch(discordId);
+			return await client.users.fetch(getDiscordId);
 		} catch (error) {
 			// 10013: "Unknown User"
-			if (error instanceof DiscordAPIError && [10013].includes((Number(error.code)))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -43,7 +52,7 @@ export class ClientUtils {
 		} catch (error) {
 			// 10007: "Unknown Member"
 			// 10013: "Unknown User"
-			if (error instanceof DiscordAPIError && [10007, 10013].includes(Number(error.code))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -52,16 +61,16 @@ export class ClientUtils {
 	}
 
 	public static async getChannel(client: Client, discordId: string): Promise<Channel | null | void> {
-		discordId = RegexUtils.discordId(discordId);
-		if (!discordId) {
+		const getDiscordId = RegexUtils.discordId(discordId);
+		if (!getDiscordId) {
 			return;
 		}
 
 		try {
-			return await client.channels.fetch(discordId);
+			return await client.channels.fetch(getDiscordId);
 		} catch (error) {
 			// 10013: "Unknown Channel"
-			if (error instanceof DiscordAPIError && [10003].includes(Number(error.code))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -97,7 +106,7 @@ export class ClientUtils {
 			const search = input.toLowerCase();
 			return (await guild.roles.fetch()).find((role) => role.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownRole].includes(Number(error.code))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -123,7 +132,7 @@ export class ClientUtils {
 				.map((channel) => channel as NewsChannel | TextChannel)
 				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(Number(error.code))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
@@ -149,7 +158,7 @@ export class ClientUtils {
 				.map((channel) => channel as StageChannel | VoiceChannel)
 				.find((channel) => channel.name.toLowerCase().includes(search));
 		} catch (error) {
-			if (error instanceof DiscordAPIError && [DiscordApiErrors.UnknownChannel].includes(Number(error.code))) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;

@@ -1,4 +1,4 @@
-import { Message, SelectMenuInteraction } from 'discord.js';
+import { Message, StringSelectMenuInteraction } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventHandler } from './index.js';
@@ -15,7 +15,7 @@ export class SelectMenuHandler implements EventHandler {
 
 	constructor(private selectMenuReplies: SelectMenu[], private eventDataService: EventDataService) {}
 
-	public async process(intr: SelectMenuInteraction, msg: Message): Promise<void> {
+	public async process(intr: StringSelectMenuInteraction, msg: Message): Promise<void> {
 		// Don't respond to self, or other bots
 		if (intr.user.id === intr.client.user?.id || intr.user.bot) {
 			return;

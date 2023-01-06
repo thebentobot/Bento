@@ -72,8 +72,8 @@ export const logs = {
 		apiRequest: `An error occurred while processing a '{HTTP_METHOD}' request to '{URL}'.`,
 		apiRateLimit: `A rate limit was hit while making a request.`,
 		autocomplete: `An error occurred while processing an autocomplete interaction.`,
-		autocompleteNotFound: `[{INTERACTION_ID}] An autocomplete with the name '{OPTION_NAME}' could not be found.`,
-		autocompleteGuild: `[{INTERACTION_ID}] An error occurred while executing the '{OPTION_NAME}' for user '{USER_TAG}' ({USER_ID}) in channel '{CHANNEL_NAME}' ({CHANNEL_ID}) in guild '{GUILD_NAME}' ({GUILD_ID}).`,
-		autocompleteOther: `[{INTERACTION_ID}] An error occurred while executing the '{OPTION_NAME}' autocomplete for user '{USER_TAG}' ({USER_ID}).`,
+		autocompleteNotFound: `[{INTERACTION_ID}] An autocomplete method for the '{COMMAND_NAME}' command could not be found.`,
+		autocompleteGuild: `[{INTERACTION_ID}] An error occurred while autocompleting the '{OPTION_NAME}' option for the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}) in channel '{CHANNEL_NAME}' ({CHANNEL_ID}) in guild '{GUILD_NAME}' ({GUILD_ID}).`,
+		autocompleteOther: `[{INTERACTION_ID}] An error occurred while autocompleting the '{OPTION_NAME}' option for the '{COMMAND_NAME}' command for user '{USER_TAG}' ({USER_ID}).`,
 	},
 };

@@ -7,6 +7,8 @@ import {
 	Message,
 	GuildMember,
 	PermissionFlagsBits,
+	AutocompleteInteraction,
+	ChatInputCommandInteraction,
 } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
@@ -20,6 +22,7 @@ import { EventDataService, Logger } from '../services/index.js';
 import { prisma } from '../services/prisma.js';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils/index.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
+import { DiscordLimits } from '../constants/index.js';
 
 export class CommandHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -186,7 +189,7 @@ export class CommandHandler implements EventHandler {
 		return true;
 	}
 
-	public async processIntr(intr: CommandInteraction): Promise<void> {
+	public async processIntr(intr: CommandInteraction | AutocompleteInteraction): Promise<void> {
 		// Don't respond to self, or other bots
 		if (intr.user.id === intr.client.user?.id || intr.user.bot) {
 			return;
@@ -198,6 +201,12 @@ export class CommandHandler implements EventHandler {
 			return;
 		}
 
+		const commandParts =
+			intr instanceof ChatInputCommandInteraction || intr instanceof AutocompleteInteraction
+				? [intr.commandName, intr.options.getSubcommandGroup(false), intr.options.getSubcommand(false)].filter(Boolean)
+				: [intr.commandName];
+		const commandName = commandParts.join(` `);
+
 		// Try to find the command the user wants
 		const command = this.commands.find((command) => command.metadata?.name === intr.commandName);
 		if (!command) {
@@ -206,6 +215,47 @@ export class CommandHandler implements EventHandler {
 					.replaceAll(`{INTERACTION_ID}`, intr.id)
 					.replaceAll(`{COMMAND_NAME}`, intr.commandName),
 			);
+			return;
+		}
+
+		if (intr instanceof AutocompleteInteraction) {
+			if (!command.autocomplete) {
+				Logger.error(
+					Logs.error.autocompleteNotFound
+						.replaceAll(`{INTERACTION_ID}`, intr.id)
+						.replaceAll(`{COMMAND_NAME}`, commandName),
+				);
+				return;
+			}
+
+			try {
+				const option = intr.options.getFocused(true);
+				const choices = await command.autocomplete(intr, option);
+				await InteractionUtils.respond(intr, choices?.slice(0, DiscordLimits.CHOICES_PER_AUTOCOMPLETE));
+			} catch (error) {
+				Logger.error(
+					intr.channel instanceof TextChannel ||
+						intr.channel instanceof NewsChannel ||
+						intr.channel instanceof ThreadChannel
+						? Logs.error.autocompleteGuild
+								.replaceAll(`{INTERACTION_ID}`, intr.id)
+								.replaceAll(`{OPTION_NAME}`, commandName)
+								.replaceAll(`{COMMAND_NAME}`, commandName)
+								.replaceAll(`{USER_TAG}`, intr.user.tag)
+								.replaceAll(`{USER_ID}`, intr.user.id)
+								.replaceAll(`{CHANNEL_NAME}`, intr.channel.name)
+								.replaceAll(`{CHANNEL_ID}`, intr.channel.id)
+								.replaceAll(`{GUILD_NAME}`, intr.guild?.name as string)
+								.replaceAll(`{GUILD_ID}`, intr.guild?.id as string)
+						: Logs.error.autocompleteOther
+								.replaceAll(`{INTERACTION_ID}`, intr.id)
+								.replaceAll(`{OPTION_NAME}`, commandName)
+								.replaceAll(`{COMMAND_NAME}`, commandName)
+								.replaceAll(`{USER_TAG}`, intr.user.tag)
+								.replaceAll(`{USER_ID}`, intr.user.id),
+					error,
+				);
+			}
 			return;
 		}
 

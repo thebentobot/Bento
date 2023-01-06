@@ -1,7 +1,6 @@
 import { REST } from '@discordjs/rest';
 import { Options } from 'discord.js';
 import * as dotenv from 'dotenv';
-import { Autocomplete } from './autocompletes/autocomplete.js';
 dotenv.config();
 import { Bot } from './bot.js';
 import { Button, GfycatSearchButton, GfycatUserFeedButton } from './buttons/index.js';
@@ -38,7 +37,6 @@ import {
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
-	AutocompleteHandler,
 	CommandHandler,
 	GuildJoinHandler,
 	GuildLeaveHandler,
@@ -167,11 +165,6 @@ async function start(): Promise<void> {
 		// TODO: Add new Select Menus here
 	];
 
-	// Autocompletes
-	const autocompletes: Autocomplete[] = [
-		// TODO: Add new autocompletes here
-	];
-
 	// Reactions
 	const reactions: Reaction[] = [
 		// TODO: Add new reactions here
@@ -197,7 +190,6 @@ async function start(): Promise<void> {
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
 	const userUpdateHandler = new UserUpdateHandler();
 	const selectMenuHandler = new SelectMenuHandler(selectMenus, eventDataService);
-	const autocompleteHandler = new AutocompleteHandler(autocompletes, eventDataService);
 
 	// Jobs
 	// reminder: this is shard-level jobs. For globals check app.ts
@@ -220,7 +212,6 @@ async function start(): Promise<void> {
 		buttonHandler,
 		reactionHandler,
 		new JobService(jobs),
-		autocompleteHandler,
 		guildMemberAddHandler,
 		guildMemberRemoveHandler,
 		messageDeleteHandler,
@@ -241,6 +232,8 @@ async function start(): Promise<void> {
 		} catch (error) {
 			Logger.error(Logs.error.commandAction, error);
 		}
+		// Wait for any final logs to be written.
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		process.exit();
 	}
 
