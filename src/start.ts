@@ -65,7 +65,7 @@ import { logs as Logs } from './lang/logs.js';
 import { Reaction } from './reactions/index';
 import { HelpSelectMenu } from './selectMenu/help-selectMenu.js';
 import { SelectMenu } from './selectMenu/selectMenu.js';
-import { JobService, Logger, CommandRegistrationService } from './services/index.js';
+import { JobService, Logger, CommandRegistrationService, EventDataService } from './services/index.js';
 import { Trigger } from './triggers/index.js';
 
 export const commands: Command[] = [
@@ -102,6 +102,9 @@ export const commands: Command[] = [
 ];
 
 async function start(): Promise<void> {
+	// Services
+	const eventDataService = new EventDataService();
+
 	// Client
 	const client = new CustomClient({
 		intents: Config.client.intents,
@@ -178,18 +181,18 @@ async function start(): Promise<void> {
 	// Event handlers
 	const guildJoinHandler = new GuildJoinHandler();
 	const guildLeaveHandler = new GuildLeaveHandler();
-	const commandHandler = new CommandHandler(helpCommand, commands);
-	const triggerHandler = new TriggerHandler(triggers);
+	const commandHandler = new CommandHandler(helpCommand, commands, eventDataService);
+	const triggerHandler = new TriggerHandler(triggers, eventDataService);
 	const messageHandler = new MessageHandler(commandHandler, triggerHandler);
-	const reactionHandler = new ReactionHandler(reactions);
+	const reactionHandler = new ReactionHandler(reactions, eventDataService);
 	const guildMemberAddHandler = new GuildMemberAddHandler();
 	const guildMemberRemoveHandler = new GuildMemberRemoveHandler();
-	const buttonHandler = new ButtonHandler(buttons);
+	const buttonHandler = new ButtonHandler(buttons, eventDataService);
 	const messageDeleteHandler = new MessageDeleteHandler();
 	const messageUpdateHandler = new MessageUpdateHandler();
 	const guildMemberUpdateHandler = new GuildMemberUpdateHandler();
 	const userUpdateHandler = new UserUpdateHandler();
-	const selectMenuHandler = new SelectMenuHandler(selectMenus);
+	const selectMenuHandler = new SelectMenuHandler(selectMenus, eventDataService);
 
 	// Jobs
 	// reminder: this is shard-level jobs. For globals check app.ts
@@ -232,6 +235,8 @@ async function start(): Promise<void> {
 		} catch (error) {
 			Logger.error(Logs.error.commandAction, error);
 		}
+		// Wait for any final logs to be written.
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		process.exit();
 	}
 

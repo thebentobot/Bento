@@ -1,4 +1,4 @@
-import { ParseUtils } from "./parse-utils.js";
+import { ParseUtils } from './parse-utils.js';
 
 export class RegexUtils {
 	public static regex(input: string): RegExp | void {
@@ -11,8 +11,8 @@ export class RegexUtils {
 		return new RegExp(match[1], match[2]);
 	}
 
-	public static discordId(input: string): string {
-		return input.match(/\b\d{17,20}\b/)?.[0] as string;
+	public static discordId(input: string) {
+		return input?.match(/\b\d{17,20}\b/)?.[0];
 	}
 
 	public static tag(input: string): { username: string; tag: string; discriminator: string } | void {
@@ -45,5 +45,9 @@ export class RegexUtils {
 		} else {
 			return;
 		}
+	}
+
+	public static escapeRegex(input: string): string {
+		return input?.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, `\\$&`);
 	}
 }

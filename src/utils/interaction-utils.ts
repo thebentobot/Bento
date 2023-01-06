@@ -9,6 +9,8 @@ import {
 	EmbedBuilder,
 	BaseMessageOptions,
 	InteractionResponse,
+	ApplicationCommandOptionChoiceData,
+	AutocompleteInteraction,
 } from 'discord.js';
 
 import { MessageUtils } from './index.js';
@@ -75,6 +77,21 @@ export class InteractionUtils {
 			}
 		} catch (error) {
 			if (error instanceof DiscordAPIError && IGNORED_ERRORS.includes(Number(error.code))) {
+				return;
+			} else {
+				throw error;
+			}
+		}
+	}
+
+	public static async respond(
+		intr: AutocompleteInteraction,
+		choices: ApplicationCommandOptionChoiceData[] = [],
+	): Promise<void> {
+		try {
+			return await intr.respond(choices);
+		} catch (error) {
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
 				return;
 			} else {
 				throw error;
