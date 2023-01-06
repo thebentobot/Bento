@@ -34,6 +34,7 @@ import {
 	BentoCommand,
 	ProfileCommand,
 	LastfmCommand,
+	RemindCommand,
 } from './commands/index.js';
 import { config as Config } from './config/config.js';
 import {
@@ -96,6 +97,7 @@ export const commands: Command[] = [
 	new BentoCommand(),
 	new ProfileCommand(),
 	new LastfmCommand(),
+	new RemindCommand(),
 	// TODO: Add new commands here
 ];
 
@@ -142,6 +144,7 @@ async function start(): Promise<void> {
 		new BentoCommand(),
 		new ProfileCommand(),
 		new LastfmCommand(),
+		new RemindCommand(),
 		// TODO: Add new commands here
 	];
 	//.sort((a, b) => (a.metadata?.name > b.metadata?.name ? 1 : -1));

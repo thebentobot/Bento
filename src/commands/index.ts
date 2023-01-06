@@ -34,3 +34,4 @@ export { BannerCommand } from './info/banner-command.js';
 // user
 export { BentoCommand } from './user/bento-command.js';
 export { ProfileCommand } from './user/profile-command.js';
+export { RemindCommand } from './user/remind-command.js';
