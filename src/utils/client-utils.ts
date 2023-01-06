@@ -34,6 +34,19 @@ export class ClientUtils {
 		}
 	}
 
+	public static async getGuild(client: Client, discordGuildId: string): Promise<Guild | void> {
+		try {
+			return await client.guilds.fetch(discordGuildId);
+		} catch (error) {
+			// 10013: "Unknown 10004"
+			if (error instanceof DiscordAPIError && typeof error.code === `number` && IGNORED_ERRORS.includes(error.code)) {
+				return;
+			} else {
+				throw error;
+			}
+		}
+	}
+
 	public static async findMember(guild: Guild, input: string): Promise<GuildMember | void> {
 		try {
 			const discordId = RegexUtils.discordId(input);

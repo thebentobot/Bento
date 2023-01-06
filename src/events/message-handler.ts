@@ -4,7 +4,7 @@ import { ChannelType, Guild, Message, MessageType, PermissionFlagsBits } from 'd
 import { CommandHandler, EventHandler, TriggerHandler } from './index.js';
 import { GuildRepo } from '../services/database/repos/guild-repo.js';
 import { prisma } from '../services/prisma.js';
-import { MessageUtils, notificationUtils } from '../utils/index.js';
+import { MessageUtils } from '../utils/index.js';
 import { DateTime } from 'luxon';
 
 const hasEmoteRegex = /<a?:.+:\d+>/gm;
