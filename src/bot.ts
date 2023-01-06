@@ -13,9 +13,10 @@ import {
 	ButtonInteraction,
 	CommandInteraction,
 	PartialMessage,
-	SelectMenuInteraction,
 	Events,
 	RESTEvents,
+	AutocompleteInteraction,
+	StringSelectMenuInteraction,
 } from 'discord.js';
 import { config as Config } from './config/config.js';
 import { debug as Debug } from './config/debug.js';
@@ -153,13 +154,11 @@ export class Bot {
 		if (!this.ready || (Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(msg.author.id))) {
 			return;
 		}
-
-		msg = (await PartialUtils.fillMessage(msg)) as Message;
-		if (!msg) {
-			return;
-		}
-
 		try {
+			msg = (await PartialUtils.fillMessage(msg)) as Message;
+			if (!msg) {
+				return;
+			}
 			await this.messageHandler.process(msg);
 		} catch (error) {
 			Logger.error(Logs.error.message, error);
@@ -171,7 +170,7 @@ export class Bot {
 			return;
 		}
 
-		if (intr instanceof CommandInteraction) {
+		if (intr instanceof CommandInteraction || intr instanceof AutocompleteInteraction) {
 			try {
 				await this.commandHandler.processIntr(intr);
 			} catch (error) {
@@ -183,7 +182,7 @@ export class Bot {
 			} catch (error) {
 				Logger.error(Logs.error.button, error);
 			}
-		} else if (intr instanceof SelectMenuInteraction) {
+		} else if (intr instanceof StringSelectMenuInteraction) {
 			try {
 				await this.SelectMenuHandler.process(intr, intr.message as Message);
 			} catch (error) {
@@ -199,18 +198,15 @@ export class Bot {
 		if (!this.ready || (Debug.dummyMode.enabled && !Debug.dummyMode.whitelist.includes(reactor.id))) {
 			return;
 		}
-
-		msgReaction = (await PartialUtils.fillReaction(msgReaction)) as MessageReaction;
-		if (!msgReaction) {
-			return;
-		}
-
-		reactor = (await PartialUtils.fillUser(reactor)) as User;
-		if (!reactor) {
-			return;
-		}
-
 		try {
+			msgReaction = (await PartialUtils.fillReaction(msgReaction)) as MessageReaction;
+			if (!msgReaction) {
+				return;
+			}
+			reactor = (await PartialUtils.fillUser(reactor)) as User;
+			if (!reactor) {
+				return;
+			}
 			await this.reactionHandler.process(msgReaction, msgReaction.message as Message, reactor);
 		} catch (error) {
 			Logger.error(Logs.error.reaction, error);

@@ -6,6 +6,7 @@ import { Button, ButtonDeferType } from '../buttons/index.js';
 import { config as Config } from '../config/config.js';
 import { EventData } from '../models/internal-models.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
+import { EventDataService } from '../services/index.js';
 
 export class ButtonHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -13,7 +14,7 @@ export class ButtonHandler implements EventHandler {
 		Config.rateLimiting.buttons.interval * 1000,
 	);
 
-	constructor(private buttons: Button[]) {}
+	constructor(private buttons: Button[], private eventDataService: EventDataService) {}
 
 	public async process(intr: ButtonInteraction, msg: Message): Promise<void> {
 		// Don't respond to self, or other bots
@@ -45,18 +46,22 @@ export class ButtonHandler implements EventHandler {
 		// Defer interaction
 		// NOTE: Anything after this point we should be responding to the interaction
 		switch (button.deferType) {
-		case ButtonDeferType.REPLY: {
-			await InteractionUtils.deferReply(intr);
-			break;
-		}
-		case ButtonDeferType.UPDATE: {
-			await InteractionUtils.deferUpdate(intr);
-			break;
-		}
+			case ButtonDeferType.REPLY: {
+				await InteractionUtils.deferReply(intr);
+				break;
+			}
+			case ButtonDeferType.UPDATE: {
+				await InteractionUtils.deferUpdate(intr);
+				break;
+			}
 		}
 
 		// TODO: Get data from database
-		const data = new EventData();
+		const data = await this.eventDataService.create({
+			user: msg.author,
+			channel: msg.channel,
+			guild: msg.guild !== null ? msg.guild : undefined,
+		});
 
 		// Execute the button
 		await button.execute(intr, msg, data);

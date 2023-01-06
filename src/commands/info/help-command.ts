@@ -5,7 +5,7 @@ import {
 	Message,
 	ActionRowBuilder,
 	EmbedBuilder,
-	SelectMenuBuilder,
+	StringSelectMenuBuilder,
 	PermissionsString,
 } from 'discord.js';
 import { CommandHandler } from '../../events/command-handler.js';
@@ -65,8 +65,8 @@ export class HelpCommand implements Command {
 			.setTitle(`Let me help you!`)
 			.setDescription(`Pick a command category and command!`);
 
-		const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
-			new SelectMenuBuilder()
+		const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+			new StringSelectMenuBuilder()
 				.setCustomId(`selectMenu_helpCMD_category_initial`)
 				.setPlaceholder(`Pick a command category`)
 				.addOptions([

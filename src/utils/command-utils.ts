@@ -10,7 +10,7 @@ import {
 import { Command } from '../commands/index.js';
 import { config as Config } from '../config/config.js';
 import { debug as Debug } from '../config/debug.js';
-import { Permission } from '../models/enums/index.js';
+import { Permission } from '../models/enum-helpers/index.js';
 import { EventData } from '../models/internal-models.js';
 import { InteractionUtils } from './interaction-utils.js';
 
