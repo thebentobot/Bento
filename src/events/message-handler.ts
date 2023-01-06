@@ -1,14 +1,17 @@
 import { guildMember, user } from '@prisma/client';
-import { ChannelType, Message, MessageType, PermissionFlagsBits } from 'discord.js';
+import { ChannelType, Guild, Message, MessageType, PermissionFlagsBits } from 'discord.js';
 
 import { CommandHandler, EventHandler, TriggerHandler } from './index.js';
 import { GuildRepo } from '../services/database/repos/guild-repo.js';
 import { prisma } from '../services/prisma.js';
 import { MessageUtils, notificationUtils } from '../utils/index.js';
+import { DateTime } from 'luxon';
 
 const hasEmoteRegex = /<a?:.+:\d+>/gm;
 const emoteRegex = /<:.+:(\d+)>/gm;
 const animatedEmoteRegex = /<a:.+:(\d+)>/gm;
+
+const guildMap = new Map<string, number>();
 
 export class MessageHandler implements EventHandler {
 	constructor(private commandHandler: CommandHandler, private triggerHandler: TriggerHandler) {}
@@ -23,6 +26,19 @@ export class MessageHandler implements EventHandler {
 		// Don't respond to DM's
 		if (msg.channel.type === ChannelType.DM) {
 			return;
+		}
+
+		if (msg.guild) {
+			const getGuildMapTimeValue = guildMap.get(msg.guild.id);
+			if (!getGuildMapTimeValue) {
+				this.updateGuild(msg.guild);
+			} else {
+				// eslint-disable-next-line no-lonely-if
+				if (DateTime.fromMillis(getGuildMapTimeValue).diffNow().days > 1) {
+					guildMap.delete(msg.guild.id);
+					this.updateGuild(msg.guild);
+				}
+			}
 		}
 
 		// find user and check if they're saved in the DB
@@ -152,5 +168,24 @@ export class MessageHandler implements EventHandler {
 
 		// Process trigger
 		await this.triggerHandler.process(msg);
+	}
+
+	private async updateGuild(guild: Guild): Promise<void> {
+		await prisma.guild.update({
+			where: {
+				guildID: BigInt(guild.id),
+			},
+			data: {
+				guildName: guild.name,
+				icon: guild.iconURL({
+					extension: `webp`,
+					forceStatic: false,
+					size: 1024,
+				}),
+				memberCount: guild.memberCount,
+			},
+		});
+		guildMap.set(guild.id, DateTime.now().toMillis());
+		return;
 	}
 }
