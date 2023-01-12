@@ -75,7 +75,7 @@
 		"luxon": "^3.2.1",
 		"naughty-words": "^1.2.0",
 		"node-fetch": "^3.3.0",
-		"node-schedule": "^2.1.0",
+		"node-schedule": "^2.1.1",
 		"node-vibrant": "^3.1.6",
 		"pino": "^8.8.0",
 		"pino-pretty": "^9.1.1",
