@@ -89,7 +89,7 @@ export const config: IConfig = {
 	client: {
 		id: process.env.botId as string,
 		token: process.env.token as string,
-		intents: [`Guilds`, `GuildMessages`, `GuildMessageReactions`, `DirectMessages`, `DirectMessageReactions`],
+		intents: [`Guilds`, `GuildMessages`, `GuildMessageReactions`, `DirectMessages`, `DirectMessageReactions`, `GuildMembers`],
 		partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 		caches: {
 			BaseGuildEmojiManager: 0,
