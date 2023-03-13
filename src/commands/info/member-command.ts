@@ -54,7 +54,7 @@ export class MemberCommand implements Command {
 			};
 			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
-				.setColor(`#${await stylingUtils.urlToColours(imageURLColour)}`)
+				.setColor(await stylingUtils.urlToColours(imageURLColour))
 				.setTitle(`Profile for ${guildMember.displayName}`)
 				.setThumbnail(guildMember.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
 				.setTimestamp()
@@ -63,9 +63,10 @@ export class MemberCommand implements Command {
 						name: `Nickname on the server`,
 						value: guildMember.nickname !== null ? guildMember.nickname : guildMember.displayName,
 					},
-					{ 
-						name: `User ID`, 
-						value: guildMember.user.id },
+					{
+						name: `User ID`,
+						value: guildMember.user.id,
+					},
 					{
 						name: `Account created on`,
 						value: `<t:${Math.round(guildMember.user.createdTimestamp / 1000)}:F>`,
@@ -75,9 +76,9 @@ export class MemberCommand implements Command {
 						value: `<t:${Math.round((guildMember.joinedTimestamp as number) / 1000)}:F>`,
 						inline: true,
 					},
-					{ 
-						name: `Highest role`, 
-						value: `${guildMember.roles.highest}` 
+					{
+						name: `Highest role`,
+						value: `${guildMember.roles.highest}`,
 					},
 					{
 						name: `All roles`,

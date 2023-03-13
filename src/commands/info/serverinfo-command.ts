@@ -22,16 +22,16 @@ export class ServerInfoCommand implements Command {
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		const embed = new EmbedBuilder()
 			.setTitle(msg.guild!.name)
-			.setColor(`#${await stylingUtils.urlToColours(msg.guild!.iconURL({ extension: `png` }) as string)}`)
+			.setColor(await stylingUtils.urlToColours(msg.guild!.iconURL({ extension: `png` })))
 			.setThumbnail(msg.guild!.iconURL({ forceStatic: false, extension: `png`, size: 1024 }) as string)
 			.addFields(
 				{
 					name: `Server ID`,
-					value: msg.guild!.id
+					value: msg.guild!.id,
 				},
 				{
 					name: `Created at`,
-					value: `<t:${Math.round(msg.guild!.createdTimestamp / 1000)}:F>`
+					value: `<t:${Math.round(msg.guild!.createdTimestamp / 1000)}:F>`,
 				},
 				{
 					name: `Server owner`,
@@ -41,16 +41,16 @@ export class ServerInfoCommand implements Command {
 				},
 				{
 					name: `Total members`,
-					value: `${msg.guild!.memberCount}`
+					value: `${msg.guild!.memberCount}`,
 				},
 				{
 					name: `Server boost level`,
-					value: msg.guild!.premiumTier.toString()
+					value: msg.guild!.premiumTier.toString(),
 				},
 				{
 					name: `Server boosters`,
 					value: `${msg.guild!.premiumSubscriptionCount}`,
-					inline: true
+					inline: true,
 				},
 				{
 					name: `Text channels | Voice channels`,
@@ -60,7 +60,7 @@ export class ServerInfoCommand implements Command {
 				},
 				{
 					name: `Amount of roles`,
-					value: `${msg.guild!.roles.cache.size}`
+					value: `${msg.guild!.roles.cache.size}`,
 				},
 				{
 					name: `Emotes`,
@@ -71,7 +71,7 @@ export class ServerInfoCommand implements Command {
 				},
 				{
 					name: `Features`,
-					value: `\`${msg.guild!.features.join(` `)}\``
+					value: `\`${msg.guild!.features.join(` `)}\``,
 				},
 			);
 		await MessageUtils.send(msg.channel, embed);

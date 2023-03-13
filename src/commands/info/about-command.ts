@@ -48,7 +48,7 @@ export class AboutCommand implements Command {
 		};
 
 		const embed = new EmbedBuilder()
-			.setColor(`#${await stylingUtils.urlToColours(client.user?.avatarURL({ extension: `png` }) as string)}`)
+			.setColor(await stylingUtils.urlToColours(client.user?.avatarURL({ extension: `png` })))
 			.setTitle(`Help`)
 			.setThumbnail(client.user?.avatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
 			.setDescription(`For a full list of commands, please use the \`help\` command`)

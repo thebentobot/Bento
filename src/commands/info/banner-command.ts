@@ -101,12 +101,18 @@ export class BannerCommand implements Command {
 	*/
 
 		if (imageURL === undefined) {
-			await InteractionUtils.send(intr, new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`This user does not have a banner`));
+			await InteractionUtils.send(
+				intr,
+				new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`This user does not have a banner`),
+			);
 			return;
 		} else {
 			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
-				.setColor(`#${await stylingUtils.urlToColours(imageURLColour as string)}`)
+				.setColor(await stylingUtils.urlToColours(imageURLColour))
 				.setImage(imageURL as string);
 			await InteractionUtils.send(intr, embed);
 			return;
@@ -121,7 +127,7 @@ export class BannerCommand implements Command {
 			if (user.bannerURL()) {
 				const embeds: EmbedBuilder[] = [];
 				const embed = new EmbedBuilder()
-					.setColor(`#${await stylingUtils.urlToColours(user.bannerURL({ extension: `png` }) as string)}`)
+					.setColor(await stylingUtils.urlToColours(user.bannerURL({ extension: `png` })))
 					.setTitle(`${user.tag}'s banner`)
 					.setImage(
 						user.bannerURL({
@@ -135,7 +141,7 @@ export class BannerCommand implements Command {
 				/*
 				if (msg.member?.bannerURL()) {
 					const embed = new MessageEmbed()
-						.setColor(`#${await stylingUtils.urlToColours(msg.member.avatarURL({ extension: `png` }) as string)}`)
+						.setColor(await stylingUtils.urlToColours(msg.member.avatarURL({ extension: `png` })))
 						.setTitle(`${msg.member.displayName}'s avatar`)
 						.setImage(
 						msg.member.avatarURL({
@@ -162,7 +168,7 @@ export class BannerCommand implements Command {
 					if (user.bannerURL()) {
 						const embeds: EmbedBuilder[] = [];
 						const embed = new EmbedBuilder()
-							.setColor(`#${await stylingUtils.urlToColours(user.bannerURL({ extension: `png` }) as string)}`)
+							.setColor(await stylingUtils.urlToColours(user.bannerURL({ extension: `png` })))
 							.setTitle(`${user.tag}'s avatar`)
 							.setImage(
 								user.bannerURL({
@@ -177,7 +183,7 @@ export class BannerCommand implements Command {
 						const guildMember = await msg.guild?.members.fetch(user);
 						if (guildMember) {
 							const embed = new MessageEmbed()
-								.setColor(`#${await stylingUtils.urlToColours(guildMember.avatarURL({ extension: `png` }) as string)}`)
+								.setColor(await stylingUtils.urlToColours(guildMember.avatarURL({ extension: `png` })))
 								.setTitle(`${guildMember.displayName}'s avatar`)
 								.setImage(
 								guildMember.avatarURL({

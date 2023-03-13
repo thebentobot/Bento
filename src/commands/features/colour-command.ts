@@ -31,9 +31,9 @@ export class ColourCommand implements Command {
 				name: `input`,
 				description: `Hexcode e.g. "${botColours.error}" or RGB e.g. "255, 0, 0"`,
 				type: ApplicationCommandOptionType.String.valueOf(),
-				required: true
+				required: true,
 			},
-		]
+		],
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,10 +42,13 @@ export class ColourCommand implements Command {
 		const command = await this.colourCommand((intr.options.get(`input`, true).value! as string).trim());
 		if (typeof command.image === `undefined`) {
 			await InteractionUtils.send(intr, command.message);
-		    return;
+			return;
 		} else {
-			await InteractionUtils.send(intr, {embeds: [command.message], files: [{name: `${command.fileName}.png`, attachment: command.image}]});
-		    return;
+			await InteractionUtils.send(intr, {
+				embeds: [command.message],
+				files: [{ name: `${command.fileName}.png`, attachment: command.image }],
+			});
+			return;
 		}
 	}
 
@@ -54,21 +57,29 @@ export class ColourCommand implements Command {
 		const command = await this.colourCommand(args.join(` `).trim());
 		if (typeof command.image === `undefined`) {
 			await MessageUtils.send(msg.channel, command.message);
-		    return;
+			return;
 		} else {
-			await MessageUtils.send(msg.channel, {embeds: [command.message], files: [{name: `${command.fileName}.png`, attachment: command.image}]});
-		    return;
+			await MessageUtils.send(msg.channel, {
+				embeds: [command.message],
+				files: [{ name: `${command.fileName}.png`, attachment: command.image }],
+			});
+			return;
 		}
 	}
 
-	private async colourCommand(colour: string): Promise<{message: EmbedBuilder, image?: Buffer, fileName?: string}> {
+	private async colourCommand(colour: string): Promise<{ message: EmbedBuilder; image?: Buffer; fileName?: string }> {
 		let hexColour: string | undefined;
 		let rgbColour: number[] | undefined;
 		const hex = colour.match(/^(?:#|0x)([0-9a-f]{6})$/i);
 		const rgb = colour.match(/(^\d{1,3})\s*,?\s*(\d{1,3})\s*,?\s*(\d{1,3}$)/i);
-		
+
 		if (!rgb && !hex) {
-			return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid colour hexcode or RGB values.`)};
+			return {
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Please provide a valid colour hexcode or RGB values.`),
+			};
 		}
 
 		if (hex) {
@@ -84,12 +95,22 @@ export class ColourCommand implements Command {
 
 		const hexValue = parseInt(hexColour as string, 16);
 		if (hexValue < 0 || hexValue > 16777215) {
-			return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid hexcode colour`)};
+			return {
+				message: new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`Please provide a valid hexcode colour`),
+			};
 		}
 
 		for (const component of rgbColour as number[]) {
 			if (component < 0 || component > 255) {
-				return {message: new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Please provide a valid RGB value.`)};
+				return {
+					message: new EmbedBuilder()
+						.setTitle(`Error`)
+						.setColor(botColours.error)
+						.setDescription(`Please provide a valid RGB value.`),
+				};
 			}
 		}
 
@@ -110,50 +131,50 @@ export class ColourCommand implements Command {
 			},
 		});
 
-		return {message: embed, image: image, fileName: hexColour as string};
+		return { message: embed, image: image, fileName: hexColour as string };
 	}
 	private rgbToHex(colour: number): string {
 		const hex: string = colour.toString(16);
 		return hex.length === 1 ? `0` + hex : hex;
 	}
-    
+
 	private rgbToHsv([red, green, blue]: number[]): number[] {
 		red /= 255;
 		green /= 255;
 		blue /= 255;
-    
+
 		const max = Math.max(red, green, blue);
 		const min = Math.min(red, green, blue);
 		let hue: number, sat: number, val: number;
 		// eslint-disable-next-line prefer-const
 		val = Math.round(max * 100);
-    
+
 		const diff = max - min;
 		// eslint-disable-next-line prefer-const
 		sat = Math.round((max === 0 ? 0 : diff / max) * 100);
-    
+
 		if (max === min) {
 			hue = 0;
 		} else {
 			switch (max) {
-			case red:
-				hue = (green - blue) / diff + 0;
-				break;
-			case green:
-				hue = (blue - red) / diff + 2;
-				break;
-			case blue:
-				hue = (red - green) / diff + 4;
-				break;
+				case red:
+					hue = (green - blue) / diff + 0;
+					break;
+				case green:
+					hue = (blue - red) / diff + 2;
+					break;
+				case blue:
+					hue = (red - green) / diff + 4;
+					break;
 			}
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            hue! /= 6;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            if (hue! < 0) hue! += 1;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            hue = Math.round(hue! * 360);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			hue! /= 6;
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			if (hue! < 0) hue! += 1;
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			hue = Math.round(hue! * 360);
 		}
-    
+
 		return [hue, sat, val];
 	}
 }

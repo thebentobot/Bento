@@ -62,7 +62,7 @@ export class UserCommand implements Command {
 			};
 			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
-				.setColor(`#${await stylingUtils.urlToColours(imageURLColour)}`)
+				.setColor(await stylingUtils.urlToColours(imageURLColour))
 				.setTitle(`Profile for ${user.tag}`)
 				.setThumbnail(
 					user.avatarURL() !== null
@@ -75,17 +75,17 @@ export class UserCommand implements Command {
 						name: `Username`,
 						value: user.tag,
 					},
-					{ 
-						name: `User ID`, 
-						value: user.id 
+					{
+						name: `User ID`,
+						value: user.id,
 					},
 					{
 						name: `Account created on`,
 						value: `<t:${Math.round(user.createdTimestamp / 1000)}:F>`,
 					},
-					{ 
-						name: `Accent Hex Colour`, 
-						value: `${user.hexAccentColor ? user.hexAccentColor : `Not set`}` 
+					{
+						name: `Accent Hex Colour`,
+						value: `${user.hexAccentColor ? user.hexAccentColor : `Not set`}`,
 					},
 				);
 			await InteractionUtils.send(intr, embed);

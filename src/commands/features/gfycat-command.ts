@@ -997,7 +997,7 @@ export class GfycatCommand implements Command {
 		};
 		const embed = new EmbedBuilder({ thumbnail: { url: `attachment://${response?.data.username}_gfypfp.png` } })
 			.setAuthor(userAuthorData)
-			.setColor(`#${await stylingUtils.urlToColours(response?.data.profileImageUrl)}`)
+			.setColor(await stylingUtils.urlToColours(response?.data.profileImageUrl))
 			.setTitle(response?.data.name)
 			.setDescription(
 				`${response.data.description ? `${response?.data.description}\n\n` : ``}Total Views: ${stylingUtils.nFormatter(

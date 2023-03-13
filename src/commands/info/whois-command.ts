@@ -22,7 +22,7 @@ export class WhoIsCommand implements Command {
 	public async executeMsgCmd(msg: Message<boolean>, args: string[]): Promise<void> {
 		if (!args.length) {
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(msg.author.displayAvatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(msg.author.displayAvatarURL({ extension: `png` })))
 				.setTitle(`Profile for ${msg.author.tag}`)
 				.setThumbnail(msg.author.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
 				.setTimestamp()
@@ -32,9 +32,9 @@ export class WhoIsCommand implements Command {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
 					},
-					{ 
-						name: `User ID`, 
-						value: msg.author.id 
+					{
+						name: `User ID`,
+						value: msg.author.id,
 					},
 					{
 						name: `Account created on`,
@@ -46,10 +46,10 @@ export class WhoIsCommand implements Command {
 						value: `<t:${Math.round((msg.member!.joinedTimestamp as number) / 1000)}:F>`,
 						inline: true,
 					},
-					{ 
+					{
 						name: `Highest role`,
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						value: `${msg.member!.roles.highest}` 
+						value: `${msg.member!.roles.highest}`,
 					},
 					{
 						name: `All roles`,
@@ -66,7 +66,7 @@ export class WhoIsCommand implements Command {
 				if (msg.guild?.members.cache.has(userID as string)) {
 					const user = msg.guild.members.cache.get(userID as string);
 					const embed = new EmbedBuilder()
-						.setColor(`#${await stylingUtils.urlToColours(user?.displayAvatarURL({ extension: `png` }) as string)}`)
+						.setColor(await stylingUtils.urlToColours(user?.displayAvatarURL({ extension: `png` })))
 						.setTitle(`Profile for ${user?.displayName}`)
 						.setThumbnail(user?.displayAvatarURL({ extension: `png`, forceStatic: false }) as string)
 						.addFields(
@@ -75,9 +75,9 @@ export class WhoIsCommand implements Command {
 								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 								value: msg.member!.nickname !== null ? msg.member!.nickname : msg.member!.displayName,
 							},
-							{ 
-								name: `User ID`, 
-								value: msg.author.id 
+							{
+								name: `User ID`,
+								value: msg.author.id,
 							},
 							{
 								name: `Account created on`,
@@ -90,10 +90,10 @@ export class WhoIsCommand implements Command {
 								inline: true,
 							},
 							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-							{ 
-								name: `Highest role`, 
+							{
+								name: `Highest role`,
 								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-								value: `${msg.member!.roles.highest}` 
+								value: `${msg.member!.roles.highest}`,
 							},
 							{
 								name: `All roles`,
@@ -109,14 +109,16 @@ export class WhoIsCommand implements Command {
 						const globalUser = (await ClientUtils.getUser(msg.client, userID)) as User;
 						if (globalUser.bot === true) return;
 						const embed = new EmbedBuilder()
-							.setColor(`#${await stylingUtils.urlToColours(globalUser.displayAvatarURL({ extension: `png` }) as string)}`)
+							.setColor(await stylingUtils.urlToColours(globalUser.displayAvatarURL({ extension: `png` })))
 							.setTitle(`Profile for ${globalUser.tag}`)
-							.setThumbnail(globalUser?.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string)
+							.setThumbnail(
+								globalUser?.displayAvatarURL({ extension: `png`, forceStatic: false, size: 1024 }) as string,
+							)
 							.setTimestamp()
 							.addFields(
-								{ 
-									name: `User ID`, 
-									value: globalUser.id 
+								{
+									name: `User ID`,
+									value: globalUser.id,
 								},
 								{
 									name: `Account created on`,

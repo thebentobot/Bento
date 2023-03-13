@@ -50,7 +50,7 @@ export class RollCommand implements Command {
 			iconURL: intr.client.user?.avatarURL({ extension: `png` }) as string,
 		};
 		const embed = new EmbedBuilder()
-			.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
+			.setColor(await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` })))
 			.setAuthor(authorData)
 			.setTitle(`The rolled number is ${command}`);
 		await InteractionUtils.send(intr, embed);
