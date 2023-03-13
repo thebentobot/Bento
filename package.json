@@ -74,7 +74,7 @@
 		"filesize": "^10.0.6",
 		"luxon": "^3.3.0",
 		"naughty-words": "^1.2.0",
-		"node-fetch": "^3.3.0",
+		"node-fetch": "^3.3.1",
 		"node-schedule": "^2.1.1",
 		"node-vibrant": "^3.1.6",
 		"pino": "^8.11.0",
