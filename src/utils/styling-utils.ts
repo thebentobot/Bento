@@ -4,12 +4,16 @@ import { HexColorString } from 'discord.js';
 import Vibrant from 'node-vibrant';
 
 export class stylingUtils {
-	public static async urlToColours(url: string): Promise<number[]> {
-		let colours: number[];
+	public static async urlToColours(url?: string | null): Promise<HexColorString> {
+		let colours: HexColorString;
 		try {
-			colours = (await Vibrant.from(url).getPalette()).Vibrant?.rgb as number[];
+			if (typeof url === `string`) {
+				colours = (await Vibrant.from(url).getPalette()).Vibrant?.hex as HexColorString;
+			} else {
+				colours = botColours.bento;
+			}
 		} catch (error) {
-			colours = [252, 211, 77];
+			colours = botColours.bento;
 		}
 		return colours;
 	}

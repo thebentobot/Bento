@@ -1,4 +1,12 @@
-import { CommandInteraction, EmbedAuthorData, EmbedBuilder, GuildMember, HexColorString, Message, PermissionsString } from 'discord.js';
+import {
+	CommandInteraction,
+	EmbedAuthorData,
+	EmbedBuilder,
+	GuildMember,
+	HexColorString,
+	Message,
+	PermissionsString,
+} from 'discord.js';
 import { EventData } from '../../models/internal-models.js';
 import { ClientUtils, MessageUtils } from '../../utils/index.js';
 import { Command, CommandDeferAccessType, CommandType } from '../command.js';
@@ -27,7 +35,7 @@ const horoscopes = [
 	`Sagittarius`,
 	`Capricorn`,
 	`Aquarius`,
-	`Pisces`
+	`Pisces`,
 ];
 
 export class HoroscopeCommand implements Command {
@@ -61,55 +69,55 @@ export class HoroscopeCommand implements Command {
 						choices: [
 							{
 								name: `Capricorn`,
-								value: `Capricorn`
+								value: `Capricorn`,
 							},
 							{
 								name: `Aquarius`,
-								value: `Aquarius`
+								value: `Aquarius`,
 							},
 							{
 								name: `Pisces`,
-								value: `Pisces`
+								value: `Pisces`,
 							},
 							{
 								name: `Aries`,
-								value: `Aries`
+								value: `Aries`,
 							},
 							{
 								name: `Taurus`,
-								value: `Taurus`
+								value: `Taurus`,
 							},
 							{
 								name: `Gemini`,
-								value: `Gemini`
+								value: `Gemini`,
 							},
 							{
 								name: `Cancer`,
-								value: `Cancer`
+								value: `Cancer`,
 							},
 							{
 								name: `Leo`,
-								value: `Leo`
+								value: `Leo`,
 							},
 							{
 								name: `Virgo`,
-								value: `Virgo`
+								value: `Virgo`,
 							},
 							{
 								name: `Libra`,
-								value: `Libra`
+								value: `Libra`,
 							},
 							{
 								name: `Scorpio`,
-								value: `Scorpio`
+								value: `Scorpio`,
 							},
 							{
 								name: `Sagittarius`,
-								value: `Sagittarius`
+								value: `Sagittarius`,
 							},
-						]
-					}
-				]
+						],
+					},
+				],
 			},
 			{
 				name: `tomorrow`,
@@ -123,55 +131,55 @@ export class HoroscopeCommand implements Command {
 						choices: [
 							{
 								name: `Capricorn`,
-								value: `Capricorn`
+								value: `Capricorn`,
 							},
 							{
 								name: `Aquarius`,
-								value: `Aquarius`
+								value: `Aquarius`,
 							},
 							{
 								name: `Pisces`,
-								value: `Pisces`
+								value: `Pisces`,
 							},
 							{
 								name: `Aries`,
-								value: `Aries`
+								value: `Aries`,
 							},
 							{
 								name: `Taurus`,
-								value: `Taurus`
+								value: `Taurus`,
 							},
 							{
 								name: `Gemini`,
-								value: `Gemini`
+								value: `Gemini`,
 							},
 							{
 								name: `Cancer`,
-								value: `Cancer`
+								value: `Cancer`,
 							},
 							{
 								name: `Leo`,
-								value: `Leo`
+								value: `Leo`,
 							},
 							{
 								name: `Virgo`,
-								value: `Virgo`
+								value: `Virgo`,
 							},
 							{
 								name: `Libra`,
-								value: `Libra`
+								value: `Libra`,
 							},
 							{
 								name: `Scorpio`,
-								value: `Scorpio`
+								value: `Scorpio`,
 							},
 							{
 								name: `Sagittarius`,
-								value: `Sagittarius`
+								value: `Sagittarius`,
 							},
-						]
-					}
-				]
+						],
+					},
+				],
 			},
 			{
 				name: `yesterday`,
@@ -185,55 +193,55 @@ export class HoroscopeCommand implements Command {
 						choices: [
 							{
 								name: `Capricorn`,
-								value: `Capricorn`
+								value: `Capricorn`,
 							},
 							{
 								name: `Aquarius`,
-								value: `Aquarius`
+								value: `Aquarius`,
 							},
 							{
 								name: `Pisces`,
-								value: `Pisces`
+								value: `Pisces`,
 							},
 							{
 								name: `Aries`,
-								value: `Aries`
+								value: `Aries`,
 							},
 							{
 								name: `Taurus`,
-								value: `Taurus`
+								value: `Taurus`,
 							},
 							{
 								name: `Gemini`,
-								value: `Gemini`
+								value: `Gemini`,
 							},
 							{
 								name: `Cancer`,
-								value: `Cancer`
+								value: `Cancer`,
 							},
 							{
 								name: `Leo`,
-								value: `Leo`
+								value: `Leo`,
 							},
 							{
 								name: `Virgo`,
-								value: `Virgo`
+								value: `Virgo`,
 							},
 							{
 								name: `Libra`,
-								value: `Libra`
+								value: `Libra`,
 							},
 							{
 								name: `Scorpio`,
-								value: `Scorpio`
+								value: `Scorpio`,
 							},
 							{
 								name: `Sagittarius`,
-								value: `Sagittarius`
+								value: `Sagittarius`,
 							},
-						]
-					}
-				]
+						],
+					},
+				],
 			},
 			{
 				name: `save`,
@@ -247,62 +255,62 @@ export class HoroscopeCommand implements Command {
 						choices: [
 							{
 								name: `Capricorn`,
-								value: `Capricorn`
+								value: `Capricorn`,
 							},
 							{
 								name: `Aquarius`,
-								value: `Aquarius`
+								value: `Aquarius`,
 							},
 							{
 								name: `Pisces`,
-								value: `Pisces`
+								value: `Pisces`,
 							},
 							{
 								name: `Aries`,
-								value: `Aries`
+								value: `Aries`,
 							},
 							{
 								name: `Taurus`,
-								value: `Taurus`
+								value: `Taurus`,
 							},
 							{
 								name: `Gemini`,
-								value: `Gemini`
+								value: `Gemini`,
 							},
 							{
 								name: `Cancer`,
-								value: `Cancer`
+								value: `Cancer`,
 							},
 							{
 								name: `Leo`,
-								value: `Leo`
+								value: `Leo`,
 							},
 							{
 								name: `Virgo`,
-								value: `Virgo`
+								value: `Virgo`,
 							},
 							{
 								name: `Libra`,
-								value: `Libra`
+								value: `Libra`,
 							},
 							{
 								name: `Scorpio`,
-								value: `Scorpio`
+								value: `Scorpio`,
 							},
 							{
 								name: `Sagittarius`,
-								value: `Sagittarius`
+								value: `Sagittarius`,
 							},
-						]
-					}
-				]
+						],
+					},
+				],
 			},
 			{
 				name: `remove`,
 				description: `Remove a saved horoscope for you`,
 				type: ApplicationCommandOptionType.Subcommand.valueOf(),
 			},
-		]
+		],
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -334,70 +342,95 @@ export class HoroscopeCommand implements Command {
 			command = await this.horoscopeToday(msg, `saved`);
 		} else {
 			switch (args[0]) {
-			case `save`: {
-				command = await this.saveSign(false, msg, args[1]);
-			}
-				break;
-			case `remove`: {
-				command = await this.removeSign(msg);
-			}
-				break;
-			case `today`: {
-				command = await this.horoscopeToday(msg, args[1]);
-			}
-				break;
-			case `tomorrow`: {
-				command = await this.horoscopeTomorrow(msg, args[1]);
-			}
-				break;
-			case `yesterday`: {
-				command = await this.horoscopeYesterday(msg, args[1]);
-			}
-				break;
-			default: {
-				command = new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Invalid argument. Use the help command to get help regarding this command.`);
-			}
-				break;
+				case `save`:
+					{
+						command = await this.saveSign(false, msg, args[1]);
+					}
+					break;
+				case `remove`:
+					{
+						command = await this.removeSign(msg);
+					}
+					break;
+				case `today`:
+					{
+						command = await this.horoscopeToday(msg, args[1]);
+					}
+					break;
+				case `tomorrow`:
+					{
+						command = await this.horoscopeTomorrow(msg, args[1]);
+					}
+					break;
+				case `yesterday`:
+					{
+						command = await this.horoscopeYesterday(msg, args[1]);
+					}
+					break;
+				default:
+					{
+						command = new EmbedBuilder()
+							.setTitle(`Error`)
+							.setColor(botColours.error)
+							.setDescription(`Invalid argument. Use the help command to get help regarding this command.`);
+					}
+					break;
 			}
 		}
 		await MessageUtils.send(msg.channel, command);
 		return;
 	}
 
-	public async saveSign(interaction: boolean, message: Message | CommandInteraction, input?: string): Promise<EmbedBuilder> {
+	public async saveSign(
+		interaction: boolean,
+		message: Message | CommandInteraction,
+		input?: string,
+	): Promise<EmbedBuilder> {
 		if (!input) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You haven't written a horoscope to save.`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`You haven't written a horoscope to save.`);
 		}
 		if (!horoscopes.includes(input)) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
 		}
 		const data = await prisma.horoscope.upsert({
 			create: {
 				userID: interaction ? BigInt((message as CommandInteraction).user.id) : BigInt((message as Message).author.id),
-				horoscope: input as horos
+				horoscope: input as horos,
 			},
 			update: {
-				horoscope: input as horos
+				horoscope: input as horos,
 			},
 			where: {
 				userID: interaction ? BigInt((message as CommandInteraction).user.id) : BigInt((message as Message).author.id),
-			}
+			},
 		});
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const member = await ClientUtils.findMember(message.guild!, interaction ? (message as CommandInteraction).user.id : (message as Message).author.id);
+		const member = await ClientUtils.findMember(
+			message.guild!,
+			interaction ? (message as CommandInteraction).user.id : (message as Message).author.id,
+		);
 		const embedAuthor: EmbedAuthorData = {
 			name: (member as GuildMember).displayName,
-			iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false}),
+			iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
 		};
-		return new EmbedBuilder().setAuthor(embedAuthor).setTitle(`Your horoscope ${data.horoscope} was successfully saved!`).setColor(botColours.success);
+		return new EmbedBuilder()
+			.setAuthor(embedAuthor)
+			.setTitle(`Your horoscope ${data.horoscope} was successfully saved!`)
+			.setColor(botColours.success);
 	}
 
 	public async removeSign(message: Message | CommandInteraction): Promise<EmbedBuilder> {
 		await prisma.horoscope.delete({
 			where: {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				userID: BigInt(message.member!.user.id)
-			}
+				userID: BigInt(message.member!.user.id),
+			},
 		});
 		return new EmbedBuilder().setTitle(`Your horoscope was successfully deleted!`).setColor(botColours.success);
 	}
@@ -409,17 +442,23 @@ export class HoroscopeCommand implements Command {
 			const horoscopeData = await prisma.horoscope.findUnique({
 				where: {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					userID: BigInt(message.member!.user.id)
-				}
+					userID: BigInt(message.member!.user.id),
+				},
 			});
 			if (!horoscopeData) {
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You haven't saved nor specified a sign to check the horoscope for today.`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You haven't saved nor specified a sign to check the horoscope for today.`);
 			} else {
 				horoscope = horoscopeData.horoscope;
 				userSaved = true;
 			}
 		} else if (!horoscopes.includes(input)) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
 		} else {
 			horoscope = input as horos;
 		}
@@ -457,13 +496,13 @@ export class HoroscopeCommand implements Command {
 			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
 			exampleEmbed.setAuthor({
 				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false })
+				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
 			});
 		}
 		try {
 			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
 		} catch {
-			exampleEmbed.setColor(`#${await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` }) as string)}`);
+			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
 		}
 		return exampleEmbed;
 	}
@@ -475,17 +514,23 @@ export class HoroscopeCommand implements Command {
 			const horoscopeData = await prisma.horoscope.findUnique({
 				where: {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					userID: BigInt(message.member!.user.id)
-				}
+					userID: BigInt(message.member!.user.id),
+				},
 			});
 			if (!horoscopeData) {
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You haven't saved nor specified a sign to check the horoscope for tomorrow.`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You haven't saved nor specified a sign to check the horoscope for tomorrow.`);
 			} else {
 				horoscope = horoscopeData.horoscope;
 				userSaved = true;
 			}
 		} else if (!horoscopes.includes(input)) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
 		} else {
 			horoscope = input as horos;
 		}
@@ -523,13 +568,13 @@ export class HoroscopeCommand implements Command {
 			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
 			exampleEmbed.setAuthor({
 				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false })
+				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
 			});
 		}
 		try {
 			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
 		} catch {
-			exampleEmbed.setColor(`#${await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` }) as string)}`);
+			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
 		}
 		return exampleEmbed;
 	}
@@ -541,17 +586,23 @@ export class HoroscopeCommand implements Command {
 			const horoscopeData = await prisma.horoscope.findUnique({
 				where: {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					userID: BigInt(message.member!.user.id)
-				}
+					userID: BigInt(message.member!.user.id),
+				},
 			});
 			if (!horoscopeData) {
-				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`You haven't saved nor specified a sign to check the horoscope for yesterday.`);
+				return new EmbedBuilder()
+					.setTitle(`Error`)
+					.setColor(botColours.error)
+					.setDescription(`You haven't saved nor specified a sign to check the horoscope for yesterday.`);
 			} else {
 				horoscope = horoscopeData.horoscope;
 				userSaved = true;
 			}
 		} else if (!horoscopes.includes(input)) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(`Invalid horoscope.\nPerhaps you've made a typo?`);
 		} else {
 			horoscope = input as horos;
 		}
@@ -589,13 +640,13 @@ export class HoroscopeCommand implements Command {
 			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
 			exampleEmbed.setAuthor({
 				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false })
+				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
 			});
 		}
 		try {
 			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
 		} catch {
-			exampleEmbed.setColor(`#${await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` }) as string)}`);
+			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
 		}
 		return exampleEmbed;
 	}

@@ -38,7 +38,7 @@ export class EightBallCommand implements Command {
 	public async executeIntr(intr: CommandInteraction, _data: EventData): Promise<void> {
 		const command = this.ball8Command();
 		const embed = new EmbedBuilder()
-			.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
+			.setColor(await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` })))
 			.setDescription(
 				`${intr.user} **asked:** ${intr.options.get(`input`)?.value}\n${intr.client.user} **answers:** ${command}`,
 			);

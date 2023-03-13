@@ -63,9 +63,7 @@ export class notificationUtils {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					const user = await (await msg.client.guilds.fetch(msg.guild!.id)).members.fetch(noti.userID.toString());
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					const channelData = msg.client.channels.cache.get(msg.channel.id) as
-						| TextChannel
-						| NewsChannel;
+					const channelData = msg.client.channels.cache.get(msg.channel.id) as TextChannel | NewsChannel;
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					if (!user.permissionsIn(channelData).has(PermissionFlagsBits.ViewChannel)) return;
 					const lastMessagesCollection = await msg.channel.messages.fetch({ limit: 3 });
@@ -76,8 +74,8 @@ export class notificationUtils {
 						url: `https://www.bentobot.xyz/`,
 						iconURL: msg.guild?.iconURL()
 							? (msg.guild.iconURL({
-								forceStatic: false,
-								extension: `png`,
+									forceStatic: false,
+									extension: `png`,
 							  }) as string)
 							: (msg.client?.user?.avatarURL({ extension: `png` }) as string),
 					};
@@ -93,13 +91,13 @@ export class notificationUtils {
 							}) as string,
 						)
 						.setColor(
-							`#${await stylingUtils.urlToColours(
+							await stylingUtils.urlToColours(
 								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 								(msg.guild!.iconURL({ extension: `png` }) as string)
 									? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 									  (msg.guild!.iconURL({ extension: `png` }) as string)
 									: (msg.client?.user?.avatarURL({ extension: `png` }) as string),
-							)}`,
+							),
 						)
 						.setDescription(
 							StringUtils.truncate(

@@ -25,7 +25,7 @@ export class CheckRemindersJob implements Job {
 				const user = await ClientUtils.getUser(this.client, `${reminder.userID}`);
 				if (user) {
 					const embed = new EmbedBuilder()
-						.setColor(`#${await stylingUtils.urlToColours(user.avatarURL({ extension: `png` }) as string)}`)
+						.setColor(await stylingUtils.urlToColours(user.avatarURL({ extension: `png` })))
 						.setTitle(`Reminder`)
 						.setDescription(reminder.reminder);
 					await MessageUtils.send(user, embed);

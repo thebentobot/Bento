@@ -51,34 +51,34 @@ export class GuildJoinHandler implements EventHandler {
 		const embed = new EmbedBuilder()
 			.setAuthor(embedAuthorData)
 			.setTitle(`Hello! My name is Bento 🍱`)
-			.setColor(`#${await stylingUtils.urlToColours(guild.client?.user?.avatarURL({ extension: `png` }) as string)}`)
+			.setColor(await stylingUtils.urlToColours(guild.client?.user?.avatarURL({ extension: `png` })))
 			.setDescription(
 				`Thank you for choosing me to service your server!\nMy default prefix is \`${process.env.prefix}\`.\nIf the prefix is conflicting because of other bots, you can change it by writing \`${process.env.prefix}prefix <NEW PREFIX>\`\nUse \`${process.env.prefix}settings\` to check what features I've enabled or disabled by default.\nUse \`${process.env.prefix}commands\` to see a list of all my commands and \`${process.env.prefix}help <command name>\` to get help or info about a command.`,
 			)
 			.addFields(
 				{
 					name: `Check out the website for more information and help with all commands and settings`,
-					value: `https://www.bentobot.xyz/`
+					value: `https://www.bentobot.xyz/`,
 				},
 				{
 					name: `Need help? Or do you have some ideas or feedback to Bento 🍱? Feel free to join the support server`,
-					value: `https://discord.gg/dd68WwP`
+					value: `https://discord.gg/dd68WwP`,
 				},
 				{
 					name: `Want to check out the code for Bento 🍱?`,
-					value: `https://github.com/thebentobot/bento`
+					value: `https://github.com/thebentobot/bento`,
 				},
 				{
 					name: `Want additional benefits when using Bento 🍱?`,
-					value: `https://www.patreon.com/bentobot`
+					value: `https://www.patreon.com/bentobot`,
 				},
 				{
 					name: `Get a Bento 🍱 for each tip`,
-					value: `https://ko-fi.com/bentobot`
+					value: `https://ko-fi.com/bentobot`,
 				},
 				{
 					name: `Vote on top.gg and receive 5 Bento 🍱`,
-					value: `https://top.gg/bot/787041583580184609/vote`
+					value: `https://top.gg/bot/787041583580184609/vote`,
 				},
 			)
 			.setFooter(embedFooterData)

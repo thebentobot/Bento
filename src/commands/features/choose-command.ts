@@ -49,7 +49,7 @@ export class ChooseCommand implements Command {
 		} else {
 			const command = await this.chooseCommand(args);
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` })))
 				.setTitle(`I've chosen ${command}`)
 				.setDescription(`The choices were:\n${args.join(`, `)}`);
 			await InteractionUtils.send(intr, embed);
