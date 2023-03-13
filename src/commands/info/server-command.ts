@@ -64,16 +64,16 @@ export class ServerCommand implements Command {
 		if (intr.options.data[0].name === `info`) {
 			const embed = new EmbedBuilder()
 				.setTitle(intr.guild!.name)
-				.setColor(`#${await stylingUtils.urlToColours(intr.guild!.iconURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(intr.guild!.iconURL({ extension: `png` })))
 				.setThumbnail(intr.guild!.iconURL({ forceStatic: false, extension: `png`, size: 1024 }) as string)
 				.addFields(
 					{
 						name: `Server ID`,
-						value: intr.guild!.id
+						value: intr.guild!.id,
 					},
 					{
 						name: `Created at`,
-						value: `<t:${Math.round(intr.guild!.createdTimestamp / 1000)}:F>`
+						value: `<t:${Math.round(intr.guild!.createdTimestamp / 1000)}:F>`,
 					},
 					{
 						name: `Server owner`,
@@ -83,16 +83,16 @@ export class ServerCommand implements Command {
 					},
 					{
 						name: `Total members`,
-						value: `${intr.guild!.memberCount}`
+						value: `${intr.guild!.memberCount}`,
 					},
 					{
 						name: `Server boost level`,
-						value: intr.guild!.premiumTier.toString()
+						value: intr.guild!.premiumTier.toString(),
 					},
 					{
 						name: `Server boosters`,
 						value: `${intr.guild!.premiumSubscriptionCount}`,
-						inline: true
+						inline: true,
 					},
 					{
 						name: `Text channels | Voice channels`,
@@ -102,7 +102,7 @@ export class ServerCommand implements Command {
 					},
 					{
 						name: `Amount of roles`,
-						value: `${intr.guild!.roles.cache.size}`
+						value: `${intr.guild!.roles.cache.size}`,
 					},
 					{
 						name: `Emotes`,
@@ -113,7 +113,7 @@ export class ServerCommand implements Command {
 					},
 					{
 						name: `Features`,
-						value: `\`${intr.guild!.features.join(` `)}\``
+						value: `\`${intr.guild!.features.join(` `)}\``,
 					},
 				);
 			await InteractionUtils.send(intr, embed);

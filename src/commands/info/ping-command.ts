@@ -39,7 +39,7 @@ export class PingCommand implements Command {
 			const dbTime = dbTimeEnd - dbTimeStart;
 
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` })))
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -51,7 +51,7 @@ export class PingCommand implements Command {
 			return;
 		} catch (error) {
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(intr.client.user?.avatarURL({ extension: `png` })))
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -77,7 +77,7 @@ export class PingCommand implements Command {
 			const dbTime = dbTimeEnd - dbTimeStart;
 
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` })))
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(
@@ -89,7 +89,7 @@ export class PingCommand implements Command {
 			return;
 		} catch (error) {
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(msg.client.user?.avatarURL({ extension: `png` })))
 				.setTitle(`🏓 Pong!`)
 				.setDescription(
 					`Bot Latency is **${Math.floor(msgTimeEnd - msgTimeStart)} ms** \nAPI Latency is **${Math.round(

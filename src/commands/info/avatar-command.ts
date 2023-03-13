@@ -119,7 +119,7 @@ export class AvatarCommand implements Command {
 		} else {
 			const embed = new EmbedBuilder()
 				.setAuthor(authorData)
-				.setColor(`#${await stylingUtils.urlToColours(imageURLColour as string)}`)
+				.setColor(await stylingUtils.urlToColours(imageURLColour))
 				.setImage(imageURL as string);
 			await InteractionUtils.send(intr, embed);
 			return;
@@ -131,7 +131,7 @@ export class AvatarCommand implements Command {
 		if (!args.length) {
 			const embeds: EmbedBuilder[] = [];
 			const embed = new EmbedBuilder()
-				.setColor(`#${await stylingUtils.urlToColours(msg.author.displayAvatarURL({ extension: `png` }) as string)}`)
+				.setColor(await stylingUtils.urlToColours(msg.author.displayAvatarURL({ extension: `png` })))
 				.setTitle(`${msg.author.tag}'s avatar`)
 				.setImage(
 					msg.author.displayAvatarURL({
@@ -144,7 +144,7 @@ export class AvatarCommand implements Command {
 			embeds.push(embed);
 			if (msg.member?.avatarURL()) {
 				const embed = new EmbedBuilder()
-					.setColor(`#${await stylingUtils.urlToColours(msg.member.avatarURL({ extension: `png` }) as string)}`)
+					.setColor(await stylingUtils.urlToColours(msg.member.avatarURL({ extension: `png` })))
 					.setTitle(`${msg.member.displayName}'s avatar`)
 					.setImage(
 						msg.member.avatarURL({
@@ -165,7 +165,7 @@ export class AvatarCommand implements Command {
 				if (user) {
 					const embeds: EmbedBuilder[] = [];
 					const embed = new EmbedBuilder()
-						.setColor(`#${await stylingUtils.urlToColours(user.displayAvatarURL({ extension: `png` }) as string)}`)
+						.setColor(await stylingUtils.urlToColours(user.displayAvatarURL({ extension: `png` })))
 						.setTitle(`${user.tag}'s avatar`)
 						.setImage(
 							user.displayAvatarURL({
@@ -179,7 +179,7 @@ export class AvatarCommand implements Command {
 					const guildMember = await msg.guild?.members.fetch(user);
 					if (guildMember) {
 						const embed = new EmbedBuilder()
-							.setColor(`#${await stylingUtils.urlToColours(guildMember.avatarURL({ extension: `png` }) as string)}`)
+							.setColor(await stylingUtils.urlToColours(guildMember.avatarURL({ extension: `png` })))
 							.setTitle(`${guildMember.displayName}'s avatar`)
 							.setImage(
 								guildMember.avatarURL({

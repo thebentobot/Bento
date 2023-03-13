@@ -73,9 +73,7 @@ export class DevCommand implements Command {
 
 		const memory = process.memoryUsage();
 		const embed = new EmbedBuilder()
-			.setColor(
-				`#${await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ extension: `png` }) as string)}`,
-			)
+			.setColor(await stylingUtils.urlToColours(element.guild?.client?.user?.avatarURL({ extension: `png` })))
 			.setTitle(`${element.client.user?.username} - Runtime info`)
 			.setDescription(
 				`**Updates**\nAttempted to update ${refreshAllAvatars.attemptUsers} users on ${
