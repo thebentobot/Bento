@@ -412,6 +412,7 @@ export class HoroscopeCommand implements Command {
 		});
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const member = await ClientUtils.findMember(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			message.guild!,
 			interaction ? (message as CommandInteraction).user.id : (message as Message).author.id,
 		);
@@ -462,49 +463,58 @@ export class HoroscopeCommand implements Command {
 		} else {
 			horoscope = input as horos;
 		}
-		const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=today`);
-		if (horoscopeData.status !== 200) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
-		}
-		const res = horoscopeData.data;
-		const exampleEmbed = new EmbedBuilder()
-			.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
-			.setDescription(res.description)
-			.setTimestamp()
-			.addFields(
-				{
-					name: `Date Range`,
-					value: `Between ${res.date_range}`,
-					inline: true,
-				},
-				{
-					name: `Compatibility 😳`,
-					value: `${res.compatibility} 😏`,
-					inline: true,
-				},
-				{ name: `Mood`, value: `${res.mood}`, inline: true },
-				{ name: `Colour`, value: `${res.color}`, inline: true },
-				{
-					name: `Lucky number`,
-					value: `${res.lucky_number}`,
-					inline: true,
-				},
-				{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
-			);
-		if (userSaved) {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
-			exampleEmbed.setAuthor({
-				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
-			});
-		}
 		try {
-			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=today`);
+			if (horoscopeData.status !== 200) {
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
+			}
+			const res = horoscopeData.data;
+			const exampleEmbed = new EmbedBuilder()
+				.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
+				.setDescription(res.description)
+				.setTimestamp()
+				.addFields(
+					{
+						name: `Date Range`,
+						value: `Between ${res.date_range}`,
+						inline: true,
+					},
+					{
+						name: `Compatibility 😳`,
+						value: `${res.compatibility} 😏`,
+						inline: true,
+					},
+					{ name: `Mood`, value: `${res.mood}`, inline: true },
+					{ name: `Colour`, value: `${res.color}`, inline: true },
+					{
+						name: `Lucky number`,
+						value: `${res.lucky_number}`,
+						inline: true,
+					},
+					{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
+				);
+			if (userSaved) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
+				exampleEmbed.setAuthor({
+					name: (member as GuildMember).displayName,
+					iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
+				});
+			}
+			try {
+				exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			} catch {
+				exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			}
+			return exampleEmbed;
 		} catch {
-			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(
+					`There is an error with the Horoscope API where the command gets its horoscope data from.\nIt is currently not available, I am sorry 😔`,
+				);
 		}
-		return exampleEmbed;
 	}
 
 	public async horoscopeTomorrow(message: Message | CommandInteraction, input?: string) {
@@ -534,49 +544,58 @@ export class HoroscopeCommand implements Command {
 		} else {
 			horoscope = input as horos;
 		}
-		const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=tomorrow`);
-		if (horoscopeData.status !== 200) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
-		}
-		const res = horoscopeData.data;
-		const exampleEmbed = new EmbedBuilder()
-			.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
-			.setDescription(res.description)
-			.setTimestamp()
-			.addFields(
-				{
-					name: `Date Range`,
-					value: `Between ${res.date_range}`,
-					inline: true,
-				},
-				{
-					name: `Compatibility 😳`,
-					value: `${res.compatibility} 😏`,
-					inline: true,
-				},
-				{ name: `Mood`, value: `${res.mood}`, inline: true },
-				{ name: `Colour`, value: `${res.color}`, inline: true },
-				{
-					name: `Lucky number`,
-					value: `${res.lucky_number}`,
-					inline: true,
-				},
-				{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
-			);
-		if (userSaved) {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
-			exampleEmbed.setAuthor({
-				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
-			});
-		}
 		try {
-			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=tomorrow`);
+			if (horoscopeData.status !== 200) {
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
+			}
+			const res = horoscopeData.data;
+			const exampleEmbed = new EmbedBuilder()
+				.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
+				.setDescription(res.description)
+				.setTimestamp()
+				.addFields(
+					{
+						name: `Date Range`,
+						value: `Between ${res.date_range}`,
+						inline: true,
+					},
+					{
+						name: `Compatibility 😳`,
+						value: `${res.compatibility} 😏`,
+						inline: true,
+					},
+					{ name: `Mood`, value: `${res.mood}`, inline: true },
+					{ name: `Colour`, value: `${res.color}`, inline: true },
+					{
+						name: `Lucky number`,
+						value: `${res.lucky_number}`,
+						inline: true,
+					},
+					{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
+				);
+			if (userSaved) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
+				exampleEmbed.setAuthor({
+					name: (member as GuildMember).displayName,
+					iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
+				});
+			}
+			try {
+				exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			} catch {
+				exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			}
+			return exampleEmbed;
 		} catch {
-			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(
+					`There is an error with the Horoscope API where the command gets its horoscope data from.\nIt is currently not available, I am sorry 😔`,
+				);
 		}
-		return exampleEmbed;
 	}
 
 	public async horoscopeYesterday(message: Message | CommandInteraction, input?: string) {
@@ -606,48 +625,57 @@ export class HoroscopeCommand implements Command {
 		} else {
 			horoscope = input as horos;
 		}
-		const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=yesterday`);
-		if (horoscopeData.status !== 200) {
-			return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
-		}
-		const res = horoscopeData.data;
-		const exampleEmbed = new EmbedBuilder()
-			.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
-			.setDescription(res.description)
-			.setTimestamp()
-			.addFields(
-				{
-					name: `Date Range`,
-					value: `Between ${res.date_range}`,
-					inline: true,
-				},
-				{
-					name: `Compatibility 😳`,
-					value: `${res.compatibility} 😏`,
-					inline: true,
-				},
-				{ name: `Mood`, value: `${res.mood}`, inline: true },
-				{ name: `Colour`, value: `${res.color}`, inline: true },
-				{
-					name: `Lucky number`,
-					value: `${res.lucky_number}`,
-					inline: true,
-				},
-				{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
-			);
-		if (userSaved) {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
-			exampleEmbed.setAuthor({
-				name: (member as GuildMember).displayName,
-				iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
-			});
-		}
 		try {
-			exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			const horoscopeData = await astroAPI.post<IHoroscopeDataAPI>(`/?sign=${horoscope.toLowerCase()}&day=yesterday`);
+			if (horoscopeData.status !== 200) {
+				return new EmbedBuilder().setTitle(`Error`).setColor(botColours.error).setDescription(`Horoscope API error.`);
+			}
+			const res = horoscopeData.data;
+			const exampleEmbed = new EmbedBuilder()
+				.setTitle(`${stylingUtils.capitalizeFirstCharacter(horoscope as string)} horoscope for ${res.current_date}`)
+				.setDescription(res.description)
+				.setTimestamp()
+				.addFields(
+					{
+						name: `Date Range`,
+						value: `Between ${res.date_range}`,
+						inline: true,
+					},
+					{
+						name: `Compatibility 😳`,
+						value: `${res.compatibility} 😏`,
+						inline: true,
+					},
+					{ name: `Mood`, value: `${res.mood}`, inline: true },
+					{ name: `Colour`, value: `${res.color}`, inline: true },
+					{
+						name: `Lucky number`,
+						value: `${res.lucky_number}`,
+						inline: true,
+					},
+					{ name: `Lucky time`, value: `${res.lucky_time}`, inline: true },
+				);
+			if (userSaved) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const member = await ClientUtils.findMember(message.guild!, message.member!.user.id);
+				exampleEmbed.setAuthor({
+					name: (member as GuildMember).displayName,
+					iconURL: (member as GuildMember).displayAvatarURL({ forceStatic: false }),
+				});
+			}
+			try {
+				exampleEmbed.setColor(chroma(res.color).hex() as HexColorString);
+			} catch {
+				exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			}
+			return exampleEmbed;
 		} catch {
-			exampleEmbed.setColor(await stylingUtils.urlToColours(message.client.user?.avatarURL({ extension: `png` })));
+			return new EmbedBuilder()
+				.setTitle(`Error`)
+				.setColor(botColours.error)
+				.setDescription(
+					`There is an error with the Horoscope API where the command gets its horoscope data from.\nIt is currently not available, I am sorry 😔`,
+				);
 		}
-		return exampleEmbed;
 	}
 }
