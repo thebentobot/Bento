@@ -1,11 +1,10 @@
-import { guildMember, user } from '@prisma/client';
-import { ChannelType, Guild, Message, MessageType, PermissionFlagsBits } from 'discord.js';
-
+import { ChannelType, Guild, GuildMember, Message, MessageType, PermissionFlagsBits } from 'discord.js';
 import { CommandHandler, EventHandler, TriggerHandler } from './index.js';
 import { GuildRepo } from '../services/database/repos/guild-repo.js';
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
 import { DateTime } from 'luxon';
+import { PrismaUtils } from '../utils/prisma-utils.js';
 
 const hasEmoteRegex = /<a?:.+:\d+>/gm;
 const emoteRegex = /<:.+:(\d+)>/gm;
@@ -42,51 +41,12 @@ export class MessageHandler implements EventHandler {
 		}
 
 		// find user and check if they're saved in the DB
-		let user = await prisma.user.findUnique({ where: { userID: BigInt(msg.author.id) } });
-
-		if (user === null) {
-			user = (await prisma.user.create({
-				data: {
-					userID: BigInt(msg.author.id),
-					username: msg.author.username,
-					discriminator: msg.author.discriminator,
-					avatarURL: msg.author.avatarURL({
-						extension: `webp`,
-						forceStatic: false,
-						size: 1024,
-					}),
-					xp: 0,
-					level: 1,
-				},
-			})) as user;
-		}
+		const user = await PrismaUtils.UserCreateIfNotExists(msg.author);
 
 		// find guild member and check if they're saved in the DB
-		let guildMember = await prisma.guildMember.findFirst({
-			where: {
-				userID: BigInt(msg.author.id),
-				guildID: BigInt(msg.guild?.id as string),
-			},
-		});
-
-		if (guildMember === null) {
-			guildMember = (await prisma.guildMember.create({
-				data: {
-					userID: BigInt(msg.author.id),
-					guildID: BigInt(msg.guild?.id as string),
-					avatarURL: msg.member?.displayAvatarURL({
-						extension: `png`,
-						forceStatic: false,
-						size: 1024,
-					}),
-					xp: 0,
-					level: 1,
-				},
-			})) as guildMember;
-		}
+		const guildMember = await PrismaUtils.GuildMemberCreateIfNotExists(msg.member as GuildMember);
 
 		// XP
-
 		const messageGuild = await prisma.guild.findUnique({ where: { guildID: BigInt(msg.guild?.id as string) } });
 
 		const patreonUser = await prisma.patreon.findUnique({ where: { userID: BigInt(msg.author.id) } });
