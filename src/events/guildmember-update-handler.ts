@@ -10,10 +10,12 @@ import {
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/message-utils.js';
 import { EventHandler } from './event-handler.js';
+import { PrismaUtils } from '../utils/prisma-utils.js';
 
 export class GuildMemberUpdateHandler implements EventHandler {
 	public async process(oldMember: GuildMember | PartialGuildMember, newMember: GuildMember): Promise<void> {
 		if (oldMember.user.bot) return;
+		if ((await PrismaUtils.GuildMemberExists(newMember)) === false) return;
 		/* const memberLogChannelData = await prisma.memberLog.findUnique({
 			where: {
 				guildID: BigInt(oldMember.guild.id),

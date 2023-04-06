@@ -5,6 +5,7 @@ import { ClientUtils, MessageUtils, stylingUtils } from '../utils/index.js';
 import { EventHandler } from './event-handler.js';
 import * as dotenv from 'dotenv';
 import { logs as Logs } from '../lang/logs.js';
+import { PrismaUtils } from '../utils/prisma-utils.js';
 dotenv.config();
 
 export class GuildJoinHandler implements EventHandler {
@@ -90,8 +91,8 @@ export class GuildJoinHandler implements EventHandler {
 
 		// Send welcome message to owner
 		const owner = await guild.fetchOwner();
-		if (owner) {
-			await MessageUtils.send(owner.user, embed);
-		}
+		await PrismaUtils.UserCreateIfNotExists(owner.user);
+		await PrismaUtils.GuildMemberCreateIfNotExists(owner);
+		await MessageUtils.send(owner.user, embed);
 	}
 }

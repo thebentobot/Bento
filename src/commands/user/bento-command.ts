@@ -7,6 +7,7 @@ import { ApplicationCommandOptionType, RESTPostAPIChatInputApplicationCommandsJS
 import { prisma } from '../../services/prisma.js';
 import { DateTime, Interval } from 'luxon';
 import { botColours } from '../../utils/styling-utils.js';
+import { PrismaUtils } from '../../utils/prisma-utils.js';
 
 export class BentoCommand implements Command {
 	public name = `bento`;
@@ -99,15 +100,16 @@ export class BentoCommand implements Command {
 					)}:R> you can serve a Bento Box 🍱 to a friend again`,
 				);
 		} else {
+			const bentoServeUser = await PrismaUtils.UserCreateIfNotExists(intr.user);
 			const bentoServeUpsert = await prisma.bento.upsert({
 				where: {
-					userID: BigInt(intr.user.id),
+					userID: bentoServeUser.userID,
 				},
 				update: {
 					bentoDate: new Date(),
 				},
 				create: {
-					userID: BigInt(intr.user.id),
+					userID: bentoServeUser.userID,
 					bento: 0,
 					bentoDate: new Date(),
 				},
@@ -135,9 +137,10 @@ export class BentoCommand implements Command {
 				incrementValue = 5;
 				bentoReceiverType = `🌟 Official Patreon Bento 🍱 Sponsor 🌟 ${member}`;
 			}
+			const bentoReceiverUser = await PrismaUtils.UserCreateIfNotExists(member.user);
 			const bentoReceiver = await prisma.bento.upsert({
 				where: {
-					userID: BigInt(member.user.id),
+					userID: bentoReceiverUser.userID,
 				},
 				update: {
 					bento: {
@@ -145,7 +148,7 @@ export class BentoCommand implements Command {
 					},
 				},
 				create: {
-					userID: BigInt(member.user.id),
+					userID: bentoReceiverUser.userID,
 					bento: incrementValue,
 					bentoDate: new Date(),
 				},
