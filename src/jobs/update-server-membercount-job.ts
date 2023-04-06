@@ -1,12 +1,8 @@
 import { Job } from './job.js';
 import { config as Config } from '../config/config.js';
-import { Client, EmbedBuilder, ShardingManager } from 'discord.js';
-import { CustomClient } from '../extensions/custom-client.js';
+import { Client } from 'discord.js';
 import { prisma } from '../services/prisma.js';
-import { reminder } from '@prisma/client';
-import { ClientUtils } from '../utils/client-utils.js';
-import { MessageUtils } from '../utils/message-utils.js';
-import { CommandUtils, stylingUtils } from '../utils/index.js';
+import { CommandUtils } from '../utils/index.js';
 
 export class UpdateServerMemberCountJob implements Job {
 	public name = `Update server membercount`;

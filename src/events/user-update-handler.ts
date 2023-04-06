@@ -2,10 +2,12 @@ import { PartialUser, User } from 'discord.js';
 
 import { prisma } from '../services/prisma.js';
 import { EventHandler } from './event-handler.js';
+import { PrismaUtils } from '../utils/prisma-utils.js';
 
 export class UserUpdateHandler implements EventHandler {
 	public async process(oldUser: User | PartialUser, newUser: User): Promise<void> {
 		if (oldUser.bot) return;
+		if ((await PrismaUtils.UserExists(newUser)) === false) return;
 		if (oldUser.avatarURL() !== newUser.avatarURL()) {
 			await prisma.user.update({
 				where: {
