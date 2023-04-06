@@ -1,81 +1,13 @@
-import {
-	GuildMember,
-	EmbedBuilder,
-	TextChannel,
-	EmbedFooterData,
-	PartialGuildMember,
-	PermissionFlagsBits,
-} from 'discord.js';
-
+import { GuildMember, TextChannel, PartialGuildMember, PermissionFlagsBits } from 'discord.js';
 import { prisma } from '../services/prisma.js';
 import { MessageUtils } from '../utils/index.js';
-import { botColours } from '../utils/styling-utils.js';
 import { EventHandler } from './event-handler.js';
+import { PrismaUtils } from '../utils/prisma-utils.js';
 
 export class GuildMemberRemoveHandler implements EventHandler {
 	public async process(member: GuildMember | PartialGuildMember): Promise<void> {
 		if (member.user.bot) return;
-		const memberLogData = await prisma.memberLog.findUnique({
-			where: {
-				guildID: BigInt(member.guild.id),
-			},
-		});
-
-		/* if (memberLogData) {
-			const [banData, kickData, muteData, warningData] = await prisma.$transaction([
-				prisma.ban.findMany({
-					where: {
-						userID: BigInt(member.user.id),
-					},
-				}),
-				prisma.kick.findMany({
-					where: {
-						userID: BigInt(member.user.id),
-					},
-				}),
-				prisma.mute.findMany({
-					where: {
-						userID: BigInt(member.user.id),
-					},
-				}),
-				prisma.warning.findMany({
-					where: {
-						userID: BigInt(member.user.id),
-					},
-				}),
-			]);
-
-			const channel = member.guild.channels.cache.get(`${memberLogData.channel}`) as TextChannel;
-
-			const EmbedFooterData: EmbedFooterData = {
-				text: `UserID: ${member.user.id}`,
-			};
-
-			const embed = new EmbedBuilder()
-				.setTitle(`${member} left the server!`)
-				.setThumbnail(
-					`${member.user.avatarURL({
-						extension: `png`,
-						forceStatic: false,
-						size: 1024,
-					})}`,
-				)
-				.setColor(botColours.error)
-				.setFooter(EmbedFooterData)
-				.setTimestamp()
-				.setDescription(
-					`**Account created:** <t:${Math.round(member.user.createdTimestamp / 1000)}:F>${
-						new Date().getTime() - member.user.createdAt.getTime() < 3600000
-							? `\n**WARNING** This user is created under an hour ago.`
-							: ``
-					}\n**Bans on other servers:** \`${banData.length}\`.\n**Kicks from other servers:** \`${
-						kickData.length
-					}\`.\n**Mutes on other servers:** \`${muteData.length}\`.\n**Warnings on other servers:** \`${
-						warningData.length
-					}\`.`,
-				);
-			await MessageUtils.send(channel, embed);
-		} */
+		if ((await PrismaUtils.GuildMemberExists(member)) === false) return;
 
 		const guildMemberData = await prisma.guildMember.findFirst({
 			where: {
@@ -90,27 +22,13 @@ export class GuildMemberRemoveHandler implements EventHandler {
 			},
 		});
 
-		const userData = await prisma.user.findMany({
-			where: {
-				userID: BigInt(member.user.id),
-			},
-		});
-
-		if (userData.length < 1) {
-			await prisma.user.delete({
-				where: {
-					userID: BigInt(member.user.id),
-				},
-			});
-		}
-
 		const byeData = await prisma.bye.findUnique({
 			where: {
 				guildID: BigInt(member.guild.id),
 			},
 		});
 
-		if (byeData && byeData.message && byeData.channel) {
+		if (byeData && byeData.message !== null && byeData.channel !== null) {
 			const channel = member.guild.channels.cache.get(`${byeData.channel}`) as TextChannel;
 			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.ViewChannel)) return;
 			if (!channel.permissionsFor(member.client.user?.id as string)?.has(PermissionFlagsBits.SendMessages)) return;
@@ -131,6 +49,20 @@ export class GuildMemberRemoveHandler implements EventHandler {
 				.replace(`\\`, ``);
 
 			await MessageUtils.send(channel, msgClean);
+		}
+
+		const anyGuildMemberData = await prisma.guildMember.findMany({
+			where: {
+				userID: BigInt(member.user.id),
+			},
+		});
+
+		if (anyGuildMemberData.length === 0) {
+			await prisma.user.delete({
+				where: {
+					userID: BigInt(member.user.id),
+				},
+			});
 		}
 	}
 }
