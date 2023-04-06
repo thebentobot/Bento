@@ -1,6 +1,6 @@
 import { guildMember, user } from '@prisma/client';
 import { prisma } from '../services/prisma.js';
-import { GuildMember, User } from 'discord.js';
+import { GuildMember, PartialGuildMember, User } from 'discord.js';
 
 export class PrismaUtils {
 	public static async UserCreateIfNotExists(discordUser: User): Promise<user> {
@@ -66,7 +66,7 @@ export class PrismaUtils {
 		return user === null ? false : true;
 	}
 
-	public static async GuildMemberExists(discordGuildMember: GuildMember): Promise<boolean> {
+	public static async GuildMemberExists(discordGuildMember: GuildMember | PartialGuildMember): Promise<boolean> {
 		const guildMember = await prisma.guildMember.findFirst({
 			where: {
 				userID: BigInt(discordGuildMember.id),
