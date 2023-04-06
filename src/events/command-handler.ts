@@ -23,6 +23,8 @@ import { prisma } from '../services/prisma.js';
 import { CommandUtils, MessageUtils, PermissionUtils } from '../utils/index.js';
 import { InteractionUtils } from '../utils/interaction-utils.js';
 import { DiscordLimits } from '../constants/index.js';
+import { botColours } from '../utils/styling-utils.js';
+import { DateTime } from 'luxon';
 
 export class CommandHandler implements EventHandler {
 	private rateLimiter = new RateLimiter(
@@ -319,19 +321,35 @@ export class CommandHandler implements EventHandler {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	private async sendIntrError(intr: CommandInteraction, _data: EventData): Promise<void> {
 		try {
+			const intrErrorInfo = {
+				id: intr.id,
+				bentoPermissions: intr.appPermissions,
+				commandName: intr.commandName,
+				guildId: intr.guildId,
+				channelId: intr.channelId,
+				replied: intr.replied,
+				ephemeral: intr.ephemeral,
+				userId: intr.user.id,
+				userPermissions: intr.memberPermissions,
+				dateTimeUTC: DateTime.fromMillis(intr.createdTimestamp).toUTC().toFormat(`yyyy-MM-dd HH:mm:ss`),
+				isChatInputCommand: intr.isChatInputCommand().valueOf(),
+				isMessageComponent: intr.isMessageComponent().valueOf(),
+				isUserSelectMenu: intr.isUserSelectMenu().valueOf(),
+			};
 			const embed = new EmbedBuilder()
-				.setDescription(`Something went wrong!`)
-				.addFields(
-					{
-						name: `Error code`,
-						value: intr.id,
-					},
-					{
-						name: `Contact support`,
-						value: `[Support Server](https://discord.gg/dd68WwP)`,
-					},
+				.setTitle(`Error`)
+				.setDescription(
+					`Something went wrong!\n\nIf reporting this error, please **copy** and include the following information below:\n\`\`\`json\n${JSON.stringify(
+						intrErrorInfo,
+						null,
+						2,
+					)}\n\`\`\``,
 				)
-				.setColor(`#ff4a4a`);
+				.addFields({
+					name: `Feel very free to report the error in the Support Server, either publicly or privately to the owner.`,
+					value: `[Support Server](https://discord.gg/dd68WwP)`,
+				})
+				.setColor(botColours.error);
 			if (intr.guild) {
 				embed.addFields(
 					{
