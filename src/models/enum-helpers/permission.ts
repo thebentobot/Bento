@@ -233,5 +233,10 @@ export class Permission {
 				return `Use External Sounds`;
 			},
 		},
+		SendVoiceMessages: {
+			displayName(): string {
+				return `Send Voice Messages`;
+			},
+		},
 	};
 }
