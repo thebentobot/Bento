@@ -39,7 +39,7 @@
 		"@types/luxon": "^3.3.2",
 		"@types/node": "^20.6.3",
 		"@types/node-fetch": "^3.0.3",
-		"@types/node-schedule": "^2.1.0",
+		"@types/node-schedule": "^2.1.1",
 		"@types/remove-markdown": "^0.3.1",
 		"@types/spotify-web-api-node": "^5.0.7",
 		"@types/tz-lookup": "^6.1.0",
