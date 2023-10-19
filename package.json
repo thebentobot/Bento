@@ -42,7 +42,7 @@
 		"@types/node-schedule": "^2.1.1",
 		"@types/remove-markdown": "^0.3.2",
 		"@types/spotify-web-api-node": "^5.0.8",
-		"@types/tz-lookup": "^6.1.0",
+		"@types/tz-lookup": "^6.1.1",
 		"@types/utf8": "^3.0.1",
 		"@typescript-eslint/eslint-plugin": "^6.8.0",
 		"@typescript-eslint/parser": "^6.8.0",
