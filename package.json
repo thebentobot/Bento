@@ -41,7 +41,7 @@
 		"@types/node-fetch": "^3.0.3",
 		"@types/node-schedule": "^2.1.2",
 		"@types/remove-markdown": "^0.3.3",
-		"@types/spotify-web-api-node": "^5.0.9",
+		"@types/spotify-web-api-node": "^5.0.10",
 		"@types/tz-lookup": "^6.1.1",
 		"@types/utf8": "^3.0.2",
 		"@typescript-eslint/eslint-plugin": "^6.10.0",
