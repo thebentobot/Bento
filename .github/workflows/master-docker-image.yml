@@ -42,7 +42,7 @@ jobs:
       - name: node cache
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
       - run: npm ci
       - name: Get npm cache directory
