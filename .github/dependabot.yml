@@ -14,8 +14,17 @@ updates:
       timezone: 'Europe/Copenhagen'
     assignees:
       - 'banner4422'
-  # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
+    target-branch: 'dev'
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: '06:00'
+      timezone: 'Europe/Copenhagen'
+    assignees:
+      - 'banner4422'
+  - package-ecosystem: "docker"
+    target-branch: 'dev'
     directory: "/"
     schedule:
       interval: "daily"
