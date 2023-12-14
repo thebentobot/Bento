@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: install node v18
+    - name: install node v21
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 21
     - name: npm ci
       run: npm ci
     - name: npm build
