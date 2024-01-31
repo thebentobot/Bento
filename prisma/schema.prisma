@@ -387,6 +387,13 @@ model gfycatPosts {
   date      DateTime @default(now()) @db.Timestamptz(6)
 }
 
+model EFMigrationsHistory {
+  MigrationId    String @id(map: "PK___EFMigrationsHistory") @db.VarChar(150)
+  ProductVersion String @db.VarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}
+
 enum horos {
   Aries
   Taurus
