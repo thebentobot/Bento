@@ -57,7 +57,7 @@
 	},
 	"dependencies": {
 		"@discordjs/rest": "^2.2.0",
-		"@prisma/client": "^5.8.1",
+		"@prisma/client": "^5.9.0",
 		"@top-gg/sdk": "^3.1.6",
 		"axios": "^1.6.7",
 		"chroma-js": "^2.4.2",
