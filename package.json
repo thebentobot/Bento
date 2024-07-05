@@ -75,7 +75,7 @@
 		"node-fetch": "^3.3.2",
 		"node-schedule": "^2.1.1",
 		"node-vibrant": "^3.1.6",
-		"pino": "^9.1.0",
+		"pino": "^9.2.0",
 		"pino-pretty": "^11.2.1",
 		"remove-markdown": "^0.5.0",
 		"spotify-web-api-node": "^5.0.2",
